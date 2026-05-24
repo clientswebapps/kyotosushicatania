@@ -1,0 +1,294 @@
+/* ============================================
+   KYOTO SUSHI CATANIA — Contact Section
+   Two-column: info + map
+   ============================================ */
+
+/* --- Section Container --- */
+.contact {
+  background: var(--color-bg);
+  padding: 120px 60px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.contact__header {
+  text-align: center;
+  margin-bottom: 0;
+}
+
+.contact__title {
+  font-family: var(--font-heading);
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 16px;
+}
+
+.contact__subtitle {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--color-text-secondary);
+  max-width: 520px;
+  margin: 0 auto 24px;
+  line-height: 1.6;
+}
+
+.contact__divider {
+  display: block;
+  width: 60px;
+  height: 2px;
+  background: var(--color-brand-gold);
+  margin: 0 auto 64px;
+  border: none;
+}
+
+/* --- Two Column Layout --- */
+.contact__container {
+  display: flex;
+  gap: 64px;
+  max-width: 1280px;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+
+/* --- Info Column (Left) --- */
+.contact__info {
+  flex: 1;
+  min-width: 0;
+}
+
+/* --- Info Block --- */
+.contact__block {
+  margin-bottom: 40px;
+}
+
+.contact__block:last-child {
+  margin-bottom: 0;
+}
+
+.contact__block-title {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--color-brand-gold);
+  margin-bottom: 20px;
+}
+
+/* --- Info Item (icon + text) --- */
+.contact__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.contact__item:last-child {
+  margin-bottom: 0;
+}
+
+.contact__item-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: var(--color-brand-gold);
+  margin-top: 2px;
+}
+
+.contact__item-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: var(--color-brand-gold);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.contact__item-text {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+.contact__item-text a {
+  color: var(--color-text);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.contact__item-text a:hover {
+  color: var(--color-brand-gold);
+}
+
+/* --- Hours List --- */
+.contact__hours-list {
+  list-style: none;
+}
+
+.contact__hours-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px dotted var(--color-border);
+}
+
+.contact__hours-item:first-child {
+  padding-top: 0;
+}
+
+.contact__hours-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.contact__hours-day {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.contact__hours-time {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}
+
+.contact__hours-closed {
+  color: var(--color-brand-red);
+  font-weight: 500;
+}
+
+/* --- Map Column (Right) --- */
+.contact__map {
+  flex: 1;
+  min-width: 0;
+}
+
+.contact__map-frame {
+  width: 100%;
+  height: 400px;
+  border-radius: 16px;
+  border: 1px solid rgba(232, 184, 48, 0.2);
+  display: block;
+  filter: grayscale(0.3) brightness(0.85);
+  transition: filter var(--transition-medium);
+}
+
+.contact__map-frame:hover {
+  filter: grayscale(0) brightness(1);
+}
+
+/* --- Reserve CTA --- */
+.contact__cta {
+  text-align: center;
+  margin-top: 72px;
+}
+
+.contact__cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--color-brand-gold);
+  color: var(--color-bg);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 20px 56px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--color-brand-gold);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.contact__cta-btn:hover {
+  background: transparent;
+  color: var(--color-brand-gold);
+  box-shadow: var(--shadow-glow-gold);
+  transform: translateY(-2px);
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 1024px) {
+  .contact {
+    padding: 100px 40px;
+  }
+
+  .contact__container {
+    gap: 48px;
+  }
+
+  .contact__title {
+    font-size: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .contact {
+    padding: 80px 24px 100px 24px;
+  }
+
+  .contact__container {
+    flex-direction: column;
+    gap: 48px;
+  }
+
+  .contact__title {
+    font-size: 34px;
+  }
+
+  .contact__map-frame {
+    height: 320px;
+  }
+
+  .contact__cta {
+    margin-top: 56px;
+  }
+
+  .contact__cta-btn {
+    font-size: 12px;
+    padding: 16px 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact {
+    padding: 64px 16px 110px 16px;
+  }
+
+  .contact__title {
+    font-size: 28px;
+  }
+
+  .contact__subtitle {
+    font-size: 14px;
+  }
+
+  .contact__map-frame {
+    height: 260px;
+    border-radius: 12px;
+  }
+
+  .contact__divider {
+    margin-bottom: 48px;
+  }
+
+  .contact__cta-btn {
+    width: 100%;
+  }
+}

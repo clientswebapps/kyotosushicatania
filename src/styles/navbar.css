@@ -1,0 +1,298 @@
+/* ============================================
+   KYOTO SUSHI CATANIA — Navbar
+   Fixed, transparent → solid on scroll
+   ============================================ */
+
+/* --- Navbar Container --- */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 60px;
+  z-index: 1000;
+  background: transparent;
+  transition: background var(--transition-medium),
+              box-shadow var(--transition-medium),
+              backdrop-filter var(--transition-medium);
+}
+
+.navbar.scrolled {
+  background: rgba(10, 10, 10, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* --- Logo --- */
+.navbar__logo {
+  flex-shrink: 0;
+  z-index: 1001;
+}
+
+.navbar__logo img {
+  height: 50px;
+  width: auto;
+  display: block;
+}
+
+/* --- Nav Links (Desktop) --- */
+.navbar__links {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  list-style: none;
+}
+
+.navbar__links li {
+  position: relative;
+}
+
+.navbar__links a {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--color-text);
+  text-decoration: none;
+  position: relative;
+  padding: 4px 0;
+  transition: color var(--transition-fast);
+}
+
+.navbar__links a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1.5px;
+  background: var(--color-brand-gold);
+  transition: width var(--transition-medium);
+}
+
+.navbar__links a:hover {
+  color: var(--color-brand-gold);
+}
+
+.navbar__links a:hover::after {
+  width: 100%;
+}
+
+.navbar__links a.active {
+  color: var(--color-brand-gold);
+}
+
+.navbar__links a.active::after {
+  width: 100%;
+}
+
+/* --- Reserve Button (Desktop) --- */
+.navbar__reserve {
+  flex-shrink: 0;
+  z-index: 1001;
+}
+
+.navbar__reserve-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-brand-gold);
+  color: var(--color-bg);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 10px 24px;
+  border-radius: var(--radius-xl);
+  border: 2px solid var(--color-brand-gold);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+}
+
+.navbar__reserve-btn:hover {
+  background: transparent;
+  color: var(--color-brand-gold);
+  box-shadow: var(--shadow-glow-gold);
+  transform: translateY(-1px);
+}
+
+/* --- Hamburger Button --- */
+.navbar__hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  z-index: 1002;
+  background: none;
+  border: none;
+  padding: 0;
+  gap: 0;
+}
+
+.navbar__hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--color-text);
+  transition: all var(--transition-fast);
+  transform-origin: center;
+}
+
+.navbar__hamburger span:nth-child(1) {
+  transform: translateY(-4px);
+}
+
+.navbar__hamburger span:nth-child(2) {
+  opacity: 1;
+}
+
+.navbar__hamburger span:nth-child(3) {
+  transform: translateY(4px);
+}
+
+/* Hamburger → X animation */
+.navbar__hamburger.open span:nth-child(1) {
+  transform: translateY(2px) rotate(45deg);
+}
+
+.navbar__hamburger.open span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.navbar__hamburger.open span:nth-child(3) {
+  transform: translateY(-2px) rotate(-45deg);
+}
+
+/* --- Mobile Overlay Menu --- */
+.navbar__overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 40px;
+  z-index: 999;
+}
+
+.navbar__overlay-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(rgba(10, 10, 10, 0.9), rgba(10, 10, 10, 0.98)), url('/images/bg-leaves.avif');
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+}
+
+.navbar__overlay-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 32px;
+  list-style: none;
+  width: 100%;
+  margin-top: -60px;
+}
+
+.navbar__overlay-links a {
+  font-family: var(--font-heading);
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  letter-spacing: 1px;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-block;
+}
+
+.navbar__overlay-links a.active,
+.navbar__overlay-links a:hover {
+  color: var(--color-brand-gold);
+  transform: translateX(10px);
+}
+
+.navbar__overlay-footer {
+  margin-top: 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.navbar__overlay-footer .navbar__reserve-btn {
+  align-self: flex-start;
+  font-size: 13px;
+  padding: 16px 40px;
+}
+
+.navbar__overlay-socials {
+  display: flex;
+  gap: 24px;
+}
+
+.navbar__overlay-socials a {
+  font-family: var(--font-body);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.navbar__overlay-socials a:hover {
+  color: var(--color-text);
+}
+
+/* ============================================
+   Responsive — Mobile (≤768px)
+   ============================================ */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 24px;
+    height: 70px;
+  }
+
+  .navbar__logo img {
+    height: 40px;
+  }
+
+  .navbar__links {
+    display: none;
+  }
+
+  .navbar__reserve {
+    display: none;
+  }
+
+  .navbar__hamburger {
+    display: flex;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0 16px;
+  }
+
+  .navbar__overlay-links a {
+    font-size: 26px;
+  }
+}

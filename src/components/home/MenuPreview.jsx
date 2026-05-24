@@ -1,0 +1,287 @@
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useCollection } from '../../hooks/useFirestore';
+import { ArrowRight, Star } from 'lucide-react';
+import ScrollHint from './ScrollHint';
+import '../../styles/menu.css';
+
+const imageMap = {
+  'Dragon Roll': '/images/dragon-roll.avif',
+  'Premium Mixed Sashimi': '/images/sashimi-platter.avif',
+  'Tonkotsu Ramen': '/images/tonkotsu-ramen.avif',
+  'Rainbow Roll': '/images/rainbow-roll.avif',
+  'Mixed Tempura': '/images/tempura-platter.avif',
+  'Grilled Gyoza': '/images/gyoza.avif',
+};
+
+const fallbackCategories = [
+  { id: 'sushi-rolls', name: 'Sushi Rolls', nameIt: 'Sushi Rolls', icon: '🍣', order: 1 },
+  { id: 'sashimi', name: 'Sashimi', nameIt: 'Sashimi', icon: '🐟', order: 2 },
+  { id: 'ramen', name: 'Ramen & Noodles', nameIt: 'Ramen & Noodles', icon: '🍜', order: 4 },
+  { id: 'antipasti', name: 'Starters', nameIt: 'Starters', icon: '🥗', order: 6 },
+];
+
+const fallbackItems = [
+  { id: '1', name: 'Dragon Roll', description: 'Shrimp tempura, avocado, tobiko, and unagi sauce', price: 14.9, categoryId: 'sushi-rolls', imageUrl: '/images/dragon-roll.avif', isBestSeller: true },
+  { id: '4', name: 'Rainbow Roll', description: 'California roll topped with salmon, tuna, avocado, and shrimp', price: 16.5, categoryId: 'sushi-rolls', imageUrl: '/images/rainbow-roll.avif', isBestSeller: true },
+  { id: '2', name: 'Premium Mixed Sashimi', description: '15-piece selection: salmon, tuna, sea bass, red shrimp, and yellowtail', price: 22.9, categoryId: 'sashimi', imageUrl: '/images/sashimi-platter.avif', isBestSeller: true },
+  { id: '3', name: 'Tonkotsu Ramen', description: '18-hour pork broth, chashu, marinated egg, nori, and scallion', price: 16.9, categoryId: 'ramen', imageUrl: '/images/tonkotsu-ramen.avif', isBestSeller: true },
+  { id: '5', name: 'Mixed Tempura', description: 'Shrimp and seasonal vegetables in light, crispy batter', price: 13.9, categoryId: 'tempura', imageUrl: '/images/tempura-platter.avif', isBestSeller: false },
+  { id: '6', name: 'Grilled Gyoza', description: 'Japanese dumplings filled with pork and vegetables, served with ponzu sauce', price: 8.9, categoryId: 'antipasti', imageUrl: '/images/gyoza.avif', isBestSeller: false },
+];
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+    },
+  },
+  exit: {
+    opacity: 0,
+    transition: { duration: 0.2 },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 25, scale: 0.97 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.4, ease: 'easeOut' },
+  },
+  exit: {
+    opacity: 0,
+    y: -10,
+    transition: { duration: 0.2 },
+  },
+};
+
+const formatPrice = (price) => `€${Number(price).toFixed(2)}`;
+
+const MenuPreview = () => {
+  const { data: firebaseCategories } = useCollection('menuCategories');
+  const { data: firebaseItems } = useCollection('menuItems');
+
+  const categories =
+    firebaseCategories && firebaseCategories.length > 0
+      ? firebaseCategories
+      : fallbackCategories;
+
+  const allItems =
+    firebaseItems && firebaseItems.length > 0 ? firebaseItems : fallbackItems;
+
+  const [activeCategory, setActiveCategory] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (categories.length > 0 && activeCategory === null) {
+      setActiveCategory(categories[0].id);
+    }
+  }, [categories, activeCategory]);
+
+  const filteredItems = allItems.filter((item) => item.categoryId === activeCategory);
+  
+  const bestSellers = allItems.filter(item => item.isBestSeller);
+  const mobileDisplayItems = (bestSellers.length > 0 ? bestSellers : allItems).slice(0, 4);
+
+  const topItems = filteredItems.slice(0, 3);
+  const bannerItem = filteredItems.length > 3 ? filteredItems[3] : null;
+  const bottomItems = filteredItems.slice(4, 8);
+
+  const getImage = (item) => {
+    return item.imageUrl || imageMap[item.name] || '/images/dragon-roll.avif';
+  };
+
+  return (
+    <section className="menu-section onboarding-section--flexible" id="menu-preview">
+      <div className="menu-section__container" style={{ display: 'block' }}>
+        <motion.div
+          className="menu-section__header"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-50px' }}
+          transition={{ duration: 0.6 }}
+        >
+          <h2 className="menu-section__title">Our Menu</h2>
+          <p className="menu-section__subtitle">
+            Discover the authentic flavors of Japanese cuisine
+          </p>
+          <hr className="menu-section__divider" />
+        </motion.div>
+
+        {!isMobile && (
+          <div className="menu-section__tabs">
+            {categories.map((cat) => (
+            <button
+              key={cat.id}
+              className={`menu-section__tab ${activeCategory === cat.id ? 'active' : ''}`}
+              onClick={() => setActiveCategory(cat.id)}
+            >
+              <span style={{ marginRight: '8px' }}>{cat.icon}</span>
+              <span>{cat.name}</span>
+            </button>
+          ))}
+        </div>
+        )}
+
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeCategory}
+            className="menu-section__content"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
+            {isMobile ? (
+              <div className="menu-section__grid-4">
+                <div style={{ gridColumn: '1 / -1', textAlign: 'center', marginBottom: '10px' }}>
+                  <span style={{ color: 'var(--color-brand-gold)', fontSize: '14px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                    <Star size={16} fill="currentColor" /> Best Sellers
+                  </span>
+                </div>
+                {mobileDisplayItems.map((item) => (
+                  <motion.div
+                    key={item.id}
+                    className="menu-section__card"
+                    variants={cardVariants}
+                  >
+                    <div className="menu-section__card-image-wrapper">
+                      <img
+                        src={getImage(item)}
+                        alt={item.name}
+                        className="menu-section__card-image"
+                        loading="lazy"
+                      />
+                    </div>
+                    <div className="menu-section__card-body">
+                      <h3 className="menu-section__card-name">{item.name}</h3>
+                      <p className="menu-section__card-description">{item.description}</p>
+                      <div className="menu-section__card-footer">
+                        <span className="menu-section__card-price">{formatPrice(item.price)}</span>
+                        <Link to="/menu" className="menu-section__card-btn">Order Now</Link>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            ) : filteredItems.length > 0 ? (
+              <>
+                <div className="menu-section__grid-3">
+                  {topItems.map((item) => (
+                    <motion.div
+                      key={item.id}
+                      className="menu-section__card"
+                      variants={cardVariants}
+                    >
+                      <div className="menu-section__card-image-wrapper">
+                        <img
+                          src={getImage(item)}
+                          alt={item.name}
+                          className="menu-section__card-image"
+                          loading="lazy"
+                        />
+                      </div>
+                      <div className="menu-section__card-body">
+                        <h3 className="menu-section__card-name">{item.name}</h3>
+                        <p className="menu-section__card-description">{item.description}</p>
+                        <div className="menu-section__card-footer">
+                          <span className="menu-section__card-price">{formatPrice(item.price)}</span>
+                          <Link to="/menu" className="menu-section__card-btn">Order Now</Link>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {bannerItem && (
+                  <motion.div className="menu-section__banner" variants={cardVariants}>
+                    <div className="menu-section__banner-image">
+                      <img src={getImage(bannerItem)} alt={bannerItem.name} loading="lazy" />
+                    </div>
+                    <div className="menu-section__banner-body">
+                      <div>
+                        <h3>{bannerItem.name}</h3>
+                        <p>{bannerItem.description}</p>
+                      </div>
+                      <div className="menu-section__banner-action">
+                        <span className="menu-section__banner-price">{formatPrice(bannerItem.price)}</span>
+                        <Link to="/menu" className="menu-section__banner-btn">Order Now</Link>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {bottomItems.length > 0 && (
+                  <div className="menu-section__grid-4">
+                    {bottomItems.map((item) => (
+                      <motion.div
+                        key={item.id}
+                        className="menu-section__card"
+                        variants={cardVariants}
+                      >
+                        <div className="menu-section__card-image-wrapper">
+                          <img
+                            src={getImage(item)}
+                            alt={item.name}
+                            className="menu-section__card-image"
+                            loading="lazy"
+                          />
+                        </div>
+                        <div className="menu-section__card-body">
+                          <h3 className="menu-section__card-name">{item.name}</h3>
+                          <p className="menu-section__card-description">{item.description}</p>
+                          <div className="menu-section__card-footer">
+                            <span className="menu-section__card-price">{formatPrice(item.price)}</span>
+                            <Link to="/menu" className="menu-section__card-btn">Order Now</Link>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </>
+            ) : (
+              <motion.p
+                style={{ textAlign: 'center', color: 'var(--color-text-secondary)', padding: '40px 0' }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+              >
+                No dishes in this category.
+              </motion.p>
+            )}
+          </motion.div>
+        </AnimatePresence>
+
+        <motion.div
+          className="menu-section__view-all"
+          style={{ paddingBottom: isMobile ? '80px' : '0' }}
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          <Link to="/menu" className="menu-section__view-all-btn">
+            View Full Menu
+            <ArrowRight size={16} />
+          </Link>
+        </motion.div>
+
+        <ScrollHint targetId="about-us" text="Keep exploring" />
+      </div>
+    </section>
+  );
+};
+
+export default MenuPreview;

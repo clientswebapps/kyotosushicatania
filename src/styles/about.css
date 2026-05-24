@@ -1,0 +1,269 @@
+/* ============================================
+   KYOTO SUSHI CATANIA — About Section
+   Two-column layout with decorative elements
+   ============================================ */
+
+/* --- Section Container --- */
+.about {
+  background: var(--color-bg-elevated);
+  padding: 120px 60px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.about__container {
+  display: flex;
+  align-items: center;
+  gap: 64px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* --- Image Column (Left 45%) --- */
+.about__image-wrapper {
+  flex: 0 0 45%;
+  position: relative;
+}
+
+.about__image {
+  width: 100%;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(232, 184, 48, 0.2);
+  display: block;
+  object-fit: cover;
+  position: relative;
+  z-index: 2;
+}
+
+/* --- Decorative Brush Stroke (Pseudo-element) --- */
+.about__image-wrapper::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(
+    135deg,
+    rgba(232, 184, 48, 0.3) 0%,
+    rgba(196, 30, 58, 0.2) 100%
+  );
+  border-radius: 60% 40% 50% 50% / 50% 60% 40% 50%;
+  z-index: 1;
+  filter: blur(20px);
+}
+
+.about__image-wrapper::after {
+  content: '';
+  position: absolute;
+  bottom: -16px;
+  right: -16px;
+  width: 180px;
+  height: 80px;
+  background: linear-gradient(
+    90deg,
+    rgba(196, 30, 58, 0.15) 0%,
+    rgba(232, 184, 48, 0.2) 100%
+  );
+  border-radius: 40% 60% 50% 50% / 60% 40% 50% 50%;
+  z-index: 1;
+  filter: blur(16px);
+}
+
+/* --- Text Column (Right 55%) --- */
+.about__content {
+  flex: 0 0 55%;
+  max-width: 55%;
+}
+
+.about__label {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--color-brand-gold);
+  margin-bottom: 16px;
+  display: block;
+}
+
+.about__title {
+  font-family: var(--font-heading);
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 24px;
+  line-height: 1.2;
+}
+
+.about__divider {
+  display: block;
+  width: 60px;
+  height: 2px;
+  background: var(--color-brand-gold);
+  margin-bottom: 32px;
+  border: none;
+}
+
+.about__text {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+
+.about__text:last-of-type {
+  margin-bottom: 0;
+}
+
+/* --- Japanese Accent Text --- */
+.about__japanese {
+  font-family: var(--font-japanese);
+  font-size: 24px;
+  font-weight: 400;
+  color: var(--color-brand-gold);
+  opacity: 0.7;
+  margin-top: 32px;
+  display: block;
+  letter-spacing: 4px;
+}
+
+/* --- Stats / Highlights Row --- */
+.about__stats {
+  display: flex;
+  gap: 40px;
+  margin-top: 40px;
+  padding-top: 32px;
+  border-top: 1px solid var(--color-border);
+}
+
+.about__stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.about__stat-number {
+  font-family: var(--font-heading);
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--color-brand-gold);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.about__stat-label {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 1024px) {
+  .about {
+    padding: 100px 40px;
+  }
+
+  .about__container {
+    gap: 48px;
+  }
+
+  .about__title {
+    font-size: 36px;
+  }
+
+  .about__text {
+    font-size: 15px;
+  }
+
+  .about__stats {
+    gap: 28px;
+  }
+}
+
+@media (max-width: 768px) {
+  .about {
+    padding: 80px 24px 100px 24px;
+  }
+
+  .about__container {
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .about__image-wrapper {
+    flex: none;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .about__content {
+    flex: none;
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .about__divider {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .about__title {
+    font-size: 32px;
+  }
+
+  .about__text {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .about__japanese {
+    font-size: 20px;
+  }
+
+  .about__stats {
+    justify-content: center;
+    gap: 32px;
+  }
+
+  .about__stat {
+    align-items: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .about {
+    padding: 64px 16px 110px 16px;
+  }
+
+  .about__title {
+    font-size: 28px;
+  }
+
+  .about__text {
+    font-size: 14px;
+  }
+
+  .about__stats {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .about__stat-number {
+    font-size: 30px;
+  }
+
+  .about__image-wrapper::before,
+  .about__image-wrapper::after {
+    display: none;
+  }
+}
