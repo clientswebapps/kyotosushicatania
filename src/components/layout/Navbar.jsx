@@ -18,37 +18,14 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      // Check both window scroll and the homepage scroll-snap container
-      const container = document.querySelector('.home-onboarding');
-      const scrollTop = container ? container.scrollTop : window.scrollY;
-      setScrolled(scrollTop > 50);
+      setScrolled(window.scrollY > 50);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-
-    // Also listen to the scroll-snap container on homepage
-    const observer = new MutationObserver(() => {
-      const container = document.querySelector('.home-onboarding');
-      if (container) {
-        container.addEventListener('scroll', handleScroll, { passive: true });
-      }
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    // Initial check
-    const container = document.querySelector('.home-onboarding');
-    if (container) {
-      container.addEventListener('scroll', handleScroll, { passive: true });
-    }
-
     handleScroll();
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      const container = document.querySelector('.home-onboarding');
-      if (container) {
-        container.removeEventListener('scroll', handleScroll);
-      }
-      observer.disconnect();
     };
   }, []);
 

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { useCollection } from '../../hooks/useFirestore';
 import { Link } from 'react-router-dom';
-import ScrollHint from './ScrollHint';
+
 import ItemModal from '../common/ItemModal';
 import '../../styles/promotions.css';
 
@@ -202,7 +202,7 @@ const PromotionsSection = () => {
         </div>
       </div>
 
-      <ScrollHint targetId="menu-preview" text="Menu" />
+
       <ItemModal 
         isOpen={!!selectedPromo} 
         onClose={() => setSelectedPromo(null)} 

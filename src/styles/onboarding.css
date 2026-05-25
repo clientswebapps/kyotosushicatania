@@ -1,39 +1,25 @@
 /* ============================================
    KYOTO SUSHI CATANIA — Scroll Onboarding
-   Full-page scroll-snap with dot nav & hints
+   Smooth scrolling layout with dot nav & hints
    ============================================ */
 
-/* --- Scroll-Snap Container --- */
+/* --- Scroll Container --- */
 .home-onboarding {
-  height: 100vh;
-  overflow-y: auto;
   overflow-x: hidden;
-  scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
-
-  /* Hide scrollbar for clean look */
-  scrollbar-width: none;
-  -ms-overflow-style: none;
 }
 
-.home-onboarding::-webkit-scrollbar {
-  display: none;
-}
 
-/* --- Snap Section (each child) --- */
+/* --- Section (each child) --- */
 .onboarding-section {
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
   min-height: 100vh;
   position: relative;
   display: flex;
   flex-direction: column;
 }
 
-/* For sections with overflow content, allow scrolling within */
+/* For sections with overflow content */
 .onboarding-section--flexible {
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
   min-height: 100vh;
   position: relative;
 }

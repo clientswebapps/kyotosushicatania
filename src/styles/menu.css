@@ -17,6 +17,20 @@
   justify-content: center;
 }
 
+/* --- Logo above title --- */
+.menu-section__logo-lockup {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.menu-section__logo {
+  height: 240px;
+  width: auto;
+  display: inline-block;
+  opacity: 0.9;
+  filter: drop-shadow(0 4px 24px rgba(0, 0, 0, 0.5));
+}
+
 .menu-section__header {
   text-align: center;
   margin-bottom: 0;
@@ -319,6 +333,10 @@
     padding: 100px 40px;
   }
 
+  .menu-section__logo {
+    height: 140px;
+  }
+
   .menu-section__title {
     font-size: 40px;
   }
@@ -327,6 +345,10 @@
 @media (max-width: 768px) {
   .menu-section {
     padding: 80px 24px;
+  }
+
+  .menu-section__logo {
+    height: 110px;
   }
 
   .menu-section__title {

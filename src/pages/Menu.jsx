@@ -1,8 +1,7 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCollection } from "../hooks/useFirestore";
-import { Search, ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Search } from "lucide-react";
 import "../styles/menu.css";
 
 const imageMap = {
@@ -60,12 +59,25 @@ export default function Menu() {
 
   return (
     <section className="menu-section">
+      <motion.div
+        className="menu-section__logo-lockup"
+        initial={{ opacity: 0, scale: 0.88 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8, ease: 'easeOut' }}
+      >
+        <img
+          src="/images/logo-white.avif"
+          alt="Kyō-To"
+          className="menu-section__logo"
+        />
+      </motion.div>
+
       <div className="menu-section__header">
         <motion.h1
           className="section-title"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
         >
           Our Menu
         </motion.h1>

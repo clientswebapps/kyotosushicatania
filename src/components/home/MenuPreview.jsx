@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCollection } from '../../hooks/useFirestore';
 import { ArrowRight, Star } from 'lucide-react';
-import ScrollHint from './ScrollHint';
+
 import '../../styles/menu.css';
 
 const imageMap = {
@@ -107,11 +107,25 @@ const MenuPreview = () => {
     <section className="menu-section onboarding-section--flexible" id="menu-preview">
       <div className="menu-section__container" style={{ display: 'block' }}>
         <motion.div
+          className="menu-section__logo-lockup"
+          initial={{ opacity: 0, scale: 0.88 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+        >
+          <img
+            src="/images/logo-white.avif"
+            alt="Kyō-To"
+            className="menu-section__logo"
+          />
+        </motion.div>
+
+        <motion.div
           className="menu-section__header"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-50px' }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
         >
           <h2 className="menu-section__title">Our Menu</h2>
           <p className="menu-section__subtitle">
@@ -278,7 +292,7 @@ const MenuPreview = () => {
           </Link>
         </motion.div>
 
-        <ScrollHint targetId="about-us" text="Keep exploring" />
+
       </div>
     </section>
   );

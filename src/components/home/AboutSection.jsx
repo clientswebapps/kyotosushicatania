@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import ScrollHint from './ScrollHint';
+
 import '../../styles/about.css';
 
 const AboutSection = () => {
@@ -71,7 +71,7 @@ const AboutSection = () => {
           </div>
         </motion.div>
       </div>
-      <ScrollHint targetId="contact-us" text="Find us" />
+
     </section>
   );
 };

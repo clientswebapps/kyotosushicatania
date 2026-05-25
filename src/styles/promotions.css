@@ -8,8 +8,6 @@
   min-height: auto;
   display: flex;
   flex-direction: column;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
   position: relative;
 }
 

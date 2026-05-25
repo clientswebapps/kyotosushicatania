@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { MapPin, Phone, Clock, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import ScrollHint from './ScrollHint';
+
 import '../../styles/contact.css';
 
 const contactInfo = [
@@ -134,7 +134,7 @@ const ContactSection = () => {
           Reserve Your Table
         </Link>
       </motion.div>
-      <ScrollHint targetId="footer" text="More info" />
+
     </section>
   );
 };
