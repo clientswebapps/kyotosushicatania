@@ -129,8 +129,8 @@
   overflow: hidden;
   border: 1px solid transparent;
   transition: transform var(--transition-medium),
-              border-color var(--transition-medium),
-              box-shadow var(--transition-medium);
+    border-color var(--transition-medium),
+    box-shadow var(--transition-medium);
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -185,7 +185,7 @@
   color: var(--color-text-muted);
   line-height: 1.5;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -322,6 +322,7 @@
    Responsive
    ============================================ */
 @media (max-width: 1200px) {
+
   .menu-section__grid-3,
   .menu-section__grid-4 {
     grid-template-columns: repeat(3, 1fr);
@@ -360,23 +361,23 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
   }
-  
+
   .menu-section__banner {
     flex-direction: column;
   }
-  
+
   .menu-section__banner-image {
     width: 100%;
     height: 200px;
   }
-  
+
   .menu-section__banner-body {
     flex-direction: column;
     align-items: flex-start;
     gap: 20px;
     padding: 24px;
   }
-  
+
   .menu-section__banner-action {
     align-items: flex-start;
     flex-direction: row;
@@ -474,5 +475,7 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
