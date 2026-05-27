@@ -49,7 +49,14 @@ export default function MenuItemModal({ item, isOpen, onClose }) {
             <div className="menu-modal-content">
               <div className="menu-modal-header">
                 <h2 className="menu-modal-title">{item.name}</h2>
-                <span className="menu-modal-price">€{Number(item.price).toFixed(2)}</span>
+                <div className="menu-modal-price-wrapper" style={{ display: 'flex', alignItems: 'baseline', gap: '12px' }}>
+                  {item.originalPrice && Number(item.originalPrice) > Number(item.price) && (
+                    <span className="menu-modal-price-original" style={{ textDecoration: 'line-through', color: 'var(--color-text-secondary)', fontSize: '0.75em', opacity: 0.7 }}>
+                      €{Number(item.originalPrice).toFixed(2)}
+                    </span>
+                  )}
+                  <span className="menu-modal-price">€{Number(item.price).toFixed(2)}</span>
+                </div>
               </div>
 
               {item.highlights && item.highlights.length > 0 && (

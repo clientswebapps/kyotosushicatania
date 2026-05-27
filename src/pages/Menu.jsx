@@ -157,7 +157,7 @@ export default function Menu() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
-                onClick={() => setSelectedItem({ ...item, imageUrl: getImage(item), highlights: itemHighlights[item.name] || [] })}
+                onClick={() => setSelectedItem({ ...item, imageUrl: getImage(item), highlights: item.highlights || itemHighlights[item.name] || [] })}
               >
                 <div className="menu-section__card-image-wrapper">
                   <img
@@ -175,17 +175,24 @@ export default function Menu() {
                 </div>
                 <div className="menu-section__card-body">
                   <h3 className="menu-section__card-name">{item.name}</h3>
-                  {itemHighlights[item.name] && (
+                  {(item.highlights || itemHighlights[item.name]) && (
                     <div className="menu-section__card-highlights">
-                      {itemHighlights[item.name].map((tag, idx) => (
+                      {(item.highlights || itemHighlights[item.name]).map((tag, idx) => (
                         <span key={idx} className="menu-highlight-tag">{tag}</span>
                       ))}
                     </div>
                   )}
                   <p className="menu-section__card-description">{item.description}</p>
-                  <span className="menu-section__card-price">
-                    €{item.price.toFixed(2)}
-                  </span>
+                  <div className="menu-price-wrapper" style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                    {item.originalPrice && Number(item.originalPrice) > Number(item.price) && (
+                      <span className="menu-price-original" style={{ textDecoration: 'line-through', color: 'var(--color-text-secondary)', fontSize: '0.85em', opacity: 0.7 }}>
+                        €{Number(item.originalPrice).toFixed(2)}
+                      </span>
+                    )}
+                    <span className="menu-section__card-price">
+                      €{item.price.toFixed(2)}
+                    </span>
+                  </div>
                 </div>
               </motion.div>
             ))}

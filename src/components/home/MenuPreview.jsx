@@ -181,7 +181,7 @@ const MenuPreview = () => {
                     key={item.id}
                     className="menu-section__card"
                     variants={cardVariants}
-                    onClick={() => setSelectedItem({ ...item, imageUrl: getImage(item), highlights: itemHighlights[item.name] || [] })}
+                    onClick={() => setSelectedItem({ ...item, imageUrl: getImage(item), highlights: item.highlights || itemHighlights[item.name] || [] })}
                   >
                     <div className="menu-section__card-image-wrapper">
                       <img
@@ -196,16 +196,23 @@ const MenuPreview = () => {
                     </div>
                     <div className="menu-section__card-body">
                       <h3 className="menu-section__card-name">{item.name}</h3>
-                      {itemHighlights[item.name] && (
+                      {(item.highlights || itemHighlights[item.name]) && (
                         <div className="menu-section__card-highlights">
-                          {itemHighlights[item.name].map((tag, idx) => (
+                          {(item.highlights || itemHighlights[item.name]).map((tag, idx) => (
                             <span key={idx} className="menu-highlight-tag">{tag}</span>
                           ))}
                         </div>
                       )}
                       <p className="menu-section__card-description">{item.description}</p>
                       <div className="menu-section__card-footer">
-                        <span className="menu-section__card-price">{formatPrice(item.price)}</span>
+                        <div className="menu-price-wrapper" style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                          {item.originalPrice && Number(item.originalPrice) > Number(item.price) && (
+                            <span className="menu-price-original" style={{ textDecoration: 'line-through', color: 'var(--color-text-secondary)', fontSize: '0.85em', opacity: 0.7 }}>
+                              {formatPrice(item.originalPrice)}
+                            </span>
+                          )}
+                          <span className="menu-section__card-price">{formatPrice(item.price)}</span>
+                        </div>
                       </div>
                     </div>
                   </motion.div>
@@ -219,7 +226,7 @@ const MenuPreview = () => {
                       key={item.id}
                       className="menu-section__card"
                       variants={cardVariants}
-                      onClick={() => setSelectedItem({ ...item, imageUrl: getImage(item), highlights: itemHighlights[item.name] || [] })}
+                      onClick={() => setSelectedItem({ ...item, imageUrl: getImage(item), highlights: item.highlights || itemHighlights[item.name] || [] })}
                     >
                       <div className="menu-section__card-image-wrapper">
                         <img
@@ -234,16 +241,23 @@ const MenuPreview = () => {
                       </div>
                       <div className="menu-section__card-body">
                         <h3 className="menu-section__card-name">{item.name}</h3>
-                        {itemHighlights[item.name] && (
+                        {(item.highlights || itemHighlights[item.name]) && (
                           <div className="menu-section__card-highlights">
-                            {itemHighlights[item.name].map((tag, idx) => (
+                            {(item.highlights || itemHighlights[item.name]).map((tag, idx) => (
                               <span key={idx} className="menu-highlight-tag">{tag}</span>
                             ))}
                           </div>
                         )}
                         <p className="menu-section__card-description">{item.description}</p>
                         <div className="menu-section__card-footer">
-                          <span className="menu-section__card-price">{formatPrice(item.price)}</span>
+                          <div className="menu-price-wrapper" style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                            {item.originalPrice && Number(item.originalPrice) > Number(item.price) && (
+                              <span className="menu-price-original" style={{ textDecoration: 'line-through', color: 'var(--color-text-secondary)', fontSize: '0.85em', opacity: 0.7 }}>
+                                {formatPrice(item.originalPrice)}
+                              </span>
+                            )}
+                            <span className="menu-section__card-price">{formatPrice(item.price)}</span>
+                          </div>
                         </div>
                       </div>
                     </motion.div>
@@ -251,16 +265,16 @@ const MenuPreview = () => {
                 </div>
 
                 {bannerItem && (
-                  <motion.div className="menu-section__banner" variants={cardVariants} onClick={() => setSelectedItem({ ...bannerItem, imageUrl: getImage(bannerItem), highlights: itemHighlights[bannerItem.name] || [] })} style={{ cursor: 'pointer' }}>
+                  <motion.div className="menu-section__banner" variants={cardVariants} onClick={() => setSelectedItem({ ...bannerItem, imageUrl: getImage(bannerItem), highlights: bannerItem.highlights || itemHighlights[bannerItem.name] || [] })} style={{ cursor: 'pointer' }}>
                     <div className="menu-section__banner-image">
                       <img src={getImage(bannerItem)} alt={bannerItem.name} loading="lazy" />
                     </div>
                     <div className="menu-section__banner-body">
                       <div>
                         <h3>{bannerItem.name}</h3>
-                        {itemHighlights[bannerItem.name] && (
+                        {(bannerItem.highlights || itemHighlights[bannerItem.name]) && (
                           <div className="menu-section__card-highlights" style={{ marginTop: '8px' }}>
-                            {itemHighlights[bannerItem.name].map((tag, idx) => (
+                            {(bannerItem.highlights || itemHighlights[bannerItem.name]).map((tag, idx) => (
                               <span key={idx} className="menu-highlight-tag">{tag}</span>
                             ))}
                           </div>
@@ -268,7 +282,14 @@ const MenuPreview = () => {
                         <p>{bannerItem.description}</p>
                       </div>
                       <div className="menu-section__banner-action">
-                        <span className="menu-section__banner-price">{formatPrice(bannerItem.price)}</span>
+                        <div className="menu-price-wrapper" style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                          {bannerItem.originalPrice && Number(bannerItem.originalPrice) > Number(bannerItem.price) && (
+                            <span className="menu-price-original" style={{ textDecoration: 'line-through', color: 'var(--color-text-secondary)', fontSize: '0.85em', opacity: 0.7 }}>
+                              {formatPrice(bannerItem.originalPrice)}
+                            </span>
+                          )}
+                          <span className="menu-section__banner-price">{formatPrice(bannerItem.price)}</span>
+                        </div>
                       </div>
                     </div>
                   </motion.div>
@@ -281,7 +302,7 @@ const MenuPreview = () => {
                         key={item.id}
                         className="menu-section__card"
                         variants={cardVariants}
-                        onClick={() => setSelectedItem({ ...item, imageUrl: getImage(item), highlights: itemHighlights[item.name] || [] })}
+                        onClick={() => setSelectedItem({ ...item, imageUrl: getImage(item), highlights: item.highlights || itemHighlights[item.name] || [] })}
                       >
                         <div className="menu-section__card-image-wrapper">
                           <img
@@ -296,16 +317,23 @@ const MenuPreview = () => {
                         </div>
                         <div className="menu-section__card-body">
                           <h3 className="menu-section__card-name">{item.name}</h3>
-                          {itemHighlights[item.name] && (
+                          {(item.highlights || itemHighlights[item.name]) && (
                             <div className="menu-section__card-highlights">
-                              {itemHighlights[item.name].map((tag, idx) => (
+                              {(item.highlights || itemHighlights[item.name]).map((tag, idx) => (
                                 <span key={idx} className="menu-highlight-tag">{tag}</span>
                               ))}
                             </div>
                           )}
                           <p className="menu-section__card-description">{item.description}</p>
                           <div className="menu-section__card-footer">
-                            <span className="menu-section__card-price">{formatPrice(item.price)}</span>
+                            <div className="menu-price-wrapper" style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                              {item.originalPrice && Number(item.originalPrice) > Number(item.price) && (
+                                <span className="menu-price-original" style={{ textDecoration: 'line-through', color: 'var(--color-text-secondary)', fontSize: '0.85em', opacity: 0.7 }}>
+                                  {formatPrice(item.originalPrice)}
+                                </span>
+                              )}
+                              <span className="menu-section__card-price">{formatPrice(item.price)}</span>
+                            </div>
                           </div>
                         </div>
                       </motion.div>

@@ -26,7 +26,8 @@ import {
   AlertCircle,
   Database,
   ChevronUp,
-  ChevronDown
+  ChevronDown,
+  Edit
 } from "lucide-react";
 import { collection, doc, setDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
@@ -51,6 +52,7 @@ export default function Admin() {
   // Menu items list
   const { data: menuItems, loading: menuLoading } = useCollection("menuItems", {
     orderByField: "order",
+    realtime: true,
   });
 
   // Categories list
@@ -114,11 +116,15 @@ export default function Admin() {
     name: "",
     description: "",
     price: "",
+    originalPrice: "",
     categoryId: "",
     isBestSeller: false,
     isAvailable: true,
     imageUrl: "",
+    highlights: [],
   });
+
+  const [editingItemId, setEditingItemId] = useState(null);
 
   // New Hero Slide Form State
   const [newHeroSlide, setNewHeroSlide] = useState({
@@ -191,27 +197,56 @@ export default function Admin() {
     }
   };
 
-  // Handle Menu Item submission
+  // Handle Menu Item submission (Add or Update)
   const handleAddMenuItem = async (e) => {
     e.preventDefault();
     try {
-      await addMenuItem({
+      const payload = {
         ...newItem,
         price: parseFloat(newItem.price),
-        order: menuItems?.length || 0,
-      });
+        originalPrice: newItem.originalPrice ? parseFloat(newItem.originalPrice) : null,
+        highlights: Array.isArray(newItem.highlights) ? newItem.highlights : [],
+      };
+
+      if (editingItemId) {
+        await updateMenuItem(editingItemId, payload);
+        setEditingItemId(null);
+      } else {
+        await addMenuItem({
+          ...payload,
+          order: menuItems?.length || 0,
+        });
+      }
+
       setNewItem({
         name: "",
         description: "",
         price: "",
+        originalPrice: "",
         categoryId: "",
         isBestSeller: false,
         isAvailable: true,
         imageUrl: "",
+        highlights: [],
       });
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const handleStartEdit = (item) => {
+    setEditingItemId(item.id);
+    setNewItem({
+      name: item.name || "",
+      description: item.description || "",
+      price: item.price !== undefined ? item.price.toString() : "",
+      originalPrice: item.originalPrice !== undefined && item.originalPrice !== null ? item.originalPrice.toString() : "",
+      categoryId: item.categoryId || "",
+      isBestSeller: !!item.isBestSeller,
+      isAvailable: item.isAvailable !== undefined ? !!item.isAvailable : true,
+      imageUrl: item.imageUrl || "",
+      highlights: Array.isArray(item.highlights) ? item.highlights : [],
+    });
   };
 
   // Handle Menu Item delete
@@ -561,9 +596,9 @@ export default function Admin() {
               className="admin-menu-manager"
             >
               <div className="admin-menu-split">
-                {/* Form to add item */}
+                {/* Form to add/edit item */}
                 <div className="admin-menu-form-container">
-                  <h2>Add New Dish</h2>
+                  <h2>{editingItemId ? `Edit Dish: ${newItem.name}` : "Add New Dish"}</h2>
                   <form onSubmit={handleAddMenuItem} className="admin-menu-form">
                     <div className="form-group">
                       <label>Dish Name *</label>
@@ -590,19 +625,6 @@ export default function Admin() {
                     </div>
                     <div className="form-row">
                       <div className="form-group">
-                        <label>Price (€) *</label>
-                        <input
-                          type="number"
-                          step="0.01"
-                          value={newItem.price}
-                          onChange={(e) =>
-                            setNewItem((p) => ({ ...p, price: e.target.value }))
-                          }
-                          required
-                          placeholder="9.90"
-                        />
-                      </div>
-                      <div className="form-group">
                         <label>Category *</label>
                         <select
                           value={newItem.categoryId}
@@ -619,6 +641,98 @@ export default function Admin() {
                           ))}
                         </select>
                       </div>
+                      <div className="form-group">
+                        <label>Active Price (€) *</label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={newItem.price}
+                          onChange={(e) =>
+                            setNewItem((p) => ({ ...p, price: e.target.value }))
+                          }
+                          required
+                          placeholder="9.90"
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Original Price (€) (Optional)</label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={newItem.originalPrice}
+                          onChange={(e) =>
+                            setNewItem((p) => ({ ...p, originalPrice: e.target.value }))
+                          }
+                          placeholder="12.00"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group" style={{ marginTop: '8px' }}>
+                      <label style={{ marginBottom: '8px', display: 'block' }}>Dish Badges / Highlights (Presets)</label>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '8px' }}>
+                        {[
+                          "👨‍🍳 Chef's Pick",
+                          "🐟 4 Fish Types",
+                          "🔥 Top Seller",
+                          "🥑 Fresh Avocado"
+                        ].map((badge) => {
+                          const isSelected = newItem.highlights?.includes(badge);
+                          return (
+                            <button
+                              type="button"
+                              key={badge}
+                              onClick={() => {
+                                setNewItem(prev => {
+                                  const highlights = prev.highlights || [];
+                                  if (highlights.includes(badge)) {
+                                    return { ...prev, highlights: highlights.filter(h => h !== badge) };
+                                  } else {
+                                    return { ...prev, highlights: [...highlights, badge] };
+                                  }
+                                });
+                              }}
+                              className={`admin-toggle-btn ${isSelected ? "active" : ""}`}
+                              style={{ padding: '6px 12px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}
+                            >
+                              <span>{badge}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <label>Custom / Future Emoji Badges (comma-separated)</label>
+                      <input
+                        type="text"
+                        value={(newItem.highlights || []).filter(h => ![
+                          "👨‍🍳 Chef's Pick",
+                          "🐟 4 Fish Types",
+                          "🔥 Top Seller",
+                          "🥑 Fresh Avocado"
+                        ].includes(h)).join(", ")}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          const customTags = val.split(",")
+                            .map(s => s.trim())
+                            .filter(s => s.length > 0);
+                          const currentPresets = (newItem.highlights || []).filter(h => [
+                            "👨‍🍳 Chef's Pick",
+                            "🐟 4 Fish Types",
+                            "🔥 Top Seller",
+                            "🥑 Fresh Avocado"
+                          ].includes(h));
+                          setNewItem(prev => ({
+                            ...prev,
+                            highlights: [...currentPresets, ...customTags]
+                          }));
+                        }}
+                        placeholder="Es: 🍤 Crispy, ✨ Premium, 🌶️ Spicy"
+                      />
+                      <small style={{ color: 'var(--color-text-secondary)', fontSize: '11px', marginTop: '4px', display: 'block' }}>
+                        Separate custom badges or any future emojis by commas.
+                      </small>
                     </div>
 
                     <div className="form-row-checkboxes">
@@ -637,10 +751,36 @@ export default function Admin() {
                       </label>
                     </div>
 
-                    <button type="submit" className="admin-add-item-btn">
-                      <PlusCircle size={16} />
-                      <span>Add to Menu</span>
-                    </button>
+                    <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                      <button type="submit" className="admin-add-item-btn" style={{ flex: 1 }}>
+                        {editingItemId ? <Check size={16} /> : <PlusCircle size={16} />}
+                        <span>{editingItemId ? "Update Dish" : "Add to Menu"}</span>
+                      </button>
+                      {editingItemId && (
+                        <button
+                          type="button"
+                          className="admin-logout-btn"
+                          onClick={() => {
+                            setEditingItemId(null);
+                            setNewItem({
+                              name: "",
+                              description: "",
+                              price: "",
+                              originalPrice: "",
+                              categoryId: "",
+                              isBestSeller: false,
+                              isAvailable: true,
+                              imageUrl: "",
+                              highlights: [],
+                            });
+                          }}
+                          style={{ margin: 0, padding: '14px' }}
+                        >
+                          <X size={16} />
+                          <span>Cancel</span>
+                        </button>
+                      )}
+                    </div>
                   </form>
                 </div>
 
@@ -691,8 +831,17 @@ export default function Admin() {
                               {item.isAvailable ? "Active" : "Sold Out"}
                             </button>
                             <button
+                              onClick={() => handleStartEdit(item)}
+                              className="admin-delete-row-btn"
+                              style={{ color: 'var(--color-brand-gold)', marginRight: '4px' }}
+                              title="Edit Dish"
+                            >
+                              <Edit size={14} />
+                            </button>
+                            <button
                               onClick={() => handleMenuItemDelete(item.id)}
                               className="admin-delete-row-btn"
+                              title="Delete Dish"
                             >
                               <Trash2 size={14} />
                             </button>
