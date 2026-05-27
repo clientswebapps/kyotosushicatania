@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCollection } from "../hooks/useFirestore";
 import { Search } from "lucide-react";
+import MenuItemModal from "../components/menu/MenuItemModal";
 import "../styles/menu.css";
 
 const imageMap = {
@@ -47,6 +48,7 @@ export default function Menu() {
   const { data: items, loading } = useCollection("menuItems");
   const [activeCategory, setActiveCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedItem, setSelectedItem] = useState(null);
 
   const currentCategory = activeCategory || (categories.length > 0 ? categories[0].id : null);
 
@@ -155,6 +157,7 @@ export default function Menu() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
+                onClick={() => setSelectedItem({ ...item, imageUrl: getImage(item), highlights: itemHighlights[item.name] || [] })}
               >
                 <div className="menu-section__card-image-wrapper">
                   <img
@@ -164,7 +167,7 @@ export default function Menu() {
                     loading="lazy"
                   />
                   {item.isBestSeller && (
-                    <span className="menu-card-badge" style={{ position: 'absolute', top: '10px', left: '10px', background: 'var(--color-brand-red)', color: 'var(--color-bg)', padding: '6px 10px', fontSize: '10px', fontWeight: 'bold', textTransform: 'uppercase', borderRadius: '4px', letterSpacing: '1px' }}>Best Seller</span>
+                    <span className="menu-modal-badge">Best Seller</span>
                   )}
                   {!item.isAvailable && (
                     <div className="menu-card-unavailable" style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold' }}>Unavailable</div>
@@ -195,6 +198,12 @@ export default function Menu() {
           <p>No dishes found</p>
         </div>
       )}
+
+      <MenuItemModal
+        item={selectedItem}
+        isOpen={!!selectedItem}
+        onClose={() => setSelectedItem(null)}
+      />
     </section>
   );
 }

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCollection } from '../../hooks/useFirestore';
 import { ArrowRight, Star } from 'lucide-react';
+import MenuItemModal from '../menu/MenuItemModal';
 
 import '../../styles/menu.css';
 
@@ -85,6 +86,7 @@ const MenuPreview = () => {
 
   const [activeCategory, setActiveCategory] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -179,6 +181,7 @@ const MenuPreview = () => {
                     key={item.id}
                     className="menu-section__card"
                     variants={cardVariants}
+                    onClick={() => setSelectedItem({ ...item, imageUrl: getImage(item), highlights: itemHighlights[item.name] || [] })}
                   >
                     <div className="menu-section__card-image-wrapper">
                       <img
@@ -187,20 +190,22 @@ const MenuPreview = () => {
                         className="menu-section__card-image"
                         loading="lazy"
                       />
+                      {item.isBestSeller && (
+                        <span className="menu-modal-badge">Best Seller</span>
+                      )}
                     </div>
-                      <div className="menu-section__card-body">
-                        <h3 className="menu-section__card-name">{item.name}</h3>
-                        {itemHighlights[item.name] && (
-                          <div className="menu-section__card-highlights">
-                            {itemHighlights[item.name].map((tag, idx) => (
-                              <span key={idx} className="menu-highlight-tag">{tag}</span>
-                            ))}
-                          </div>
-                        )}
-                        <p className="menu-section__card-description">{item.description}</p>
+                    <div className="menu-section__card-body">
+                      <h3 className="menu-section__card-name">{item.name}</h3>
+                      {itemHighlights[item.name] && (
+                        <div className="menu-section__card-highlights">
+                          {itemHighlights[item.name].map((tag, idx) => (
+                            <span key={idx} className="menu-highlight-tag">{tag}</span>
+                          ))}
+                        </div>
+                      )}
+                      <p className="menu-section__card-description">{item.description}</p>
                       <div className="menu-section__card-footer">
                         <span className="menu-section__card-price">{formatPrice(item.price)}</span>
-                        <Link to="/menu" className="menu-section__card-btn">Order Now</Link>
                       </div>
                     </div>
                   </motion.div>
@@ -214,6 +219,7 @@ const MenuPreview = () => {
                       key={item.id}
                       className="menu-section__card"
                       variants={cardVariants}
+                      onClick={() => setSelectedItem({ ...item, imageUrl: getImage(item), highlights: itemHighlights[item.name] || [] })}
                     >
                       <div className="menu-section__card-image-wrapper">
                         <img
@@ -222,6 +228,9 @@ const MenuPreview = () => {
                           className="menu-section__card-image"
                           loading="lazy"
                         />
+                        {item.isBestSeller && (
+                          <span className="menu-modal-badge">Best Seller</span>
+                        )}
                       </div>
                       <div className="menu-section__card-body">
                         <h3 className="menu-section__card-name">{item.name}</h3>
@@ -235,7 +244,6 @@ const MenuPreview = () => {
                         <p className="menu-section__card-description">{item.description}</p>
                         <div className="menu-section__card-footer">
                           <span className="menu-section__card-price">{formatPrice(item.price)}</span>
-                          <Link to="/menu" className="menu-section__card-btn">Order Now</Link>
                         </div>
                       </div>
                     </motion.div>
@@ -243,7 +251,7 @@ const MenuPreview = () => {
                 </div>
 
                 {bannerItem && (
-                  <motion.div className="menu-section__banner" variants={cardVariants}>
+                  <motion.div className="menu-section__banner" variants={cardVariants} onClick={() => setSelectedItem({ ...bannerItem, imageUrl: getImage(bannerItem), highlights: itemHighlights[bannerItem.name] || [] })} style={{ cursor: 'pointer' }}>
                     <div className="menu-section__banner-image">
                       <img src={getImage(bannerItem)} alt={bannerItem.name} loading="lazy" />
                     </div>
@@ -261,7 +269,6 @@ const MenuPreview = () => {
                       </div>
                       <div className="menu-section__banner-action">
                         <span className="menu-section__banner-price">{formatPrice(bannerItem.price)}</span>
-                        <Link to="/menu" className="menu-section__banner-btn">Order Now</Link>
                       </div>
                     </div>
                   </motion.div>
@@ -274,6 +281,7 @@ const MenuPreview = () => {
                         key={item.id}
                         className="menu-section__card"
                         variants={cardVariants}
+                        onClick={() => setSelectedItem({ ...item, imageUrl: getImage(item), highlights: itemHighlights[item.name] || [] })}
                       >
                         <div className="menu-section__card-image-wrapper">
                           <img
@@ -282,6 +290,9 @@ const MenuPreview = () => {
                             className="menu-section__card-image"
                             loading="lazy"
                           />
+                          {item.isBestSeller && (
+                            <span className="menu-modal-badge">Best Seller</span>
+                          )}
                         </div>
                         <div className="menu-section__card-body">
                           <h3 className="menu-section__card-name">{item.name}</h3>
@@ -295,7 +306,6 @@ const MenuPreview = () => {
                           <p className="menu-section__card-description">{item.description}</p>
                           <div className="menu-section__card-footer">
                             <span className="menu-section__card-price">{formatPrice(item.price)}</span>
-                            <Link to="/menu" className="menu-section__card-btn">Order Now</Link>
                           </div>
                         </div>
                       </motion.div>
@@ -330,6 +340,11 @@ const MenuPreview = () => {
         </motion.div>
 
 
+        <MenuItemModal
+          item={selectedItem}
+          isOpen={!!selectedItem}
+          onClose={() => setSelectedItem(null)}
+        />
       </div>
     </section>
   );
