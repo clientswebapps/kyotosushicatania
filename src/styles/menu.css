@@ -6,7 +6,7 @@
 /* --- Section Container --- */
 .menu-section {
   background-color: var(--color-bg);
-  background-image: linear-gradient(rgba(10, 10, 10, 0.8), rgba(10, 10, 10, 0.95)), url('/images/bg-leaves.avif');
+  background-image: linear-gradient(rgba(5, 25, 10, 0.75), rgba(5, 25, 10, 0.9)), url('/images/bg-leaves.avif');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -138,7 +138,8 @@
 
 .menu-section__card:hover {
   transform: translateY(-6px);
-  border-color: rgba(243, 192, 22, 0.4); /* gold subtle border */
+  border-color: rgba(243, 192, 22, 0.4);
+  /* gold subtle border */
   box-shadow: var(--shadow-card-premium);
 }
 
