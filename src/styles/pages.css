@@ -83,7 +83,8 @@
   width: 100%;
   border-radius: var(--radius-lg);
   object-fit: cover;
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-card-premium);
+  border: 1px solid var(--color-border-light);
 }
 
 .about-story-text {
@@ -139,13 +140,17 @@
   border-radius: var(--radius-md);
   text-align: center;
   border: 1px solid transparent;
-  transition: all var(--transition-fast);
+  border-top: 3px solid var(--color-brand-gold);
+  transition: all var(--transition-medium);
 }
 
 .about-value-card:hover {
   border-color: var(--color-brand-gold);
   transform: translateY(-5px);
+  box-shadow: var(--shadow-glow-gold);
 }
+
+/* Specific colors for value cards via nth-child in the component */
 
 .about-value-icon {
   font-size: 32px;
@@ -187,6 +192,14 @@
   padding: 24px;
   border-radius: var(--radius-md);
   text-align: center;
+  border: 1px solid var(--color-border-light);
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.contact-info-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-brand-blue);
+  box-shadow: var(--shadow-glow-blue);
 }
 
 .contact-icon {
@@ -249,14 +262,15 @@
 .reservation-form select:focus,
 .reservation-form textarea:focus {
   outline: none;
-  border-color: var(--color-brand-gold);
+  border-color: var(--color-brand-blue);
+  box-shadow: 0 0 0 1px var(--color-brand-blue);
 }
 
 .reservation-submit-btn {
   width: 100%;
-  background: var(--color-brand-gold);
-  color: var(--color-bg);
-  border: none;
+  background: var(--color-brand-red);
+  color: #fff;
+  border: 2px solid var(--color-brand-red);
   padding: 16px;
   font-size: 14px;
   font-weight: bold;
@@ -268,7 +282,9 @@
 }
 
 .reservation-submit-btn:hover {
-  background: #d4a628;
+  background: transparent;
+  color: var(--color-brand-red);
+  box-shadow: var(--shadow-glow-red);
 }
 
 .form-row {
@@ -284,9 +300,10 @@
 
 .reservation-success-icon {
   font-size: 48px;
-  color: #4CAF50;
+  color: var(--color-brand-gold);
   display: block;
   margin-bottom: 20px;
+  text-shadow: 0 0 20px var(--color-brand-gold-glow);
 }
 
 /* --- Admin Page --- */

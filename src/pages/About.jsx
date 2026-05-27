@@ -86,32 +86,32 @@ export default function About() {
           <h2 className="section-title">Our Values</h2>
           <div className="section-divider"></div>
           <div className="about-values-grid">
-            <div className="about-value-card">
-              <span className="about-value-icon">🐟</span>
+            <div className="about-value-card" style={{ borderTopColor: 'var(--color-brand-blue)' }}>
+              <span className="about-value-icon" style={{ textShadow: '0 0 15px var(--color-brand-blue-glow)' }}>🐟</span>
               <h3>Freshness</h3>
               <p>
                 Ingredients selected daily to ensure the utmost freshness in
                 every dish.
               </p>
             </div>
-            <div className="about-value-card">
-              <span className="about-value-icon">🎯</span>
+            <div className="about-value-card" style={{ borderTopColor: 'var(--color-brand-red)' }}>
+              <span className="about-value-icon" style={{ textShadow: '0 0 15px var(--color-brand-red-glow)' }}>🎯</span>
               <h3>Precision</h3>
               <p>
                 Every cut, every presentation, every detail is crafted with
                 artisanal precision.
               </p>
             </div>
-            <div className="about-value-card">
-              <span className="about-value-icon">🌸</span>
+            <div className="about-value-card" style={{ borderTopColor: 'var(--color-brand-gold)' }}>
+              <span className="about-value-icon" style={{ textShadow: '0 0 15px var(--color-brand-gold-glow)' }}>🌸</span>
               <h3>Harmony</h3>
               <p>
                 The balance between flavors, colors, and textures is at the core
                 of our cuisine.
               </p>
             </div>
-            <div className="about-value-card">
-              <span className="about-value-icon">💫</span>
+            <div className="about-value-card" style={{ borderTopColor: 'var(--color-brand-blue)' }}>
+              <span className="about-value-icon" style={{ textShadow: '0 0 15px var(--color-brand-blue-glow)' }}>💫</span>
               <h3>Innovation</h3>
               <p>
                 We respect tradition but embrace creativity to offer new

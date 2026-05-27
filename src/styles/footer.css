@@ -6,7 +6,8 @@
 /* --- Footer Container --- */
 .footer {
   background: #0d0d0d;
-  border-top: 1px solid #1a1a1a;
+  border-top: 1px solid transparent;
+  border-image: linear-gradient(90deg, transparent, var(--color-brand-blue-subtle), var(--color-brand-gold-subtle), transparent) 1;
   padding: 60px;
 }
 
@@ -118,10 +119,11 @@
 }
 
 .footer__social-icon:hover {
-  border-color: var(--color-brand-gold);
-  color: var(--color-brand-gold);
-  background: rgba(232, 184, 48, 0.05);
+  border-color: var(--color-brand-red);
+  color: var(--color-brand-red);
+  background: var(--color-brand-red-subtle);
   transform: translateY(-2px);
+  box-shadow: var(--shadow-glow-red);
 }
 
 .footer__social-icon svg {
@@ -167,7 +169,8 @@
   max-width: 1280px;
   margin: 48px auto 0;
   padding-top: 24px;
-  border-top: 1px solid #1a1a1a;
+  border-top: 1px solid transparent;
+  border-image: linear-gradient(90deg, var(--color-brand-blue-subtle), var(--color-brand-gold-subtle), var(--color-brand-red-subtle)) 1;
   display: flex;
   align-items: center;
   justify-content: space-between;

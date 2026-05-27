@@ -146,8 +146,9 @@ export default function Contact() {
                 Kyō-To!
               </p>
               <button
-                className="reservation-reset-btn"
+                className="btn btn-gold-outline"
                 onClick={() => setSubmitted(false)}
+                style={{ marginTop: '24px' }}
               >
                 New Reservation
               </button>

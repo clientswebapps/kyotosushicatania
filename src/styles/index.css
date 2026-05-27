@@ -4,7 +4,7 @@
    ============================================ */
 
 /* --- Google Fonts --- */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&family=Noto+Serif+JP:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=Noto+Serif+JP:wght@400;500&display=swap');
 
 @import './pages.css';
 
@@ -23,17 +23,31 @@
   --color-text-secondary: #8a8a8a;
   --color-text-muted: #555555;
 
-  /* Colors — Brand */
-  --color-brand-blue: #1C3B87;
+  /* Colors — Brand: Gold (Primary Accent) */
   --color-brand-gold: #F3C016;
-  --color-brand-red: #E1251B;
+  --color-brand-gold-hover: #d4a628;
+  --color-brand-gold-subtle: rgba(243, 192, 22, 0.08);
+  --color-brand-gold-glow: rgba(243, 192, 22, 0.15);
+
+  /* Colors — Brand: Red (Energy Accent) */
+  --color-brand-red: #C8102E;
+  --color-brand-red-hover: #a00d24;
+  --color-brand-red-subtle: rgba(200, 16, 46, 0.08);
+  --color-brand-red-glow: rgba(200, 16, 46, 0.15);
+
+  /* Colors — Brand: Blue (Trust Accent) */
+  --color-brand-blue: #1C3B87;
+  --color-brand-blue-hover: #152d6a;
+  --color-brand-blue-subtle: rgba(28, 59, 135, 0.08);
+  --color-brand-blue-glow: rgba(28, 59, 135, 0.15);
 
   /* Colors — UI */
   --color-border: #2a2a2a;
+  --color-border-light: rgba(255, 255, 255, 0.06);
 
   /* Typography */
-  --font-heading: 'Playfair Display', serif;
-  --font-body: 'Inter', sans-serif;
+  --font-heading: 'Cormorant Garamond', serif;
+  --font-body: 'DM Sans', sans-serif;
   --font-japanese: 'Noto Serif JP', serif;
 
   /* Border Radius */
@@ -44,15 +58,17 @@
 
   /* Shadows */
   --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
-  --shadow-glow-gold: 0 0 30px rgba(232, 184, 48, 0.15);
-  --shadow-glow-blue: 0 0 30px rgba(26, 63, 199, 0.15);
+  --shadow-card-premium: 0 8px 32px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-glow-gold: 0 0 30px rgba(243, 192, 22, 0.15);
+  --shadow-glow-red: 0 0 30px rgba(200, 16, 46, 0.15);
+  --shadow-glow-blue: 0 0 30px rgba(28, 59, 135, 0.15);
 
   /* Transitions */
   --transition-fast: 0.2s ease;
   --transition-medium: 0.4s ease;
   --transition-slow: 0.6s ease;
 
-  /* Spacing Scale */
+  /* Spacing Scale (8px grid) */
   --space-xs: 4px;
   --space-sm: 8px;
   --space-md: 16px;
@@ -253,6 +269,20 @@ hr {
 }
 
 /* ============================================
+   Reduced Motion (Accessibility)
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================
    Utility Classes
    ============================================ */
 
@@ -368,7 +398,7 @@ hr {
   font-weight: 700;
 }
 
-/* --- Spacing Helpers --- */
+/* --- Spacing Helpers (8px grid) --- */
 .mt-sm {
   margin-top: var(--space-sm);
 }
@@ -433,11 +463,12 @@ hr {
 /* --- Section Shared --- */
 .section-title {
   font-family: var(--font-heading);
-  font-size: 48px;
+  font-size: 56px;
   font-weight: 700;
   text-align: center;
   color: var(--color-text);
   margin-bottom: var(--space-md);
+  letter-spacing: 1px;
 }
 
 .section-subtitle {
@@ -456,7 +487,7 @@ hr {
   display: block;
   width: 60px;
   height: 2px;
-  background: var(--color-brand-gold);
+  background: linear-gradient(90deg, var(--color-brand-red), var(--color-brand-gold));
   margin: 0 auto var(--space-3xl);
   border: none;
 }
@@ -487,8 +518,8 @@ hr {
 }
 
 .btn-gold:hover {
-  background: #d4a628;
-  border-color: #d4a628;
+  background: var(--color-brand-gold-hover);
+  border-color: var(--color-brand-gold-hover);
   box-shadow: var(--shadow-glow-gold);
   transform: translateY(-2px);
 }
@@ -505,6 +536,21 @@ hr {
   background: var(--color-brand-gold);
   color: var(--color-bg);
   box-shadow: var(--shadow-glow-gold);
+  transform: translateY(-2px);
+}
+
+.btn-red {
+  background: var(--color-brand-red);
+  color: #ffffff;
+  padding: 14px 32px;
+  font-size: 13px;
+  border: 2px solid var(--color-brand-red);
+}
+
+.btn-red:hover {
+  background: var(--color-brand-red-hover);
+  border-color: var(--color-brand-red-hover);
+  box-shadow: var(--shadow-glow-red);
   transform: translateY(-2px);
 }
 
@@ -543,7 +589,7 @@ hr {
 /* --- Responsive Helpers --- */
 @media (max-width: 768px) {
   .section-title {
-    font-size: 34px;
+    font-size: 40px;
   }
 
   .section-subtitle {
@@ -563,7 +609,7 @@ hr {
 
 @media (max-width: 480px) {
   .section-title {
-    font-size: 28px;
+    font-size: 32px;
   }
 }
 

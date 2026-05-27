@@ -32,6 +32,15 @@ const imageMap = {
   "Dorayaki": "/images/gyoza.avif",
 };
 
+const itemHighlights = {
+  'Dragon Roll': ['🔥 Chef\'s Pick', '🥑 Fresh Avocado'],
+  'Premium Mixed Sashimi': ['🌊 Wild-caught', '✨ Premium Quality'],
+  'Tonkotsu Ramen': ['⏳ 18hr broth', '🥚 Marinated Egg'],
+  'Rainbow Roll': ['🌈 4 Fish Types', '🔥 Top Seller'],
+  'Mixed Tempura': ['🍤 Crispy', '🌱 Seasonal Veg'],
+  'Grilled Gyoza': ['🥟 Hand-made', '🔥 Grilled to order']
+};
+
 export default function Menu() {
   const { data: categories } = useCollection("menuCategories");
   const { data: items, loading } = useCollection("menuItems");
@@ -147,7 +156,7 @@ export default function Menu() {
                     loading="lazy"
                   />
                   {item.isBestSeller && (
-                    <span className="menu-card-badge" style={{ position: 'absolute', top: '10px', left: '10px', background: 'var(--color-brand-gold)', color: 'var(--color-bg)', padding: '4px 8px', fontSize: '10px', fontWeight: 'bold', textTransform: 'uppercase', borderRadius: '4px' }}>Best Seller</span>
+                    <span className="menu-card-badge" style={{ position: 'absolute', top: '10px', left: '10px', background: 'var(--color-brand-red)', color: 'var(--color-bg)', padding: '6px 10px', fontSize: '10px', fontWeight: 'bold', textTransform: 'uppercase', borderRadius: '4px', letterSpacing: '1px' }}>Best Seller</span>
                   )}
                   {!item.isAvailable && (
                     <div className="menu-card-unavailable" style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold' }}>Unavailable</div>
@@ -155,6 +164,13 @@ export default function Menu() {
                 </div>
                 <div className="menu-section__card-body">
                   <h3 className="menu-section__card-name">{item.name}</h3>
+                  {itemHighlights[item.name] && (
+                    <div className="menu-section__card-highlights">
+                      {itemHighlights[item.name].map((tag, idx) => (
+                        <span key={idx} className="menu-highlight-tag">{tag}</span>
+                      ))}
+                    </div>
+                  )}
                   <p className="menu-section__card-description">{item.description}</p>
                   <span className="menu-section__card-price">
                     €{item.price.toFixed(2)}

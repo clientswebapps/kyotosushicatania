@@ -15,6 +15,15 @@ const imageMap = {
   'Grilled Gyoza': '/images/gyoza.avif',
 };
 
+const itemHighlights = {
+  'Dragon Roll': ['🔥 Chef\'s Pick', '🥑 Fresh Avocado'],
+  'Premium Mixed Sashimi': ['🌊 Wild-caught', '✨ Premium Quality'],
+  'Tonkotsu Ramen': ['⏳ 18hr broth', '🥚 Marinated Egg'],
+  'Rainbow Roll': ['🌈 4 Fish Types', '🔥 Top Seller'],
+  'Mixed Tempura': ['🍤 Crispy', '🌱 Seasonal Veg'],
+  'Grilled Gyoza': ['🥟 Hand-made', '🔥 Grilled to order']
+};
+
 const fallbackCategories = [
   { id: 'sushi-rolls', name: 'Sushi Rolls', nameIt: 'Sushi Rolls', icon: '🍣', order: 1 },
   { id: 'sashimi', name: 'Sashimi', nameIt: 'Sashimi', icon: '🐟', order: 2 },
@@ -179,9 +188,16 @@ const MenuPreview = () => {
                         loading="lazy"
                       />
                     </div>
-                    <div className="menu-section__card-body">
-                      <h3 className="menu-section__card-name">{item.name}</h3>
-                      <p className="menu-section__card-description">{item.description}</p>
+                      <div className="menu-section__card-body">
+                        <h3 className="menu-section__card-name">{item.name}</h3>
+                        {itemHighlights[item.name] && (
+                          <div className="menu-section__card-highlights">
+                            {itemHighlights[item.name].map((tag, idx) => (
+                              <span key={idx} className="menu-highlight-tag">{tag}</span>
+                            ))}
+                          </div>
+                        )}
+                        <p className="menu-section__card-description">{item.description}</p>
                       <div className="menu-section__card-footer">
                         <span className="menu-section__card-price">{formatPrice(item.price)}</span>
                         <Link to="/menu" className="menu-section__card-btn">Order Now</Link>
@@ -209,6 +225,13 @@ const MenuPreview = () => {
                       </div>
                       <div className="menu-section__card-body">
                         <h3 className="menu-section__card-name">{item.name}</h3>
+                        {itemHighlights[item.name] && (
+                          <div className="menu-section__card-highlights">
+                            {itemHighlights[item.name].map((tag, idx) => (
+                              <span key={idx} className="menu-highlight-tag">{tag}</span>
+                            ))}
+                          </div>
+                        )}
                         <p className="menu-section__card-description">{item.description}</p>
                         <div className="menu-section__card-footer">
                           <span className="menu-section__card-price">{formatPrice(item.price)}</span>
@@ -227,6 +250,13 @@ const MenuPreview = () => {
                     <div className="menu-section__banner-body">
                       <div>
                         <h3>{bannerItem.name}</h3>
+                        {itemHighlights[bannerItem.name] && (
+                          <div className="menu-section__card-highlights" style={{ marginTop: '8px' }}>
+                            {itemHighlights[bannerItem.name].map((tag, idx) => (
+                              <span key={idx} className="menu-highlight-tag">{tag}</span>
+                            ))}
+                          </div>
+                        )}
                         <p>{bannerItem.description}</p>
                       </div>
                       <div className="menu-section__banner-action">
@@ -255,6 +285,13 @@ const MenuPreview = () => {
                         </div>
                         <div className="menu-section__card-body">
                           <h3 className="menu-section__card-name">{item.name}</h3>
+                          {itemHighlights[item.name] && (
+                            <div className="menu-section__card-highlights">
+                              {itemHighlights[item.name].map((tag, idx) => (
+                                <span key={idx} className="menu-highlight-tag">{tag}</span>
+                              ))}
+                            </div>
+                          )}
                           <p className="menu-section__card-description">{item.description}</p>
                           <div className="menu-section__card-footer">
                             <span className="menu-section__card-price">{formatPrice(item.price)}</span>

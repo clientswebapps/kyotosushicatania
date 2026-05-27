@@ -47,8 +47,8 @@
   height: 120px;
   background: linear-gradient(
     135deg,
-    rgba(232, 184, 48, 0.3) 0%,
-    rgba(196, 30, 58, 0.2) 100%
+    rgba(243, 192, 22, 0.3) 0%,
+    rgba(28, 59, 135, 0.25) 100%
   );
   border-radius: 60% 40% 50% 50% / 50% 60% 40% 50%;
   z-index: 1;
@@ -64,8 +64,8 @@
   height: 80px;
   background: linear-gradient(
     90deg,
-    rgba(196, 30, 58, 0.15) 0%,
-    rgba(232, 184, 48, 0.2) 100%
+    rgba(200, 16, 46, 0.2) 0%,
+    rgba(243, 192, 22, 0.25) 100%
   );
   border-radius: 40% 60% 50% 50% / 60% 40% 50% 50%;
   z-index: 1;
@@ -123,13 +123,14 @@
 /* --- Japanese Accent Text --- */
 .about__japanese {
   font-family: var(--font-japanese);
-  font-size: 24px;
-  font-weight: 400;
+  font-size: 32px;
+  font-weight: 500;
   color: var(--color-brand-gold);
-  opacity: 0.7;
+  opacity: 0.85;
   margin-top: 32px;
   display: block;
-  letter-spacing: 4px;
+  letter-spacing: 6px;
+  text-shadow: 0 0 20px var(--color-brand-gold-glow);
 }
 
 /* --- Stats / Highlights Row --- */
@@ -148,9 +149,9 @@
 
 .about__stat-number {
   font-family: var(--font-heading);
-  font-size: 36px;
+  font-size: 40px;
   font-weight: 700;
-  color: var(--color-brand-gold);
+  color: var(--color-brand-red);
   line-height: 1;
   margin-bottom: 6px;
 }

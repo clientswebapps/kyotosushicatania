@@ -58,10 +58,10 @@
   height: 100%;
   background: linear-gradient(
     to bottom,
-    rgba(10, 10, 10, 0.4) 0%,
-    rgba(10, 10, 10, 0.5) 40%,
+    rgba(10, 10, 10, 0.5) 0%,
+    rgba(10, 10, 10, 0.4) 30%,
     rgba(10, 10, 10, 0.7) 70%,
-    rgba(10, 10, 10, 0.9) 100%
+    rgba(10, 10, 10, 0.95) 100%
   );
   z-index: 3;
   pointer-events: none;
@@ -84,12 +84,13 @@
 
 .hero__title {
   font-family: var(--font-heading);
-  font-size: 64px;
+  font-size: 84px; /* increased for Cormorant Garamond */
   font-weight: 700;
   color: var(--color-text);
-  line-height: 1.1;
-  margin-bottom: 20px;
-  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
+  line-height: 1.05;
+  margin-bottom: 24px;
+  text-shadow: 0 4px 40px rgba(0, 0, 0, 0.8), 0 2px 10px rgba(0,0,0,0.5);
+  position: relative;
 }
 
 .hero__title .text-gold {
@@ -98,11 +99,11 @@
 
 .hero__subtitle {
   font-family: var(--font-body);
-  font-size: 20px;
-  font-weight: 400;
+  font-size: 22px;
+  font-weight: 300;
   color: var(--color-text);
   opacity: 0.95;
-  line-height: 1.6;
+  line-height: 1.5;
   margin: 0 auto 40px;
   max-width: 600px;
   text-shadow: 0 4px 15px rgba(0, 0, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 1);
@@ -113,8 +114,8 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: var(--color-brand-gold);
-  color: var(--color-bg);
+  background: var(--color-brand-red);
+  color: #fff;
   font-family: var(--font-body);
   font-size: 14px;
   font-weight: 600;
@@ -122,17 +123,41 @@
   letter-spacing: 2px;
   padding: 18px 48px;
   border-radius: var(--radius-sm);
-  border: 2px solid var(--color-brand-gold);
+  border: 2px solid var(--color-brand-red);
   cursor: pointer;
   text-decoration: none;
   transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero__cta::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent);
+  transform: skewX(-25deg);
+  transition: all 0.6s ease;
 }
 
 .hero__cta:hover {
-  background: transparent;
-  color: var(--color-brand-gold);
-  box-shadow: 0 0 40px rgba(232, 184, 48, 0.3);
+  background: var(--color-brand-red-hover);
+  border-color: var(--color-brand-red-hover);
+  box-shadow: var(--shadow-glow-red);
   transform: translateY(-2px);
+}
+
+.hero__cta:hover::before {
+  left: 150%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__cta::before {
+    display: none;
+  }
 }
 
 /* --- Navigation Dots --- */
@@ -221,11 +246,11 @@
    ============================================ */
 @media (max-width: 1024px) {
   .hero__title {
-    font-size: 52px;
+    font-size: 64px;
   }
 
   .hero__subtitle {
-    font-size: 18px;
+    font-size: 20px;
   }
 
   .hero__content {

@@ -22,10 +22,10 @@
 }
 
 .navbar.scrolled {
-  background: rgba(0, 0, 0, 0.9);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06),
-              0 4px 30px rgba(0, 0, 0, 0.4);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.92);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6),
+              0 1px 15px var(--color-brand-gold-subtle);
+  border-bottom: 1px solid rgba(243, 192, 22, 0.15);
 }
 
 /* --- Logo --- */
@@ -54,7 +54,7 @@
 
 .navbar__links a {
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 2px;
