@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { MapPin, Phone, Clock, Mail, Send, Users, Calendar } from "lucide-react";
 import { useAddDocument } from "../hooks/useFirestore";
@@ -49,6 +50,13 @@ export default function Contact() {
 
   return (
     <div className="contact-page">
+      <Helmet>
+        <title>Contact & Reservations - Kyō-To Sushi Catania</title>
+        <meta name="description" content="Reserve your table at Kyō-To Sushi Catania. Find our location, opening hours, and contact information. Experience the best Japanese cuisine in Catania." />
+        <meta property="og:title" content="Contact & Reservations - Kyō-To Sushi Catania" />
+        <meta property="og:description" content="Reserve your table at Kyō-To Sushi Catania. Experience the best Japanese cuisine in Catania." />
+        <meta property="og:url" content="https://kyotosushicatania.web.app/contact" />
+      </Helmet>
       <div className="contact-page-header">
         <motion.h1
           className="section-title"

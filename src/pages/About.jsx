@@ -1,9 +1,17 @@
+import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import "../styles/about.css";
 
 export default function About() {
   return (
     <div className="about-page">
+      <Helmet>
+        <title>About Us - Kyō-To Sushi Catania</title>
+        <meta name="description" content="Discover the story and philosophy behind Kyō-To Sushi Catania. We blend traditional Japanese Washoku art with contemporary culinary innovation." />
+        <meta property="og:title" content="About Us - Kyō-To Sushi Catania" />
+        <meta property="og:description" content="Discover the story and philosophy behind Kyō-To Sushi Catania. Traditional Japanese Washoku art with contemporary innovation." />
+        <meta property="og:url" content="https://kyotosushicatania.web.app/about" />
+      </Helmet>
       <div className="about-page-header">
         <motion.h1
           className="section-title"

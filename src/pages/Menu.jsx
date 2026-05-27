@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCollection } from "../hooks/useFirestore";
 import { Search } from "lucide-react";
@@ -68,6 +69,13 @@ export default function Menu() {
 
   return (
     <section className="menu-section">
+      <Helmet>
+        <title>Our Menu - Kyō-To Sushi Catania</title>
+        <meta name="description" content="Explore the authentic menu of Kyō-To Sushi Catania. From Dragon Rolls to 18-hour Tonkotsu Ramen, discover our fresh, premium Japanese cuisine." />
+        <meta property="og:title" content="Our Menu - Kyō-To Sushi Catania" />
+        <meta property="og:description" content="Explore the authentic menu of Kyō-To Sushi Catania. Fresh, premium Japanese cuisine." />
+        <meta property="og:url" content="https://kyotosushicatania.web.app/menu" />
+      </Helmet>
       <motion.div
         className="menu-section__logo-lockup"
         initial={{ opacity: 0, scale: 0.88 }}
