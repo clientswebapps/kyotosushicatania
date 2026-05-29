@@ -76,7 +76,7 @@ export default function Menu() {
         <meta name="description" content="Explore the authentic menu of Kyō-To Sushi Catania. From Dragon Rolls to 18-hour Tonkotsu Ramen, discover our fresh, premium Japanese cuisine." />
         <meta property="og:title" content="Our Menu - Kyō-To Sushi Catania" />
         <meta property="og:description" content="Explore the authentic menu of Kyō-To Sushi Catania. Fresh, premium Japanese cuisine." />
-        <meta property="og:url" content="https://kyotosushicatania.web.app/menu" />
+        <meta property="og:url" content="https://www.kyotosushicatania.com/menu" />
       </Helmet>
       <motion.div
         className="menu-section__logo-lockup"

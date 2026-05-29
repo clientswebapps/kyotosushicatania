@@ -127,6 +127,110 @@
   font-style: italic;
 }
 
+/* --- Founder Section --- */
+.about-founder-section {
+  display: flex;
+  align-items: center;
+  gap: 60px;
+  margin: 96px 0;
+  padding: 48px;
+  background: linear-gradient(135deg, rgba(20, 20, 20, 0.6) 0%, rgba(10, 10, 10, 0.8) 100%);
+  border: 1px solid rgba(232, 184, 48, 0.15);
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-card-premium);
+}
+
+.about-founder-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(232, 184, 48, 0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.about-founder-image {
+  flex: 0 0 40%;
+  position: relative;
+}
+
+.about-founder-image img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(232, 184, 48, 0.3);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+  transition: transform var(--transition-medium);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .about-founder-image:hover img {
+    transform: scale(1.02);
+  }
+}
+
+.about-founder-text {
+  flex: 1;
+  z-index: 1;
+}
+
+.about-founder-text h2 {
+  font-family: var(--font-heading);
+  font-size: 36px;
+  color: var(--color-text);
+  margin-bottom: 24px;
+}
+
+.about-founder-text p {
+  color: var(--color-text-secondary);
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+
+.about-quote {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--color-brand-gold);
+  margin: 24px 0 12px 0;
+  position: relative;
+  padding-left: 24px;
+  border-left: 3px solid var(--color-brand-gold);
+}
+
+.about-signature {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+  margin-top: 8px;
+}
+
+@media (max-width: 1024px) {
+  .about-founder-section {
+    flex-direction: column;
+    padding: 32px 24px;
+    gap: 40px;
+    text-align: center;
+  }
+  .about-founder-image {
+    flex: none;
+    width: 100%;
+    max-width: 350px;
+  }
+  .about-quote {
+    text-align: left;
+    padding-left: 16px;
+  }
+}
+
 .about-values-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

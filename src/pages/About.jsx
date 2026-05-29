@@ -10,7 +10,7 @@ export default function About() {
         <meta name="description" content="Discover the story and philosophy behind Kyō-To Sushi Catania. We blend traditional Japanese Washoku art with contemporary culinary innovation." />
         <meta property="og:title" content="About Us - Kyō-To Sushi Catania" />
         <meta property="og:description" content="Discover the story and philosophy behind Kyō-To Sushi Catania. Traditional Japanese Washoku art with contemporary innovation." />
-        <meta property="og:url" content="https://kyotosushicatania.web.app/about" />
+        <meta property="og:url" content="https://www.kyotosushicatania.com/about" />
       </Helmet>
       <div className="about-page-header">
         <motion.h1
@@ -81,6 +81,41 @@ export default function About() {
             <p className="about-japanese-subtitle">
               Washoku no Kokoro — The Heart of Japanese Cuisine
             </p>
+          </div>
+        </motion.div>
+
+        <motion.div
+          className="about-founder-section"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+        >
+          <div className="about-founder-image">
+            <img src="/images/Founder.jpeg" alt="Chef Jay Nalzaro - Founder of Kyō-To Sushi Catania" />
+          </div>
+          <div className="about-founder-text">
+            <span className="about-label">Meet the Chef & Founder</span>
+            <h2>Jay Nalzaro</h2>
+            <p>
+              Behind every culinary masterpiece at Kyō-To is the vision of Chef Jay Nalzaro.
+              As both the founder and executive chef, Jay's journey is defined by a relentless
+              pursuit of culinary perfection. Born with an innate passion for Asian cuisine,
+              he spent years mastering the intricate techniques of traditional Japanese Washoku,
+              refining his knife skills, and understanding the delicate balance of flavor and aesthetics.
+            </p>
+            <p>
+              For Chef Jay, sushi is not merely food—it is an art form. His philosophy is simple
+              yet profound: respect the history of the craft, but never be afraid to innovate.
+              By blending time-honored Japanese traditions with contemporary global influences,
+              Chef Jay creates dishes that are visually stunning and deep in flavor. Kyō-To Sushi
+              Catania is the culmination of this lifelong dream, bringing a refined, premium
+              dining experience to the heart of Sicily.
+            </p>
+            <blockquote className="about-quote">
+              "Sushi is not just about slicing fish; it is an art of patience, respect, and constant evolution."
+            </blockquote>
+            <p className="about-signature">— Chef Jay Nalzaro</p>
           </div>
         </motion.div>
 

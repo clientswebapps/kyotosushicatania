@@ -8,13 +8,18 @@ const contactInfo = [
   {
     icon: MapPin,
     label: 'Address',
-    value: 'Via Example 123, 95100 Catania CT',
+    value: 'Via Barone della Bicocca, 14, 95124 Catania CT',
   },
   {
     icon: Phone,
     label: 'Phone',
-    value: '+39 095 123 4567',
-    href: 'tel:+390951234567',
+    value: (
+      <span style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+        <a href="tel:+390952907347">095 290 7347</a>
+        <a href="tel:+393475092264">+39 347 509 2264</a>
+      </span>
+    ),
+    isCustom: true,
   },
   {
     icon: Mail,
@@ -25,8 +30,8 @@ const contactInfo = [
 ];
 
 const hours = [
-  { days: 'Mon - Fri', times: '12:00 - 15:00 / 19:00 - 23:00' },
-  { days: 'Sat - Sun', times: '12:00 - 23:30' },
+  { days: 'Monday', times: '18:00 - 23:30' },
+  { days: 'Tue - Sun', times: '12:30 - 15:00 / 18:00 - 23:30' },
 ];
 
 const containerVariants = {
@@ -81,7 +86,9 @@ const ContactSection = () => {
                   <item.icon size={18} />
                 </div>
                 <div className="contact__item-text">
-                  {item.href ? (
+                  {item.isCustom ? (
+                    item.value
+                  ) : item.href ? (
                     <a href={item.href}>{item.value}</a>
                   ) : (
                     <span>{item.value}</span>
@@ -113,7 +120,7 @@ const ContactSection = () => {
         >
           <iframe
             title="Kyō-To Sushi Catania - Location"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3165.123456789!2d15.0874!3d37.5079!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzfCsDMwJzI4LjQiTiAxNcKwMDUnMTAuNiJF!5e0!3m2!1sit!2sit!4v1"
+            src="https://maps.google.com/maps?q=Via%20Barone%20della%20Bicocca,%2014,%20Catania&t=&z=17&ie=UTF8&iwloc=&output=embed"
             className="contact__map-frame"
             style={{ border: 0 }}
             allowFullScreen=""

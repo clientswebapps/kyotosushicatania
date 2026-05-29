@@ -55,7 +55,7 @@ export default function Contact() {
         <meta name="description" content="Reserve your table at Kyō-To Sushi Catania. Find our location, opening hours, and contact information. Experience the best Japanese cuisine in Catania." />
         <meta property="og:title" content="Contact & Reservations - Kyō-To Sushi Catania" />
         <meta property="og:description" content="Reserve your table at Kyō-To Sushi Catania. Experience the best Japanese cuisine in Catania." />
-        <meta property="og:url" content="https://kyotosushicatania.web.app/contact" />
+        <meta property="og:url" content="https://www.kyotosushicatania.com/contact" />
       </Helmet>
       <div className="contact-page-header">
         <motion.h1
@@ -84,16 +84,17 @@ export default function Contact() {
               <MapPin size={24} className="contact-icon" />
               <div>
                 <h3>Address</h3>
-                <p>Via Example 123</p>
-                <p>95100 Catania CT, Italy</p>
+                <p>Via Barone della Bicocca, 14</p>
+                <p>95124 Catania CT, Italy</p>
               </div>
             </div>
             <div className="contact-info-card">
               <Phone size={24} className="contact-icon" />
               <div>
                 <h3>Phone</h3>
-                <p>
-                  <a href="tel:+390951234567">+39 095 123 4567</a>
+                <p style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <a href="tel:+390952907347">095 290 7347</a>
+                  <a href="tel:+393475092264">+39 347 509 2264</a>
                 </p>
               </div>
             </div>
@@ -110,15 +111,15 @@ export default function Contact() {
               <Clock size={24} className="contact-icon" />
               <div>
                 <h3>Hours</h3>
-                <p>Mon - Fri: 12:00 - 15:00 / 19:00 - 23:00</p>
-                <p>Sat - Sun: 12:00 - 23:30</p>
+                <p>Monday: 18:00 - 23:30</p>
+                <p>Tue - Sun: 12:30 - 15:00 / 18:00 - 23:30</p>
               </div>
             </div>
           </div>
 
           <div className="contact-map-full">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3164.5!2d15.087!3d37.502!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzfCsDMwJzA3LjIiTiAxNcKwMDUnMTMuMiJF!5e0!3m2!1sit!2sit!4v1"
+              src="https://maps.google.com/maps?q=Via%20Barone%20della%20Bicocca,%2014,%20Catania&t=&z=17&ie=UTF8&iwloc=&output=embed"
               width="100%"
               height="350"
               style={{ border: 0, borderRadius: "16px" }}
