@@ -1,9 +1,8 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCollection } from "../hooks/useFirestore";
 import { Search } from "lucide-react";
-import MenuItemModal from "../components/menu/MenuItemModal";
 import "../styles/menu.css";
 
 const imageMap = {
@@ -48,7 +47,32 @@ export default function Menu() {
   const { data: items, loading } = useCollection("menuItems");
   const [activeCategory, setActiveCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [flippedCards, setFlippedCards] = useState({});
+
+  const toggleFlip = useCallback((itemId) => {
+    setFlippedCards((prev) => ({ ...prev, [itemId]: !prev[itemId] }));
+  }, []);
+
+  const handleMouseMove = useCallback((e) => {
+    if (window.innerWidth <= 768) return; // Disable parallax on mobile
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const xc = rect.width / 2;
+    const yc = rect.height / 2;
+    const angleX = (yc - y) / 25; // Subtle tilt
+    const angleY = (x - xc) / 25; // Subtle tilt
+    card.style.setProperty("--rx", `${angleX}deg`);
+    card.style.setProperty("--ry", `${angleY}deg`);
+  }, []);
+
+  const handleMouseLeave = useCallback((e) => {
+    if (window.innerWidth <= 768) return; // Disable parallax on mobile
+    const card = e.currentTarget;
+    card.style.setProperty("--rx", "0deg");
+    card.style.setProperty("--ry", "0deg");
+  }, []);
 
   const currentCategory = activeCategory || (categories.length > 0 ? categories[0].id : null);
 
@@ -153,45 +177,70 @@ export default function Menu() {
             {filteredItems.map((item, index) => (
               <motion.div
                 key={item.id}
-                className="menu-section__card"
+                className="menu-flip-card"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
-                onClick={() => setSelectedItem({ ...item, imageUrl: getImage(item), highlights: item.highlights || itemHighlights[item.name] || [] })}
+                onClick={() => toggleFlip(item.id)}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
               >
-                <div className="menu-section__card-image-wrapper">
-                  <img
-                    src={getImage(item)}
-                    alt={item.name}
-                    className="menu-section__card-image"
-                    loading="lazy"
-                  />
-                  {item.isBestSeller && (
-                    <span className="menu-modal-badge">Best Seller</span>
-                  )}
-                  {!item.isAvailable && (
-                    <div className="menu-card-unavailable" style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold' }}>Unavailable</div>
-                  )}
-                </div>
-                <div className="menu-section__card-body">
-                  <h3 className="menu-section__card-name">{item.name}</h3>
-                  {(item.highlights || itemHighlights[item.name]) && (
-                    <div className="menu-section__card-highlights">
-                      {(item.highlights || itemHighlights[item.name]).map((tag, idx) => (
-                        <span key={idx} className="menu-highlight-tag">{tag}</span>
-                      ))}
+                <div className={`menu-flip-card__inner ${flippedCards[item.id] ? 'is-flipped' : ''}`}>
+                  {/* ---- FRONT FACE ---- */}
+                  <div className="menu-flip-card__face menu-flip-card__front">
+                    <div className="menu-section__card-image-wrapper">
+                      <img
+                        src={getImage(item)}
+                        alt={item.name}
+                        className="menu-section__card-image"
+                        loading="lazy"
+                      />
+                      {item.isBestSeller && (
+                        <span className="menu-modal-badge">Best Seller</span>
+                      )}
+                      {!item.isAvailable && (
+                        <div className="menu-card-unavailable">Unavailable</div>
+                      )}
                     </div>
-                  )}
-                  <p className="menu-section__card-description">{item.description}</p>
-                  <div className="menu-price-wrapper" style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-                    {item.originalPrice && Number(item.originalPrice) > Number(item.price) && (
-                      <span className="menu-price-original" style={{ textDecoration: 'line-through', color: 'var(--color-text-secondary)', fontSize: '0.85em', opacity: 0.7 }}>
-                        €{Number(item.originalPrice).toFixed(2)}
-                      </span>
+                    <div className="menu-section__card-body">
+                      <h3 className="menu-section__card-name">{item.name}</h3>
+                      {(item.highlights || itemHighlights[item.name]) && (
+                        <div className="menu-section__card-highlights">
+                          {(item.highlights || itemHighlights[item.name]).map((tag, idx) => (
+                            <span key={idx} className="menu-highlight-tag">{tag}</span>
+                          ))}
+                        </div>
+                      )}
+                      {item.description && (
+                        <p className="menu-section__card-description">{item.description}</p>
+                      )}
+                      <div className="menu-price-wrapper">
+                        {item.originalPrice && Number(item.originalPrice) > Number(item.price) && (
+                          <span className="menu-price-original">
+                            €{Number(item.originalPrice).toFixed(2)}
+                          </span>
+                        )}
+                        <span className="menu-section__card-price">
+                          €{item.price.toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ---- BACK FACE ---- */}
+                  <div className="menu-flip-card__face menu-flip-card__back">
+                    {item.isBestSeller && (
+                      <span className="menu-modal-badge menu-modal-badge--back">Best Seller</span>
                     )}
-                    <span className="menu-section__card-price">
-                      €{item.price.toFixed(2)}
-                    </span>
+                    <h3 className="menu-flip-card__back-title">{item.name}</h3>
+                    {(item.highlights || itemHighlights[item.name]) && (
+                      <div className="menu-flip-card__back-highlights">
+                        {(item.highlights || itemHighlights[item.name]).map((tag, idx) => (
+                          <span key={idx} className="menu-highlight-tag">{tag}</span>
+                        ))}
+                      </div>
+                    )}
+                    <p className="menu-flip-card__back-description">{item.description}</p>
                   </div>
                 </div>
               </motion.div>
@@ -206,11 +255,7 @@ export default function Menu() {
         </div>
       )}
 
-      <MenuItemModal
-        item={selectedItem}
-        isOpen={!!selectedItem}
-        onClose={() => setSelectedItem(null)}
-      />
+
     </section>
   );
 }
