@@ -161,13 +161,17 @@ const HeroCarousel = () => {
               exit="exit"
             >
               <h1 className="hero__title">
-                {activeSlide.title === 'Welcome to Kyō-To' ? (
-                  <>
-                    Welcome to <span className="text-gold">Kyō-To</span>
-                  </>
-                ) : (
-                  activeSlide.title
-                )}
+                {(() => {
+                  const title = activeSlide.title || "";
+                  const parts = title.split(/(\*\*[^*]+\*\*)/g);
+                  return parts.map((part, idx) => {
+                    if (part.startsWith("**") && part.endsWith("**")) {
+                      const cleanText = part.slice(2, -2);
+                      return <span key={idx} className="text-gold">{cleanText}</span>;
+                    }
+                    return part;
+                  });
+                })()}
               </h1>
               <p className="hero__subtitle">{activeSlide.subtitle}</p>
               {activeSlide.ctaLink && (

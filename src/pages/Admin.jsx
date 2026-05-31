@@ -964,6 +964,9 @@ export default function Admin() {
                     <div className="form-group">
                       <label>Title *</label>
                       <input type="text" value={newHeroSlide.title} onChange={(e) => setNewHeroSlide((p) => ({ ...p, title: e.target.value }))} required placeholder="Es: Summer Specials" />
+                      <small style={{ color: 'var(--color-text-secondary)', fontSize: '11px', marginTop: '4px', display: 'block' }}>
+                        Use double asterisks to highlight text in gold (e.g. <code>Welcome to **Kyō-To**</code>)
+                      </small>
                     </div>
                     <div className="form-group">
                       <label>Subtitle</label>
