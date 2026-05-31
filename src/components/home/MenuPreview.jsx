@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCollection } from '../../hooks/useFirestore';
-import { ArrowRight, Star } from 'lucide-react';
+import { ArrowRight, Star, AlertCircle } from 'lucide-react';
+import AllergenModal from '../common/AllergenModal';
 
 import '../../styles/menu.css';
 
@@ -83,9 +84,9 @@ const MenuPreview = () => {
   const allItems =
     firebaseItems && firebaseItems.length > 0 ? firebaseItems : fallbackItems;
 
-  const [activeCategory, setActiveCategory] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
   const [flippedCards, setFlippedCards] = useState({});
+  const [showAllergens, setShowAllergens] = useState(false);
 
   const toggleFlip = useCallback((itemId) => {
     setFlippedCards((prev) => ({ ...prev, [itemId]: !prev[itemId] }));
@@ -119,20 +120,18 @@ const MenuPreview = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  useEffect(() => {
-    if (categories.length > 0 && activeCategory === null) {
-      setActiveCategory(categories[0].id);
-    }
-  }, [categories, activeCategory]);
+  // Build curated homepage items: featured first, then best sellers, then others
+  const displayItems = (() => {
+    const featured = allItems.filter(item => item.isFeatured);
+    const bestSellers = allItems.filter(item => item.isBestSeller && !item.isFeatured);
+    const others = allItems.filter(item => !item.isFeatured && !item.isBestSeller);
+    return [...featured, ...bestSellers, ...others].slice(0, 8);
+  })();
 
-  const filteredItems = allItems.filter((item) => item.categoryId === activeCategory);
-  
-  const bestSellers = allItems.filter(item => item.isBestSeller);
-  const mobileDisplayItems = (bestSellers.length > 0 ? bestSellers : allItems).slice(0, 4);
-
-  const topItems = filteredItems.slice(0, 3);
-  const bannerItem = filteredItems.length > 3 ? filteredItems[3] : null;
-  const bottomItems = filteredItems.slice(4, 8);
+  const mobileDisplayItems = displayItems.slice(0, 4);
+  const topItems = displayItems.slice(0, 3);
+  const bannerItem = displayItems.length > 3 ? displayItems[3] : null;
+  const bottomItems = displayItems.slice(4, 8);
 
   const getImage = (item) => {
     return item.imageUrl || imageMap[item.name] || '/images/dragon-roll.avif';
@@ -169,24 +168,9 @@ const MenuPreview = () => {
           <hr className="menu-section__divider" />
         </motion.div>
 
-        {!isMobile && (
-          <div className="menu-section__tabs">
-            {categories.map((cat) => (
-            <button
-              key={cat.id}
-              className={`menu-section__tab ${activeCategory === cat.id ? 'active' : ''}`}
-              onClick={() => setActiveCategory(cat.id)}
-            >
-              <span style={{ marginRight: '8px' }}>{cat.icon}</span>
-              <span>{cat.name}</span>
-            </button>
-          ))}
-        </div>
-        )}
-
         <AnimatePresence mode="wait">
           <motion.div
-            key={activeCategory}
+            key="homepage-featured"
             className="menu-section__content"
             variants={containerVariants}
             initial="hidden"
@@ -200,74 +184,10 @@ const MenuPreview = () => {
                     <Star size={16} fill="currentColor" /> Best Sellers
                   </span>
                 </div>
-                {mobileDisplayItems.map((item) => (
-                  <motion.div
-                    key={item.id}
-                    className="menu-flip-card"
-                    variants={cardVariants}
-                    onClick={() => toggleFlip(item.id)}
-                    onMouseMove={handleMouseMove}
-                    onMouseLeave={handleMouseLeave}
-                  >
-                    <div className={`menu-flip-card__inner ${flippedCards[item.id] ? 'is-flipped' : ''}`}>
-                      <div className="menu-flip-card__face menu-flip-card__front">
-                        <div className="menu-section__card-image-wrapper">
-                          <img
-                            src={getImage(item)}
-                            alt={item.name}
-                            className="menu-section__card-image"
-                            loading="lazy"
-                          />
-                          {item.isBestSeller && (
-                            <span className="menu-modal-badge">Best Seller</span>
-                          )}
-                        </div>
-                        <div className="menu-section__card-body">
-                          <h3 className="menu-section__card-name">{item.name}</h3>
-                          {(item.highlights || itemHighlights[item.name]) && (
-                            <div className="menu-section__card-highlights">
-                              {(item.highlights || itemHighlights[item.name]).map((tag, idx) => (
-                                <span key={idx} className="menu-highlight-tag">{tag}</span>
-                              ))}
-                            </div>
-                          )}
-                          {item.description && (
-                            <p className="menu-section__card-description">{item.description}</p>
-                          )}
-                          <div className="menu-section__card-footer">
-                            <div className="menu-price-wrapper">
-                              {item.originalPrice && Number(item.originalPrice) > Number(item.price) && (
-                                <span className="menu-price-original">
-                                  {formatPrice(item.originalPrice)}
-                                </span>
-                              )}
-                              <span className="menu-section__card-price">{formatPrice(item.price)}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="menu-flip-card__face menu-flip-card__back">
-                        {item.isBestSeller && (
-                          <span className="menu-modal-badge menu-modal-badge--back">Best Seller</span>
-                        )}
-                        <h3 className="menu-flip-card__back-title">{item.name}</h3>
-                        {(item.highlights || itemHighlights[item.name]) && (
-                          <div className="menu-flip-card__back-highlights">
-                            {(item.highlights || itemHighlights[item.name]).map((tag, idx) => (
-                              <span key={idx} className="menu-highlight-tag">{tag}</span>
-                            ))}
-                          </div>
-                        )}
-                        <p className="menu-flip-card__back-description">{item.description}</p>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            ) : filteredItems.length > 0 ? (
-              <>
-                <div className="menu-section__grid-3">
-                  {topItems.map((item) => (
+                {mobileDisplayItems.map((item) => {
+                  const hasMedia = item.imageUrl || imageMap[item.name];
+                  const isVideo = hasMedia && /\.(mp4|webm|ogg)(\?.*)?$/i.test(item.imageUrl || "");
+                  return (
                     <motion.div
                       key={item.id}
                       className="menu-flip-card"
@@ -279,12 +199,30 @@ const MenuPreview = () => {
                       <div className={`menu-flip-card__inner ${flippedCards[item.id] ? 'is-flipped' : ''}`}>
                         <div className="menu-flip-card__face menu-flip-card__front">
                           <div className="menu-section__card-image-wrapper">
-                            <img
-                              src={getImage(item)}
-                              alt={item.name}
-                              className="menu-section__card-image"
-                              loading="lazy"
-                            />
+                            {hasMedia ? (
+                              isVideo ? (
+                                <video
+                                  src={item.imageUrl}
+                                  className="menu-section__card-image"
+                                  autoPlay
+                                  loop
+                                  muted
+                                  playsInline
+                                  style={{ objectFit: "cover", width: "100%", height: "100%" }}
+                                />
+                              ) : (
+                                <img
+                                  src={item.imageUrl || imageMap[item.name]}
+                                  alt={item.name}
+                                  className="menu-section__card-image"
+                                  loading="lazy"
+                                />
+                              )
+                            ) : (
+                              <div className="menu-section__card-image-placeholder">
+                                    <img src="/images/logo-white.avif" alt="" className="placeholder-logo" />
+                              </div>
+                            )}
                             {item.isBestSeller && (
                               <span className="menu-modal-badge">Best Seller</span>
                             )}
@@ -329,43 +267,16 @@ const MenuPreview = () => {
                         </div>
                       </div>
                     </motion.div>
-                  ))}
-                </div>
-
-                {bannerItem && (
-                  <motion.div className="menu-section__banner" variants={cardVariants}>
-                    <div className="menu-section__banner-image">
-                      <img src={getImage(bannerItem)} alt={bannerItem.name} loading="lazy" />
-                    </div>
-                    <div className="menu-section__banner-body">
-                      <div>
-                        <h3>{bannerItem.name}</h3>
-                        {(bannerItem.highlights || itemHighlights[bannerItem.name]) && (
-                          <div className="menu-section__card-highlights" style={{ marginTop: '8px' }}>
-                            {(bannerItem.highlights || itemHighlights[bannerItem.name]).map((tag, idx) => (
-                              <span key={idx} className="menu-highlight-tag">{tag}</span>
-                            ))}
-                          </div>
-                        )}
-                        <p>{bannerItem.description}</p>
-                      </div>
-                      <div className="menu-section__banner-action">
-                        <div className="menu-price-wrapper" style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-                          {bannerItem.originalPrice && Number(bannerItem.originalPrice) > Number(bannerItem.price) && (
-                            <span className="menu-price-original" style={{ textDecoration: 'line-through', color: 'var(--color-text-secondary)', fontSize: '0.85em', opacity: 0.7 }}>
-                              {formatPrice(bannerItem.originalPrice)}
-                            </span>
-                          )}
-                          <span className="menu-section__banner-price">{formatPrice(bannerItem.price)}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-
-                {bottomItems.length > 0 && (
-                  <div className="menu-section__grid-4">
-                    {bottomItems.map((item) => (
+                  );
+                })}
+              </div>
+            ) : displayItems.length > 0 ? (
+              <>
+                <div className="menu-section__grid-3">
+                  {topItems.map((item) => {
+                    const hasMedia = item.imageUrl || imageMap[item.name];
+                    const isVideo = hasMedia && /\.(mp4|webm|ogg)(\?.*)?$/i.test(item.imageUrl || "");
+                    return (
                       <motion.div
                         key={item.id}
                         className="menu-flip-card"
@@ -377,12 +288,30 @@ const MenuPreview = () => {
                         <div className={`menu-flip-card__inner ${flippedCards[item.id] ? 'is-flipped' : ''}`}>
                           <div className="menu-flip-card__face menu-flip-card__front">
                             <div className="menu-section__card-image-wrapper">
-                              <img
-                                src={getImage(item)}
-                                alt={item.name}
-                                className="menu-section__card-image"
-                                loading="lazy"
-                              />
+                              {hasMedia ? (
+                                isVideo ? (
+                                  <video
+                                    src={item.imageUrl}
+                                    className="menu-section__card-image"
+                                    autoPlay
+                                    loop
+                                    muted
+                                    playsInline
+                                    style={{ objectFit: "cover", width: "100%", height: "100%" }}
+                                  />
+                                ) : (
+                                  <img
+                                    src={item.imageUrl || imageMap[item.name]}
+                                    alt={item.name}
+                                    className="menu-section__card-image"
+                                    loading="lazy"
+                                  />
+                                )
+                              ) : (
+                                <div className="menu-section__card-image-placeholder">
+                                      <img src="/images/logo-white.avif" alt="" className="placeholder-logo" />
+                                </div>
+                              )}
                               {item.isBestSeller && (
                                 <span className="menu-modal-badge">Best Seller</span>
                               )}
@@ -427,7 +356,128 @@ const MenuPreview = () => {
                           </div>
                         </div>
                       </motion.div>
-                    ))}
+                    );
+                  })}
+                </div>
+
+                {bannerItem && (
+                  <motion.div className="menu-section__banner" variants={cardVariants}>
+                    <div className="menu-section__banner-image">
+                      <img src={getImage(bannerItem)} alt={bannerItem.name} loading="lazy" />
+                    </div>
+                    <div className="menu-section__banner-body">
+                      <div>
+                        <h3>{bannerItem.name}</h3>
+                        {(bannerItem.highlights || itemHighlights[bannerItem.name]) && (
+                          <div className="menu-section__card-highlights" style={{ marginTop: '8px' }}>
+                            {(bannerItem.highlights || itemHighlights[bannerItem.name]).map((tag, idx) => (
+                              <span key={idx} className="menu-highlight-tag">{tag}</span>
+                            ))}
+                          </div>
+                        )}
+                        <p>{bannerItem.description}</p>
+                      </div>
+                      <div className="menu-section__banner-action">
+                        <div className="menu-price-wrapper" style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                          {bannerItem.originalPrice && Number(bannerItem.originalPrice) > Number(bannerItem.price) && (
+                            <span className="menu-price-original" style={{ textDecoration: 'line-through', color: 'var(--color-text-secondary)', fontSize: '0.85em', opacity: 0.7 }}>
+                              {formatPrice(bannerItem.originalPrice)}
+                            </span>
+                          )}
+                          <span className="menu-section__banner-price">{formatPrice(bannerItem.price)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {bottomItems.length > 0 && (
+                  <div className="menu-section__grid-4">
+                    {bottomItems.map((item) => {
+                      const hasMedia = item.imageUrl || imageMap[item.name];
+                      const isVideo = hasMedia && /\.(mp4|webm|ogg)(\?.*)?$/i.test(item.imageUrl || "");
+                      return (
+                        <motion.div
+                          key={item.id}
+                          className="menu-flip-card"
+                          variants={cardVariants}
+                          onClick={() => toggleFlip(item.id)}
+                          onMouseMove={handleMouseMove}
+                          onMouseLeave={handleMouseLeave}
+                        >
+                          <div className={`menu-flip-card__inner ${flippedCards[item.id] ? 'is-flipped' : ''}`}>
+                            <div className="menu-flip-card__face menu-flip-card__front">
+                              <div className="menu-section__card-image-wrapper">
+                                {hasMedia ? (
+                                  isVideo ? (
+                                    <video
+                                      src={item.imageUrl}
+                                      className="menu-section__card-image"
+                                      autoPlay
+                                      loop
+                                      muted
+                                      playsInline
+                                      style={{ objectFit: "cover", width: "100%", height: "100%" }}
+                                    />
+                                  ) : (
+                                    <img
+                                      src={item.imageUrl || imageMap[item.name]}
+                                      alt={item.name}
+                                      className="menu-section__card-image"
+                                      loading="lazy"
+                                    />
+                                  )
+                                ) : (
+                                  <div className="menu-section__card-image-placeholder">
+                                        <img src="/images/logo-white.avif" alt="" className="placeholder-logo" />
+                                  </div>
+                                )}
+                                {item.isBestSeller && (
+                                  <span className="menu-modal-badge">Best Seller</span>
+                                )}
+                              </div>
+                              <div className="menu-section__card-body">
+                                <h3 className="menu-section__card-name">{item.name}</h3>
+                                {(item.highlights || itemHighlights[item.name]) && (
+                                  <div className="menu-section__card-highlights">
+                                    {(item.highlights || itemHighlights[item.name]).map((tag, idx) => (
+                                      <span key={idx} className="menu-highlight-tag">{tag}</span>
+                                    ))}
+                                  </div>
+                                )}
+                                {item.description && (
+                                  <p className="menu-section__card-description">{item.description}</p>
+                                )}
+                                <div className="menu-section__card-footer">
+                                  <div className="menu-price-wrapper">
+                                    {item.originalPrice && Number(item.originalPrice) > Number(item.price) && (
+                                      <span className="menu-price-original">
+                                        {formatPrice(item.originalPrice)}
+                                      </span>
+                                    )}
+                                    <span className="menu-section__card-price">{formatPrice(item.price)}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="menu-flip-card__face menu-flip-card__back">
+                              {item.isBestSeller && (
+                                <span className="menu-modal-badge menu-modal-badge--back">Best Seller</span>
+                              )}
+                              <h3 className="menu-flip-card__back-title">{item.name}</h3>
+                              {(item.highlights || itemHighlights[item.name]) && (
+                                <div className="menu-flip-card__back-highlights">
+                                  {(item.highlights || itemHighlights[item.name]).map((tag, idx) => (
+                                    <span key={idx} className="menu-highlight-tag">{tag}</span>
+                                  ))}
+                                </div>
+                              )}
+                              <p className="menu-flip-card__back-description">{item.description}</p>
+                            </div>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
                   </div>
                 )}
               </>
@@ -445,7 +495,7 @@ const MenuPreview = () => {
 
         <motion.div
           className="menu-section__view-all"
-          style={{ paddingBottom: isMobile ? '80px' : '0' }}
+          style={{ paddingBottom: isMobile ? '80px' : '0', display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -455,10 +505,19 @@ const MenuPreview = () => {
             View Full Menu
             <ArrowRight size={16} />
           </Link>
+          <button 
+            onClick={() => setShowAllergens(true)}
+            className="menu-section__view-all-btn menu-allergens-preview-btn"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+          >
+            <AlertCircle size={16} />
+            Allergeni
+          </button>
         </motion.div>
 
 
       </div>
+      <AllergenModal isOpen={showAllergens} onClose={() => setShowAllergens(false)} />
     </section>
   );
 };

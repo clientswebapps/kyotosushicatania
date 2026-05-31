@@ -119,6 +119,7 @@ export default function Admin() {
     originalPrice: "",
     categoryId: "",
     isBestSeller: false,
+    isFeatured: false,
     isAvailable: true,
     imageUrl: "",
     highlights: [],
@@ -133,9 +134,12 @@ export default function Admin() {
     imageUrl: "",
     ctaText: "",
     ctaLink: "",
+    duration: 5,
     order: 0,
     active: true
   });
+
+  const [editingHeroSlideId, setEditingHeroSlideId] = useState(null);
 
   // New Promotion Form State
   const [newPromotion, setNewPromotion] = useState({
@@ -197,6 +201,15 @@ export default function Admin() {
     }
   };
 
+  // Toggle featured on homepage
+  const toggleFeatured = async (item) => {
+    try {
+      await updateMenuItem(item.id, { isFeatured: !item.isFeatured });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   // Handle Menu Item submission (Add or Update)
   const handleAddMenuItem = async (e) => {
     e.preventDefault();
@@ -225,6 +238,7 @@ export default function Admin() {
         originalPrice: "",
         categoryId: "",
         isBestSeller: false,
+        isFeatured: false,
         isAvailable: true,
         imageUrl: "",
         highlights: [],
@@ -243,6 +257,7 @@ export default function Admin() {
       originalPrice: item.originalPrice !== undefined && item.originalPrice !== null ? item.originalPrice.toString() : "",
       categoryId: item.categoryId || "",
       isBestSeller: !!item.isBestSeller,
+      isFeatured: !!item.isFeatured,
       isAvailable: item.isAvailable !== undefined ? !!item.isAvailable : true,
       imageUrl: item.imageUrl || "",
       highlights: Array.isArray(item.highlights) ? item.highlights : [],
@@ -273,13 +288,37 @@ export default function Admin() {
   const handleAddHeroSlide = async (e) => {
     e.preventDefault();
     try {
-      const minOrder = heroSlides?.length > 0 ? Math.min(...heroSlides.map(s => s.order || 0)) : 0;
-      await addHeroSlide({
+      const payload = {
         ...newHeroSlide,
-        order: minOrder - 1,
-      });
-      setNewHeroSlide({ title: "", subtitle: "", imageUrl: "", ctaText: "", ctaLink: "", order: 0, active: true });
+        duration: Number(newHeroSlide.duration) || 5,
+      };
+
+      if (editingHeroSlideId) {
+        await updateHeroSlide(editingHeroSlideId, payload);
+        setEditingHeroSlideId(null);
+      } else {
+        const minOrder = heroSlides?.length > 0 ? Math.min(...heroSlides.map(s => s.order || 0)) : 0;
+        await addHeroSlide({
+          ...payload,
+          order: minOrder - 1,
+        });
+      }
+      setNewHeroSlide({ title: "", subtitle: "", imageUrl: "", ctaText: "", ctaLink: "", duration: 5, order: 0, active: true });
     } catch (err) { console.error(err); }
+  };
+
+  const handleStartHeroEdit = (slide) => {
+    setEditingHeroSlideId(slide.id);
+    setNewHeroSlide({
+      title: slide.title || "",
+      subtitle: slide.subtitle || "",
+      imageUrl: slide.imageUrl || "",
+      ctaText: slide.ctaText || "",
+      ctaLink: slide.ctaLink || "",
+      duration: slide.duration || 5,
+      order: slide.order || 0,
+      active: slide.active !== undefined ? !!slide.active : true
+    });
   };
 
   const handleHeroSlideDelete = async (id) => {
@@ -668,6 +707,33 @@ export default function Admin() {
                       </div>
                     </div>
 
+                    <div className="form-group" style={{ marginBottom: "16px" }}>
+                      <label>Media (Image/Video URL or Upload) (Optional)</label>
+                      <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                        <input
+                          type="text"
+                          value={newItem.imageUrl || ""}
+                          onChange={(e) =>
+                            setNewItem((p) => ({ ...p, imageUrl: e.target.value }))
+                          }
+                          placeholder="/images/dish.avif or .mp4 link"
+                          style={{ flex: 1, margin: 0 }}
+                        />
+                        <span style={{ fontSize: "12px", color: "var(--color-text-secondary)" }}>OR</span>
+                        <input
+                          type="file"
+                          accept="image/*,video/*"
+                          onChange={(e) => handleFileUpload(e, setNewItem)}
+                          disabled={uploadingImage}
+                          style={{ flex: 1, padding: "8px", background: "rgba(255,255,255,0.05)", borderRadius: "4px" }}
+                        />
+                      </div>
+                      {uploadingImage && <small style={{ color: "var(--color-brand-gold)", display: "block", marginTop: "8px" }}>Compressing image...</small>}
+                      <small style={{ color: 'var(--color-text-secondary)', fontSize: '11px', marginTop: '6px', display: 'block' }}>
+                        Max file size: 2MB. Uploaded images are auto-compressed to WebP.
+                      </small>
+                    </div>
+
                     <div className="form-group" style={{ marginTop: '8px' }}>
                       <label style={{ marginBottom: '8px', display: 'block' }}>Dish Badges / Highlights (Presets)</label>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '8px' }}>
@@ -749,6 +815,19 @@ export default function Admin() {
                         />
                         <span>Set as Best Seller</span>
                       </label>
+                      <label className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          checked={newItem.isFeatured}
+                          onChange={(e) =>
+                            setNewItem((p) => ({
+                              ...p,
+                              isFeatured: e.target.checked,
+                            }))
+                          }
+                        />
+                        <span>Feature on Homepage</span>
+                      </label>
                     </div>
 
                     <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
@@ -769,6 +848,7 @@ export default function Admin() {
                               originalPrice: "",
                               categoryId: "",
                               isBestSeller: false,
+                              isFeatured: false,
                               isAvailable: true,
                               imageUrl: "",
                               highlights: [],
@@ -813,6 +893,15 @@ export default function Admin() {
                             </p>
                           </div>
                           <div className="admin-menu-item-actions">
+                            <button
+                              onClick={() => toggleFeatured(item)}
+                              className={`admin-toggle-btn ${
+                                item.isFeatured ? "active" : ""
+                              }`}
+                              title="Toggle Featured on Homepage"
+                            >
+                              🏠
+                            </button>
                             <button
                               onClick={() => toggleBestSeller(item)}
                               className={`admin-toggle-btn ${
@@ -870,7 +959,7 @@ export default function Admin() {
 
               <div className="admin-menu-grid">
                 <div className="admin-menu-form-container">
-                  <h2>Add New Slide</h2>
+                  <h2>{editingHeroSlideId ? "Edit Slide" : "Add New Slide"}</h2>
                   <form onSubmit={handleAddHeroSlide} className="admin-menu-form">
                     <div className="form-group">
                       <label>Title *</label>
@@ -885,13 +974,21 @@ export default function Admin() {
                         <label>CTA Text</label>
                         <input type="text" value={newHeroSlide.ctaText} onChange={(e) => setNewHeroSlide((p) => ({ ...p, ctaText: e.target.value }))} placeholder="Es: View Menu" />
                       </div>
+                      <div className="form-group">
+                        <label>Redirect Link (CTA Link)</label>
+                        <input type="text" value={newHeroSlide.ctaLink} onChange={(e) => setNewHeroSlide((p) => ({ ...p, ctaLink: e.target.value }))} placeholder="Es: /menu" />
+                      </div>
+                    </div>
+                    <div className="form-group">
+                      <label>Slide Duration (Seconds)</label>
+                      <input type="number" min="1" max="60" value={newHeroSlide.duration} onChange={(e) => setNewHeroSlide((p) => ({ ...p, duration: Number(e.target.value) }))} placeholder="5" />
                     </div>
                     <div className="form-group" style={{ marginBottom: "16px" }}>
                       <label>Media (Image/Video URL or Upload) *</label>
                       <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
                         <input type="text" value={newHeroSlide.imageUrl} onChange={(e) => setNewHeroSlide((p) => ({ ...p, imageUrl: e.target.value }))} placeholder="/images/hero-1.avif or .mp4 link" style={{ flex: 1, margin: 0 }} required={!newHeroSlide.imageUrl} />
                         <span style={{ fontSize: "12px", color: "var(--color-text-secondary)" }}>OR</span>
-                        <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, setNewHeroSlide)} disabled={uploadingImage} style={{ flex: 1, padding: "8px", background: "rgba(255,255,255,0.05)", borderRadius: "4px" }} />
+                        <input type="file" accept="image/*,video/*" onChange={(e) => handleFileUpload(e, setNewHeroSlide)} disabled={uploadingImage} style={{ flex: 1, padding: "8px", background: "rgba(255,255,255,0.05)", borderRadius: "4px" }} />
                       </div>
                       {uploadingImage && <small style={{ color: "var(--color-brand-gold)", display: "block", marginTop: "8px" }}>Compressing image...</small>}
                     </div>
@@ -901,10 +998,26 @@ export default function Admin() {
                         <span>Active</span>
                       </label>
                     </div>
-                    <button type="submit" className="admin-add-item-btn">
-                      <PlusCircle size={16} />
-                      <span>Add Slide</span>
-                    </button>
+                    <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                      <button type="submit" className="admin-add-item-btn" style={{ flex: 1 }}>
+                        {editingHeroSlideId ? <Check size={16} /> : <PlusCircle size={16} />}
+                        <span>{editingHeroSlideId ? "Update Slide" : "Add Slide"}</span>
+                      </button>
+                      {editingHeroSlideId && (
+                        <button
+                          type="button"
+                          className="admin-logout-btn"
+                          onClick={() => {
+                            setEditingHeroSlideId(null);
+                            setNewHeroSlide({ title: "", subtitle: "", imageUrl: "", ctaText: "", ctaLink: "", duration: 5, order: 0, active: true });
+                          }}
+                          style={{ margin: 0, padding: '14px' }}
+                        >
+                          <X size={16} />
+                          <span>Cancel</span>
+                        </button>
+                      )}
+                    </div>
                   </form>
                 </div>
 
@@ -937,14 +1050,17 @@ export default function Admin() {
                             </div>
                             <div className="admin-menu-item-info">
                               <h4>{slide.title}</h4>
-                              <p>{slide.subtitle}</p>
+                              <p>{slide.subtitle || "(No subtitle)"} | ⏱️ {slide.duration || 5}s</p>
                             </div>
                           </div>
                           <div className="admin-menu-item-actions">
                             <button onClick={() => handleHeroSlideToggle(slide.id, slide.active)} className={`admin-toggle-btn ${slide.active ? "active-available" : ""}`}>
                               {slide.active ? "Active" : "Hidden"}
                             </button>
-                            <button onClick={() => handleHeroSlideDelete(slide.id)} className="admin-delete-row-btn">
+                            <button onClick={() => handleStartHeroEdit(slide)} className="admin-delete-row-btn" style={{ color: 'var(--color-brand-gold)', marginRight: '4px' }} title="Edit Slide">
+                              <Edit size={14} />
+                            </button>
+                            <button onClick={() => handleHeroSlideDelete(slide.id)} className="admin-delete-row-btn" title="Delete Slide">
                               <Trash2 size={14} />
                             </button>
                           </div>

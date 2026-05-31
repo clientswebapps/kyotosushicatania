@@ -1,6 +1,6 @@
 /**
  * Processes an image upload directly in the browser:
- * 1. Checks file size (max 1MB)
+ * 1. Checks file size (max 2MB)
  * 2. Reads file as data URL
  * 3. Draws to a Canvas to compress and convert to WebP format
  * @param {File} file - The file uploaded by the user
@@ -13,10 +13,10 @@ export const processImageUpload = (file) => {
       return;
     }
 
-    // Check file size (1MB = 1048576 bytes)
-    const MAX_SIZE = 1 * 1024 * 1024;
+    // Check file size (2MB = 2097152 bytes)
+    const MAX_SIZE = 2 * 1024 * 1024;
     if (file.size > MAX_SIZE) {
-      reject(new Error(`File size must be less than 1MB. Current size: ${(file.size / 1024 / 1024).toFixed(2)}MB`));
+      reject(new Error(`File is too large! Max 2MB allowed. Your file: ${(file.size / 1024 / 1024).toFixed(2)}MB`));
       return;
     }
 

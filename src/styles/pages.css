@@ -3,7 +3,16 @@
    (Menu, About, Contact, Admin)
    ============================================ */
 
-/* --- Menu Search Bar --- */
+/* --- Menu Search and Filter Row --- */
+.menu-search-and-filter-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  max-width: 580px;
+  margin: 0 auto 40px;
+}
+
 .menu-search-bar {
   display: flex;
   align-items: center;
@@ -11,8 +20,7 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   padding: 12px 24px;
-  max-width: 400px;
-  margin: 0 auto 40px;
+  flex: 1;
   transition: border-color var(--transition-fast);
 }
 
@@ -37,6 +45,42 @@
 
 .menu-search-input::placeholder {
   color: var(--color-text-muted);
+}
+
+.menu-allergens-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  color: var(--color-brand-gold);
+  border-radius: var(--radius-xl);
+  padding: 12px 24px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.menu-allergens-btn:hover {
+  border-color: var(--color-brand-gold);
+  background: rgba(243, 192, 22, 0.05);
+  box-shadow: 0 0 15px rgba(243, 192, 22, 0.1);
+}
+
+/* Homepage preview allergen button override */
+.menu-allergens-preview-btn {
+  border: 2px solid var(--color-border) !important;
+  color: var(--color-text-secondary) !important;
+}
+
+.menu-allergens-preview-btn:hover {
+  border-color: var(--color-brand-gold) !important;
+  color: var(--color-brand-gold) !important;
+  background: transparent !important;
+  box-shadow: 0 0 15px rgba(243, 192, 22, 0.1) !important;
 }
 
 .menu-back-link {

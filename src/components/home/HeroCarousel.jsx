@@ -90,7 +90,6 @@ const HeroCarousel = () => {
     firebaseSlides && firebaseSlides.length > 0 ? firebaseSlides : fallbackSlides;
 
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [modalOpen, setModalOpen] = useState(false);
   const intervalRef = useRef(null);
 
   const goToNext = useCallback(() => {
@@ -105,19 +104,21 @@ const HeroCarousel = () => {
     setCurrentSlide(index);
   }, []);
 
+  const activeSlide = slides[currentSlide];
+
   useEffect(() => {
-    if (slides.length <= 1) return;
+    if (slides.length <= 1 || !activeSlide) return;
+
+    const delayMs = (Number(activeSlide.duration) || 5) * 1000;
 
     intervalRef.current = setInterval(() => {
       goToNext();
-    }, 5000);
+    }, delayMs);
 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [goToNext, slides.length, currentSlide]);
-
-  const activeSlide = slides[currentSlide];
+  }, [goToNext, slides.length, currentSlide, activeSlide]);
 
   if (!activeSlide) return null;
 
@@ -169,14 +170,10 @@ const HeroCarousel = () => {
                 )}
               </h1>
               <p className="hero__subtitle">{activeSlide.subtitle}</p>
-              {activeSlide.ctaLink ? (
+              {activeSlide.ctaLink && (
                 <Link to={activeSlide.ctaLink} className="hero__cta">
-                  {activeSlide.ctaText}
+                  {activeSlide.ctaText || "Scopri di più"}
                 </Link>
-              ) : (
-                <button onClick={() => setModalOpen(true)} className="hero__cta" style={{ border: 'none', cursor: 'pointer' }}>
-                  {activeSlide.ctaText}
-                </button>
               )}
             </motion.div>
           </motion.div>
@@ -215,11 +212,6 @@ const HeroCarousel = () => {
       )}
 
       <ScrollHint targetId="promotions" text="View Offers" />
-      <ItemModal 
-        isOpen={modalOpen} 
-        onClose={() => setModalOpen(false)} 
-        item={activeSlide} 
-      />
     </section>
   );
 };
