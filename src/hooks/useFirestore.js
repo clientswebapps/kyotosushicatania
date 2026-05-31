@@ -2237,6 +2237,56 @@ const fallbackData = {
         "categoryId": "tempura"
     }
 ],
+  galleryItems: [
+    {
+      id: "gal-1",
+      imageUrl: "/images/menu/menu (1).jpeg",
+      title: "Signature Roll Platter",
+      order: 1,
+      active: true,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "gal-2",
+      imageUrl: "/images/menu/menu (2).jpeg",
+      title: "Chef Special Selection",
+      order: 2,
+      active: true,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "gal-3",
+      imageUrl: "/images/menu/menu (3).jpeg",
+      title: "Traditional Washoku",
+      order: 3,
+      active: true,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "gal-4",
+      imageUrl: "/images/menu/menu (4).jpeg",
+      title: "Special Uramaki",
+      order: 4,
+      active: true,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "gal-5",
+      imageUrl: "/images/menu/menu (5).jpeg",
+      title: "Contemporary Fusion",
+      order: 5,
+      active: true,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "gal-6",
+      imageUrl: "/images/menu/menu (6).jpeg",
+      title: "Premium Sashimi",
+      order: 6,
+      active: true,
+      createdAt: new Date().toISOString()
+    }
+  ]
 };
 
 /**
@@ -2303,15 +2353,7 @@ export function useCollection(collectionName, options = {}) {
         q,
         (snapshot) => {
           if (snapshot.empty) {
-            const fallback = fallbackData[collectionName] || [];
-            let filtered = fallback;
-            if (whereField && whereValue !== undefined) {
-              filtered = fallback.filter((item) => item[whereField] === whereValue);
-            }
-            if (orderByField) {
-              filtered.sort((a, b) => (a[orderByField] || 0) - (b[orderByField] || 0));
-            }
-            setData(filtered);
+            setData([]);
           } else {
             const results = snapshot.docs.map((doc) => ({
               id: doc.id,
@@ -2335,15 +2377,7 @@ export function useCollection(collectionName, options = {}) {
       getDocs(q)
         .then((snapshot) => {
           if (snapshot.empty) {
-            const fallback = fallbackData[collectionName] || [];
-            let filtered = fallback;
-            if (whereField && whereValue !== undefined) {
-              filtered = fallback.filter((item) => item[whereField] === whereValue);
-            }
-            if (orderByField) {
-              filtered.sort((a, b) => (a[orderByField] || 0) - (b[orderByField] || 0));
-            }
-            setData(filtered);
+            setData([]);
           } else {
             const results = snapshot.docs.map((doc) => ({
               id: doc.id,

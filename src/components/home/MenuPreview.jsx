@@ -228,6 +228,7 @@ const MenuPreview = () => {
                                   loop
                                   muted
                                   playsInline
+                                  preload="auto"
                                   style={{ objectFit: "cover", width: "100%", height: "100%" }}
                                 />
                               ) : (
@@ -321,6 +322,7 @@ const MenuPreview = () => {
                                     loop
                                     muted
                                     playsInline
+                                    preload="auto"
                                     style={{ objectFit: "cover", width: "100%", height: "100%" }}
                                   />
                                 ) : (
@@ -445,6 +447,7 @@ const MenuPreview = () => {
                                       loop
                                       muted
                                       playsInline
+                                      preload="auto"
                                       style={{ objectFit: "cover", width: "100%", height: "100%" }}
                                     />
                                   ) : (

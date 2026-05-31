@@ -150,6 +150,7 @@ const HeroCarousel = () => {
                 loop
                 muted
                 playsInline
+                preload="auto"
                 style={{ objectFit: "cover", width: "100%", height: "100%" }}
               />
             ) : (

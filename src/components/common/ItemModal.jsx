@@ -20,7 +20,7 @@ const ItemModal = ({ isOpen, onClose, item }) => {
             
             <div className="modal-image-container">
               {/\.(mp4|webm|ogg)(\?.*)?$/i.test(item.imageUrl) ? (
-                <video src={item.imageUrl} autoPlay loop muted playsInline className="modal-media" />
+                <video src={item.imageUrl} autoPlay loop muted playsInline preload="auto" className="modal-media" />
               ) : (
                 <img src={item.imageUrl} alt={item.title} className="modal-media" />
               )}

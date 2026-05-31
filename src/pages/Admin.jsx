@@ -31,7 +31,8 @@ import {
   Search
 } from "lucide-react";
 import { collection, doc, setDoc } from "firebase/firestore";
-import { db } from "../firebase/config";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db, storage } from "../firebase/config";
 import { fallbackData } from "../hooks/useFirestore";
 import { processImageUpload } from "../utils/imageUtils";
 import "../styles/admin.css";
@@ -78,6 +79,12 @@ export default function Admin() {
   const { addDocument: addPromo } = useAddDocument("promotions");
   const { deleteDocument: deletePromo } = useDeleteDocument("promotions");
 
+  // Gallery list & actions
+  const { data: galleryItems, loading: galleryLoading } = useCollection("galleryItems", { orderByField: "order", realtime: true });
+  const { updateDocument: updateGalleryItem } = useUpdateDocument("galleryItems");
+  const { addDocument: addGalleryItem } = useAddDocument("galleryItems");
+  const { deleteDocument: deleteGalleryItem } = useDeleteDocument("galleryItems");
+
   // Reorder items using up/down arrows
   const handleMoveItem = async (index, direction, items, updateFn) => {
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
@@ -96,17 +103,65 @@ export default function Admin() {
   };
 
   // Image Upload Handlers
+  // Image/Video Upload Handlers (Firebase Storage with base64 fallback)
   const [uploadingImage, setUploadingImage] = useState(false);
   const handleFileUpload = async (e, setFormState) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    const isImage = file.type.startsWith("image/");
+    const MAX_SIZE = isImage ? 2 * 1024 * 1024 : 10 * 1024 * 1024;
+    
+    if (file.size > MAX_SIZE) {
+      alert(`File is too large! Max ${isImage ? '2MB' : '10MB'} allowed.`);
+      return;
+    }
+
     try {
       setUploadingImage(true);
-      const base64Str = await processImageUpload(file);
-      setFormState((prev) => ({ ...prev, imageUrl: base64Str }));
+      
+      if (storage) {
+        let fileToUpload = file;
+        let fileName = `${Date.now()}_${file.name}`;
+        
+        if (isImage) {
+          try {
+            const compressedBase64 = await processImageUpload(file);
+            const resBlob = await fetch(compressedBase64).then(r => r.blob());
+            fileToUpload = resBlob;
+            const cleanName = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+            fileName = `${Date.now()}_${cleanName}.webp`;
+          } catch (compressErr) {
+            console.error("Compression failed, using original file:", compressErr);
+          }
+        }
+        
+        const storageRef = ref(storage, `uploads/${fileName}`);
+        const metadata = {
+          contentType: fileToUpload.type || file.type,
+          cacheControl: "public, max-age=31536000"
+        };
+        const uploadResult = await uploadBytes(storageRef, fileToUpload, metadata);
+        const downloadUrl = await getDownloadURL(uploadResult.ref);
+        
+        setFormState((prev) => ({ ...prev, imageUrl: downloadUrl }));
+      } else {
+        // Fallback: local/mock data-URL encoding
+        if (isImage) {
+          const base64Str = await processImageUpload(file);
+          setFormState((prev) => ({ ...prev, imageUrl: base64Str }));
+        } else {
+          // Video fallback
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            setFormState((prev) => ({ ...prev, imageUrl: event.target.result }));
+          };
+          reader.readAsDataURL(file);
+        }
+      }
     } catch (error) {
-      alert(error.message);
+      console.error("Upload error:", error);
+      alert("Upload failed: " + error.message);
     } finally {
       setUploadingImage(false);
     }
@@ -165,6 +220,17 @@ export default function Admin() {
     imageUrl: "",
     tag: "",
     link: "",
+    order: 0,
+    active: true
+  });
+
+  const [savingGalleryItem, setSavingGalleryItem] = useState(false);
+  const [editingGalleryItemId, setEditingGalleryItemId] = useState(null);
+
+  // New Gallery Item Form State
+  const [newGalleryItem, setNewGalleryItem] = useState({
+    title: "",
+    imageUrl: "",
     order: 0,
     active: true
   });
@@ -243,6 +309,10 @@ export default function Admin() {
         await updateMenuItem(editingItemId, payload);
         setEditingItemId(null);
       } else {
+        if (menuItems && menuItems.length >= 700) {
+          alert("The menu is already full (maximum 700 menu items). You need to remove 1 item to continue.");
+          return;
+        }
         await addMenuItem({
           ...payload,
           order: menuItems?.length || 0,
@@ -318,6 +388,10 @@ export default function Admin() {
         await updateHeroSlide(editingHeroSlideId, payload);
         setEditingHeroSlideId(null);
       } else {
+        if (heroSlides && heroSlides.length >= 3) {
+          alert("Hero settings are already full (maximum 3 items). You need to remove 1 item to continue.");
+          return;
+        }
         const minOrder = heroSlides?.length > 0 ? Math.min(...heroSlides.map(s => s.order || 0)) : 0;
         await addHeroSlide({
           ...payload,
@@ -361,6 +435,10 @@ export default function Admin() {
     e.preventDefault();
     setSavingPromo(true);
     try {
+      if (promotions && promotions.length >= 5) {
+        alert("Promotions are already full (maximum 5 promos). You need to remove 1 item to continue.");
+        return;
+      }
       const minOrder = promotions?.length > 0 ? Math.min(...promotions.map(s => s.order || 0)) : 0;
       await addPromo({
         ...newPromotion,
@@ -382,6 +460,65 @@ export default function Admin() {
 
   const handlePromoToggle = async (id, currentStatus) => {
     try { await updatePromo(id, { active: !currentStatus }); } catch (err) { console.error(err); }
+  };
+
+  // --- Gallery Actions ---
+  const handleAddGalleryItem = async (e) => {
+    e.preventDefault();
+    setSavingGalleryItem(true);
+    try {
+      const payload = {
+        ...newGalleryItem,
+      };
+
+      if (editingGalleryItemId) {
+        await updateGalleryItem(editingGalleryItemId, payload);
+        setEditingGalleryItemId(null);
+      } else {
+        if (galleryItems && galleryItems.length >= 20) {
+          alert("The gallery is already full (maximum 20 items). You need to remove 1 item to continue.");
+          return;
+        }
+        const minOrder = galleryItems?.length > 0 ? Math.min(...galleryItems.map(s => s.order || 0)) : 0;
+        await addGalleryItem({
+          ...payload,
+          order: minOrder - 1,
+        });
+      }
+      setNewGalleryItem({ title: "", imageUrl: "", order: 0, active: true });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSavingGalleryItem(false);
+    }
+  };
+
+  const handleStartGalleryEdit = (item) => {
+    setEditingGalleryItemId(item.id);
+    setNewGalleryItem({
+      title: item.title || "",
+      imageUrl: item.imageUrl || "",
+      order: item.order || 0,
+      active: item.active !== undefined ? !!item.active : true
+    });
+  };
+
+  const handleGalleryItemDelete = async (id) => {
+    if (window.confirm("Delete this gallery item?")) {
+      try {
+        await deleteGalleryItem(id);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  };
+
+  const handleGalleryItemToggle = async (id, currentStatus) => {
+    try {
+      await updateGalleryItem(id, { active: !currentStatus });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const [seeding, setSeeding] = useState(false);
@@ -411,6 +548,12 @@ export default function Admin() {
       // 4. Add promotions
       for (const promo of fallbackData.promotions) {
         await setDoc(doc(db, "promotions", promo.id), promo);
+      }
+      // 5. Add gallery items
+      if (fallbackData.galleryItems) {
+        for (const item of fallbackData.galleryItems) {
+          await setDoc(doc(db, "galleryItems", item.id), item);
+        }
       }
       alert("Database populated successfully! Reload the page.");
     } catch (err) {
@@ -566,6 +709,13 @@ export default function Admin() {
         >
           <FileText size={18} />
           <span>Menu Settings</span>
+        </button>
+        <button
+          className={`admin-tab-btn ${activeTab === "gallery" ? "active" : ""}`}
+          onClick={() => setActiveTab("gallery")}
+        >
+          <Eye size={18} />
+          <span>Gallery Settings</span>
         </button>
       </div>
 
@@ -760,9 +910,9 @@ export default function Admin() {
                           style={{ flex: 1, padding: "8px", background: "rgba(255,255,255,0.05)", borderRadius: "4px" }}
                         />
                       </div>
-                      {uploadingImage && <small style={{ color: "var(--color-brand-gold)", display: "block", marginTop: "8px" }}>Compressing image...</small>}
+                      {uploadingImage && <small style={{ color: "var(--color-brand-gold)", display: "block", marginTop: "8px" }}>Processing media file...</small>}
                       <small style={{ color: 'var(--color-text-secondary)', fontSize: '11px', marginTop: '6px', display: 'block' }}>
-                        Max file size: 2MB. Uploaded images are auto-compressed to WebP.
+                        Max file size: 2MB for images (auto-compressed to WebP), 10MB for videos.
                       </small>
                     </div>
 
@@ -863,7 +1013,7 @@ export default function Admin() {
                     </div>
 
                     <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
-                      <button type="submit" className="admin-add-item-btn" style={{ flex: 1 }} disabled={savingMenuItem}>
+                      <button type="submit" className="admin-add-item-btn" style={{ flex: 1 }} disabled={savingMenuItem || uploadingImage}>
                         {savingMenuItem ? (
                           <div className="admin-spinner" style={{ marginRight: '6px' }}></div>
                         ) : editingItemId ? (
@@ -1074,7 +1224,10 @@ export default function Admin() {
                         <span style={{ fontSize: "12px", color: "var(--color-text-secondary)" }}>OR</span>
                         <input type="file" accept="image/*,video/*" onChange={(e) => handleFileUpload(e, setNewHeroSlide)} disabled={uploadingImage} style={{ flex: 1, padding: "8px", background: "rgba(255,255,255,0.05)", borderRadius: "4px" }} />
                       </div>
-                      {uploadingImage && <small style={{ color: "var(--color-brand-gold)", display: "block", marginTop: "8px" }}>Compressing image...</small>}
+                      {uploadingImage && <small style={{ color: "var(--color-brand-gold)", display: "block", marginTop: "8px" }}>Processing media file...</small>}
+                      <small style={{ color: 'var(--color-text-secondary)', fontSize: '11px', marginTop: '6px', display: 'block' }}>
+                        Max file size: 2MB for images (auto-compressed to WebP), 10MB for videos.
+                      </small>
                     </div>
                     <div className="form-row-checkboxes">
                       <label className="checkbox-label">
@@ -1083,7 +1236,7 @@ export default function Admin() {
                       </label>
                     </div>
                     <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
-                      <button type="submit" className="admin-add-item-btn" style={{ flex: 1 }} disabled={savingHeroSlide}>
+                      <button type="submit" className="admin-add-item-btn" style={{ flex: 1 }} disabled={savingHeroSlide || uploadingImage}>
                         {savingHeroSlide ? (
                           <div className="admin-spinner" style={{ marginRight: '6px' }}></div>
                         ) : editingHeroSlideId ? (
@@ -1215,9 +1368,12 @@ export default function Admin() {
                       <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
                         <input type="text" value={newPromotion.imageUrl} onChange={(e) => setNewPromotion((p) => ({ ...p, imageUrl: e.target.value }))} placeholder="/images/promo-1.avif or .mp4 link" style={{ flex: 1, margin: 0 }} required={!newPromotion.imageUrl} />
                         <span style={{ fontSize: "12px", color: "var(--color-text-secondary)" }}>OR</span>
-                        <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, setNewPromotion)} disabled={uploadingImage} style={{ flex: 1, padding: "8px", background: "rgba(255,255,255,0.05)", borderRadius: "4px" }} />
+                        <input type="file" accept="image/*,video/*" onChange={(e) => handleFileUpload(e, setNewPromotion)} disabled={uploadingImage} style={{ flex: 1, padding: "8px", background: "rgba(255,255,255,0.05)", borderRadius: "4px" }} />
                       </div>
-                      {uploadingImage && <small style={{ color: "var(--color-brand-gold)", display: "block", marginTop: "8px" }}>Compressing image...</small>}
+                      {uploadingImage && <small style={{ color: "var(--color-brand-gold)", display: "block", marginTop: "8px" }}>Processing media file...</small>}
+                      <small style={{ color: 'var(--color-text-secondary)', fontSize: '11px', marginTop: '6px', display: 'block' }}>
+                        Max file size: 2MB for images (auto-compressed to WebP), 10MB for videos.
+                      </small>
                     </div>
                     <div className="form-row-checkboxes">
                       <label className="checkbox-label">
@@ -1225,7 +1381,7 @@ export default function Admin() {
                         <span>Active</span>
                       </label>
                     </div>
-                    <button type="submit" className="admin-add-item-btn" disabled={savingPromo}>
+                    <button type="submit" className="admin-add-item-btn" disabled={savingPromo || uploadingImage}>
                       {savingPromo ? (
                         <div className="admin-spinner" style={{ marginRight: '6px' }}></div>
                       ) : (
@@ -1282,6 +1438,194 @@ export default function Admin() {
                           </div>
                         </div>
                       ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {activeTab === "gallery" && (
+            <motion.div
+              key="gallery"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="admin-menu-header">
+                <h2>Gallery Settings</h2>
+                <p>Manage the infinite scrolling food/menu media gallery</p>
+              </div>
+
+              <div className="admin-menu-grid">
+                <div className="admin-menu-form-container">
+                  <h2>{editingGalleryItemId ? `Edit Gallery Item` : "Add New Gallery Item"}</h2>
+                  <form onSubmit={handleAddGalleryItem} className="admin-menu-form">
+                    <div className="form-group">
+                      <label>Title (Optional Caption)</label>
+                      <input 
+                        type="text" 
+                        value={newGalleryItem.title} 
+                        onChange={(e) => setNewGalleryItem((p) => ({ ...p, title: e.target.value }))} 
+                        placeholder="Es: Dragon Roll Signature" 
+                      />
+                    </div>
+                    
+                    <div className="form-group" style={{ marginBottom: "16px" }}>
+                      <label>Media (Image/Video URL or Upload) *</label>
+                      <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                        <input 
+                          type="text" 
+                          value={newGalleryItem.imageUrl} 
+                          onChange={(e) => setNewGalleryItem((p) => ({ ...p, imageUrl: e.target.value }))} 
+                          placeholder="/images/menu/menu (1).jpeg or .mp4 link" 
+                          style={{ flex: 1, margin: 0 }} 
+                          required={!newGalleryItem.imageUrl} 
+                        />
+                        <span style={{ fontSize: "12px", color: "var(--color-text-secondary)" }}>OR</span>
+                        <input 
+                          type="file" 
+                          accept="image/*,video/*" 
+                          onChange={(e) => handleFileUpload(e, setNewGalleryItem)} 
+                          disabled={uploadingImage} 
+                          style={{ flex: 1, padding: "8px", background: "rgba(255,255,255,0.05)", borderRadius: "4px" }} 
+                        />
+                      </div>
+                      {uploadingImage && <small style={{ color: "var(--color-brand-gold)", display: "block", marginTop: "8px" }}>Processing media file...</small>}
+                      <small style={{ color: 'var(--color-text-secondary)', fontSize: '11px', marginTop: '6px', display: 'block' }}>
+                        Max file size: 2MB for images (auto-compressed to WebP), 10MB for videos.
+                      </small>
+                    </div>
+
+                    <div className="form-row-checkboxes">
+                      <label className="checkbox-label">
+                        <input 
+                          type="checkbox" 
+                          checked={newGalleryItem.active} 
+                          onChange={(e) => setNewGalleryItem((p) => ({ ...p, active: e.target.checked }))} 
+                        />
+                        <span>Active</span>
+                      </label>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                      <button type="submit" className="admin-add-item-btn" style={{ flex: 1 }} disabled={savingGalleryItem || uploadingImage}>
+                        {savingGalleryItem ? (
+                          <div className="admin-spinner" style={{ marginRight: '6px' }}></div>
+                        ) : editingGalleryItemId ? (
+                          <Check size={16} />
+                        ) : (
+                          <PlusCircle size={16} />
+                        )}
+                        <span>
+                          {savingGalleryItem
+                            ? editingGalleryItemId
+                              ? "Saving..."
+                              : "Adding..."
+                            : editingGalleryItemId
+                            ? "Update Item"
+                            : "Add to Gallery"}
+                        </span>
+                      </button>
+                      
+                      {editingGalleryItemId && (
+                        <button
+                          type="button"
+                          className="admin-logout-btn"
+                          onClick={() => {
+                            setEditingGalleryItemId(null);
+                            setNewGalleryItem({ title: "", imageUrl: "", order: 0, active: true });
+                          }}
+                          style={{ margin: 0, padding: '14px' }}
+                        >
+                          <X size={16} />
+                          <span>Cancel</span>
+                        </button>
+                      )}
+                    </div>
+                  </form>
+                </div>
+
+                <div className="admin-menu-list-container">
+                  <div className="admin-menu-list-header">
+                    <h2>Manage Gallery Items</h2>
+                  </div>
+                  {galleryLoading ? (
+                    <div className="admin-loading-spinner-wrapper">
+                      <div className="menu-loading-spinner"></div>
+                    </div>
+                  ) : (
+                    <div className="admin-menu-items-list">
+                      {galleryItems.map((item, index) => (
+                        <div key={item.id} className="admin-menu-item-row">
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <div className="admin-reorder-btns">
+                              <button
+                                className="admin-reorder-btn"
+                                onClick={() => handleMoveItem(index, 'up', galleryItems, updateGalleryItem)}
+                                disabled={index === 0}
+                                title="Move up"
+                              >
+                                <ChevronUp size={14} />
+                              </button>
+                              <button
+                                className="admin-reorder-btn"
+                                onClick={() => handleMoveItem(index, 'down', galleryItems, updateGalleryItem)}
+                                disabled={index === galleryItems.length - 1}
+                                title="Move down"
+                              >
+                                <ChevronDown size={14} />
+                              </button>
+                            </div>
+                            
+                            {/* Visual Thumbnail */}
+                            <div style={{ width: '48px', height: '48px', borderRadius: '4px', overflow: 'hidden', background: '#222', flexShrink: 0 }}>
+                              {/\.(mp4|webm|ogg)(\?.*)?$/i.test(item.imageUrl) ? (
+                                <video src={item.imageUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} muted />
+                              ) : (
+                                <img src={item.imageUrl || '/images/dragon-roll.avif'} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                              )}
+                            </div>
+
+                            <div className="admin-menu-item-info">
+                              <h4>{item.title || "(Untitled Item)"}</h4>
+                              <p style={{ fontSize: '11px', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', maxWidth: '180px' }}>
+                                {item.imageUrl}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="admin-menu-item-actions">
+                            <button 
+                              onClick={() => handleGalleryItemToggle(item.id, item.active)} 
+                              className={`admin-toggle-btn ${item.active ? "active-available" : ""}`}
+                            >
+                              {item.active ? "Active" : "Hidden"}
+                            </button>
+                            
+                            <button 
+                              onClick={() => handleStartGalleryEdit(item)} 
+                              className="admin-delete-row-btn" 
+                              style={{ color: 'var(--color-brand-gold)', marginRight: '4px' }} 
+                              title="Edit Item"
+                            >
+                              <Edit size={14} />
+                            </button>
+                            
+                            <button 
+                              onClick={() => handleGalleryItemDelete(item.id)} 
+                              className="admin-delete-row-btn" 
+                              title="Delete Item"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                      {galleryItems.length === 0 && (
+                        <p className="admin-empty-state" style={{ padding: '20px 0' }}>No gallery items found. Click 'Import Demo Menu' to seed or upload some media files!</p>
+                      )}
                     </div>
                   )}
                 </div>

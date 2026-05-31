@@ -15,7 +15,7 @@ const AboutSection = () => {
           transition={{ duration: 0.7, ease: 'easeOut' }}
         >
           <img
-            src="/images/sashimi-platter.avif"
+            src="/images/1.jpeg"
             alt="Kyō-To restaurant atmosphere"
             className="about__image"
             loading="lazy"

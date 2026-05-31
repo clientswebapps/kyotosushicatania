@@ -33,22 +33,16 @@ export default function About() {
           transition={{ duration: 0.8 }}
         >
           <div className="about-story-image">
-            <img src="/images/sashimi-platter.avif" alt="Our restaurant" />
+            <img src="/images/2.jpeg" alt="Our restaurant and menu" />
           </div>
           <div className="about-story-text">
             <span className="about-label">OUR STORY</span>
             <h2>Tradition and Innovation</h2>
             <p>
-              Kyō-To Sushi Catania was born from a passion for authentic Japanese
-              cuisine and the desire to bring a unique culinary experience to the
-              heart of Sicily. Our name evokes Kyoto, the ancient capital of Japan,
-              guardian of age-old traditions.
+              At Kyō-To Sushi Catania, our culinary journey is defined by a dedication to menu innovation and restaurant excellence. Every dish on our menu is a testament to how we bridge traditional Japanese roots with contemporary flavors, crafting a premium dining experience that is both authentic and modern.
             </p>
             <p>
-              Every dish we serve is the result of a perfect balance between
-              tradition and contemporary creativity. We use only the finest
-              ingredients, carefully selected by our chef to ensure authentic
-              freshness and flavor.
+              From raw delicacies to carefully designed signature plates, we select every ingredient with absolute precision. Our restaurant aims to provide more than just a meal—we invite you to experience a harmonious blend of taste, presentation, and warm hospitality.
             </p>
           </div>
         </motion.div>
@@ -61,21 +55,16 @@ export default function About() {
           transition={{ duration: 0.8 }}
         >
           <div className="about-story-image">
-            <img src="/images/dragon-roll.avif" alt="Our dishes" />
+            <img src="/images/3.jpeg" alt="Our menu varieties" />
           </div>
           <div className="about-story-text">
             <span className="about-label">OUR PHILOSOPHY</span>
             <h2>The Art of Washoku</h2>
             <p>
-              Washoku — traditional Japanese cuisine — is much more than a
-              simple way of cooking. It is an art that celebrates the harmony of
-              flavors, colors, and textures, respecting the seasonality of
-              ingredients.
+              The heart of our menu lies in the art of Washoku—the traditional Japanese philosophy of harmony, balance, and aesthetic presentation. We design our menu to showcase the natural flavors of high-quality seasonal ingredients, celebrating their taste, color, and texture in every single plate.
             </p>
             <p>
-              In our restaurant, every composition is designed to delight the
-              eyes before the palate. From the minimalist elegance of sashimi to
-              the richness of our creative rolls, every dish tells a story.
+              Each section of our menu, from the elegant simplicity of traditional sashimi to the bold, creative textures of our custom rolls, has been curated to tell a story of culinary dedication. It is a sensory exploration that honors age-old craftsmanship in every bite.
             </p>
             <p className="about-japanese-text">和食の心</p>
             <p className="about-japanese-subtitle">

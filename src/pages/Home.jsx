@@ -2,6 +2,7 @@ import HeroCarousel from "../components/home/HeroCarousel";
 import PromotionsSection from "../components/home/PromotionsSection";
 import MenuPreview from "../components/home/MenuPreview";
 import AboutSection from "../components/home/AboutSection";
+import MenuGallery from "../components/home/MenuGallery";
 import ContactSection from "../components/home/ContactSection";
 import Footer from "../components/layout/Footer";
 import '../styles/onboarding.css';
@@ -67,6 +68,7 @@ export default function Home() {
       <PromotionsSection />
       <MenuPreview />
       <AboutSection />
+      <MenuGallery />
       <ContactSection />
       <Footer />
     </div>

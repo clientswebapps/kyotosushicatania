@@ -1,0 +1,263 @@
+/* ============================================
+   KYOTO SUSHI CATANIA — Menu Gallery Marquee
+   ============================================ */
+
+.menu-gallery-section {
+  padding: 80px 0 120px;
+  background: var(--color-bg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-gallery__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 48px;
+  padding: 0 60px;
+  gap: 24px;
+}
+
+.menu-gallery__header-text {
+  text-align: left;
+}
+
+.menu-gallery__nav-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.menu-gallery__nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-light);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all var(--transition-medium);
+}
+
+.menu-gallery__nav-btn:hover {
+  background: var(--color-brand-gold);
+  color: var(--color-bg);
+  border-color: var(--color-brand-gold);
+  box-shadow: 0 0 15px rgba(243, 192, 22, 0.4);
+}
+
+/* --- Carousel Wrapper --- */
+.menu-gallery__carousel-wrapper {
+  position: relative;
+  max-width: 100%;
+  margin: 0 auto;
+  width: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+  -webkit-overflow-scrolling: touch;
+}
+
+.menu-gallery__carousel-wrapper::-webkit-scrollbar {
+  display: none; /* Safari/Chrome */
+}
+
+/* Fade edges for a polished look */
+.menu-gallery__carousel-wrapper::before,
+.menu-gallery__carousel-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 80px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.menu-gallery__carousel-wrapper::before {
+  left: 0;
+  background: linear-gradient(to right, var(--color-bg), transparent);
+}
+
+.menu-gallery__carousel-wrapper::after {
+  right: 0;
+  background: linear-gradient(to left, var(--color-bg), transparent);
+}
+
+.menu-gallery__track {
+  display: flex;
+  gap: 24px;
+  width: max-content;
+  padding: 8px 60px;
+}
+
+.menu-gallery__card {
+  position: relative;
+  flex: 0 0 auto;
+  width: 320px;
+  height: 400px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--color-border-light);
+  background: var(--color-bg-elevated);
+  scroll-snap-align: start;
+  transition: border-color var(--transition-medium), box-shadow var(--transition-medium), transform var(--transition-medium);
+}
+
+.menu-gallery__card:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: rgba(243, 192, 22, 0.4);
+  box-shadow: var(--shadow-card-premium);
+  z-index: 6;
+}
+
+.menu-gallery__media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+.menu-gallery__card:hover .menu-gallery__media {
+  transform: scale(1.05);
+}
+
+/* Overlay that slides in on hover */
+.menu-gallery__info-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px;
+  background: linear-gradient(to top, rgba(10, 10, 10, 0.9) 0%, rgba(10, 10, 10, 0.3) 70%, transparent 100%);
+  z-index: 2;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all var(--transition-medium);
+}
+
+.menu-gallery__card:hover .menu-gallery__info-overlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.menu-gallery__item-title {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--color-text);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  display: block;
+}
+
+/* ============================================
+   Accessibility - Respect Prefers Reduced Motion
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  .menu-gallery__carousel-wrapper {
+    scroll-behavior: auto;
+  }
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 1024px) {
+  .menu-gallery-section {
+    padding: 60px 0 80px;
+  }
+
+  .menu-gallery__header {
+    padding: 0 40px;
+    margin-bottom: 32px;
+  }
+
+  .menu-gallery__track {
+    padding: 8px 40px;
+  }
+
+  .menu-gallery__card {
+    width: 280px;
+    height: 350px;
+  }
+  
+  .menu-gallery__carousel-wrapper::before,
+  .menu-gallery__carousel-wrapper::after {
+    width: 60px;
+  }
+}
+
+@media (max-width: 768px) {
+  .menu-gallery__header {
+    padding: 0 24px;
+    margin-bottom: 32px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .menu-gallery__nav-buttons {
+    display: none; /* Hide navigation buttons on touch screens as swipe is native */
+  }
+
+  .menu-gallery__carousel-wrapper::before,
+  .menu-gallery__carousel-wrapper::after {
+    width: 40px;
+  }
+
+  .menu-gallery__track {
+    padding: 8px 24px;
+  }
+
+  .menu-gallery__card {
+    width: 240px;
+    height: 300px;
+  }
+}
+
+/* ============================================
+   Loading State Spinner
+   ============================================ */
+.menu-gallery__loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 80px 0;
+  min-height: 400px;
+  width: 100%;
+}
+
+.menu-gallery__spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+  border-top-color: var(--color-brand-gold);
+  animation: gallery-spin 1s linear infinite;
+}
+
+@keyframes gallery-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Spinner for Loading individual images/videos inside gallery cards */
+.menu-gallery__image-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  border-top-color: var(--color-brand-gold);
+  animation: gallery-spin 1s linear infinite;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -16px;
+  margin-left: -16px;
+  z-index: 2;
+}
