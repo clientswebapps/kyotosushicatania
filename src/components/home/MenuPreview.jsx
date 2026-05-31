@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCollection } from '../../hooks/useFirestore';
-import { ArrowRight, Star, AlertCircle } from 'lucide-react';
+import { ArrowRight, Star, AlertCircle, Info } from 'lucide-react';
 import AllergenModal from '../common/AllergenModal';
 
 import '../../styles/menu.css';
@@ -223,6 +223,10 @@ const MenuPreview = () => {
                                     <img src="/images/logo-white.avif" alt="" className="placeholder-logo" />
                               </div>
                             )}
+                            <div className="menu-card-hint-badge">
+                              <Info size={12} />
+                              <span>Info</span>
+                            </div>
                             {item.isBestSeller && (
                               <span className="menu-modal-badge">Best Seller</span>
                             )}
@@ -312,6 +316,10 @@ const MenuPreview = () => {
                                       <img src="/images/logo-white.avif" alt="" className="placeholder-logo" />
                                 </div>
                               )}
+                              <div className="menu-card-hint-badge">
+                                <Info size={12} />
+                                <span>Info</span>
+                              </div>
                               {item.isBestSeller && (
                                 <span className="menu-modal-badge">Best Seller</span>
                               )}
@@ -432,6 +440,10 @@ const MenuPreview = () => {
                                         <img src="/images/logo-white.avif" alt="" className="placeholder-logo" />
                                   </div>
                                 )}
+                                <div className="menu-card-hint-badge">
+                                  <Info size={12} />
+                                  <span>Info</span>
+                                </div>
                                 {item.isBestSeller && (
                                   <span className="menu-modal-badge">Best Seller</span>
                                 )}

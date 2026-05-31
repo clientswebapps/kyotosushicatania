@@ -1,8 +1,8 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCollection } from "../hooks/useFirestore";
-import { Search, AlertCircle } from "lucide-react";
+import { Search, AlertCircle, X, Info } from "lucide-react";
 import AllergenModal from "../components/common/AllergenModal";
 import "../styles/menu.css";
 
@@ -50,9 +50,32 @@ export default function Menu() {
   const [searchQuery, setSearchQuery] = useState("");
   const [flippedCards, setFlippedCards] = useState({});
   const [showAllergens, setShowAllergens] = useState(false);
+  const [selectedModalItem, setSelectedModalItem] = useState(null);
+
+  useEffect(() => {
+    if (selectedModalItem) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [selectedModalItem]);
+  const tabsRef = useRef(null);
 
   const toggleFlip = useCallback((itemId) => {
     setFlippedCards((prev) => ({ ...prev, [itemId]: !prev[itemId] }));
+  }, []);
+
+  const handleCategoryChangeAndScroll = useCallback((catId, itemId = null) => {
+    setActiveCategory(catId);
+    if (itemId) {
+      setFlippedCards({ [itemId]: true });
+    }
+    setTimeout(() => {
+      tabsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 80);
   }, []);
 
   const handleMouseMove = useCallback((e) => {
@@ -156,7 +179,7 @@ export default function Menu() {
       </div>
 
       {!searchQuery && (
-        <div className="menu-section__tabs">
+        <div ref={tabsRef} className="menu-section__tabs">
           <button
             className={`menu-section__tab ${currentCategory === "all" ? "active" : ""}`}
             onClick={() => {
@@ -205,17 +228,27 @@ export default function Menu() {
                   if (catItems.length === 0) return null;
                   return (
                     <div key={cat.id} className="menu-all-cat-section">
-                      <h2 className="menu-all-cat-title">
+                      <h2 className="menu-all-cat-title" onClick={() => handleCategoryChangeAndScroll(cat.id)}>
                         <span style={{ marginRight: '10px' }}>{cat.icon}</span>
                         {cat.name}
                       </h2>
                       <div className="menu-all-cat-items">
                         {catItems.map((item) => (
-                          <div key={item.id} className="menu-all-dotted-item" onClick={() => toggleFlip(item.id)}>
+                          <div 
+                            key={item.id} 
+                            className="menu-all-dotted-item" 
+                            onClick={() => {
+                              setFlippedCards((prev) => ({ ...prev, [item.id]: false }));
+                              setSelectedModalItem(item);
+                            }}
+                          >
                             <div className="menu-all-dotted-main">
                               <span className="menu-all-dotted-name">{item.name}</span>
                               <span className="menu-all-dotted-connector"></span>
-                              <span className="menu-all-dotted-price">€{item.price.toFixed(2)}</span>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <span className="menu-all-dotted-price">€{item.price.toFixed(2)}</span>
+                                <Info size={14} className="menu-all-dotted-info-icon" style={{ color: 'var(--color-brand-gold)', opacity: 0.6, flexShrink: 0 }} />
+                              </div>
                             </div>
                             {item.description && (
                               <p className="menu-all-dotted-desc">{item.description}</p>
@@ -271,6 +304,10 @@ export default function Menu() {
                                 <img src="/images/logo-white.avif" alt="" className="placeholder-logo" />
                               </div>
                             )}
+                            <div className="menu-card-hint-badge">
+                              <Info size={12} />
+                              <span>Info</span>
+                            </div>
                             {item.isBestSeller && (
                               <span className="menu-modal-badge">Best Seller</span>
                             )}
@@ -334,6 +371,123 @@ export default function Menu() {
         </div>
       )}
 
+
+      {/* Detail Modal for Dotted Menu Items */}
+      <AnimatePresence>
+        {selectedModalItem && (
+          <div className="menu-detail-modal-backdrop" onClick={() => setSelectedModalItem(null)}>
+            <motion.div
+              className="menu-detail-modal-content"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.3 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button className="menu-detail-modal-close" onClick={() => setSelectedModalItem(null)}>
+                <X size={24} />
+              </button>
+              
+              <div className="menu-detail-modal-card-wrapper">
+                {(() => {
+                  const item = selectedModalItem;
+                  const hasMedia = item.imageUrl || imageMap[item.name];
+                  const isVideo = hasMedia && /\.(mp4|webm|ogg)(\?.*)?$/i.test(item.imageUrl || "");
+                  return (
+                    <div
+                      className="menu-flip-card menu-flip-card--modal"
+                      onClick={() => toggleFlip(item.id)}
+                      onMouseMove={handleMouseMove}
+                      onMouseLeave={handleMouseLeave}
+                    >
+                      <div className={`menu-flip-card__inner ${flippedCards[item.id] ? 'is-flipped' : ''}`}>
+                        {/* ---- FRONT FACE ---- */}
+                        <div className="menu-flip-card__face menu-flip-card__front">
+                          <div className="menu-section__card-image-wrapper">
+                            {hasMedia ? (
+                              isVideo ? (
+                                <video
+                                  src={item.imageUrl}
+                                  className="menu-section__card-image"
+                                  autoPlay
+                                  loop
+                                  muted
+                                  playsInline
+                                  style={{ objectFit: "cover", width: "100%", height: "100%" }}
+                                />
+                              ) : (
+                                <img
+                                  src={item.imageUrl || imageMap[item.name]}
+                                  alt={item.name}
+                                  className="menu-section__card-image"
+                                  loading="lazy"
+                                />
+                              )
+                            ) : (
+                              <div className="menu-section__card-image-placeholder">
+                                <img src="/images/logo-white.avif" alt="" className="placeholder-logo" />
+                              </div>
+                            )}
+                            <div className="menu-card-hint-badge">
+                              <Info size={12} />
+                              <span>Info</span>
+                            </div>
+                            {item.isBestSeller && (
+                              <span className="menu-modal-badge">Best Seller</span>
+                            )}
+                            {!item.isAvailable && (
+                              <div className="menu-card-unavailable">Unavailable</div>
+                            )}
+                          </div>
+                          <div className="menu-section__card-body">
+                            <h3 className="menu-section__card-name">{item.name}</h3>
+                            {(item.highlights || itemHighlights[item.name]) && (
+                              <div className="menu-section__card-highlights">
+                                {(item.highlights || itemHighlights[item.name]).map((tag, idx) => (
+                                  <span key={idx} className="menu-highlight-tag">{tag}</span>
+                                ))}
+                              </div>
+                            )}
+                            {item.description && (
+                              <p className="menu-section__card-description">{item.description}</p>
+                            )}
+                            <div className="menu-price-wrapper">
+                              {item.originalPrice && Number(item.originalPrice) > Number(item.price) && (
+                                <span className="menu-price-original">
+                                  €{Number(item.originalPrice).toFixed(2)}
+                                </span>
+                              )}
+                              <span className="menu-section__card-price">
+                                €{item.price.toFixed(2)}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* ---- BACK FACE ---- */}
+                        <div className="menu-flip-card__face menu-flip-card__back">
+                          {item.isBestSeller && (
+                            <span className="menu-modal-badge menu-modal-badge--back">Best Seller</span>
+                          )}
+                          <h3 className="menu-flip-card__back-title">{item.name}</h3>
+                          {(item.highlights || itemHighlights[item.name]) && (
+                            <div className="menu-flip-card__back-highlights">
+                              {(item.highlights || itemHighlights[item.name]).map((tag, idx) => (
+                                <span key={idx} className="menu-highlight-tag">{tag}</span>
+                              ))}
+                            </div>
+                          )}
+                          <p className="menu-flip-card__back-description">{item.description}</p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       <AllergenModal isOpen={showAllergens} onClose={() => setShowAllergens(false)} />
     </section>

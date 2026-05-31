@@ -821,6 +821,13 @@
   margin: 0;
   display: flex;
   align-items: center;
+  cursor: pointer;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.menu-all-cat-title:hover {
+  color: var(--color-text);
+  border-bottom-color: rgba(255, 255, 255, 0.35);
 }
 
 .menu-all-cat-items {
@@ -876,4 +883,173 @@
   color: var(--color-text-secondary);
   margin: 4px 0 0 0;
   line-height: 1.4;
+}
+
+/* --- Detail Modal for Dotted Menu Items --- */
+.menu-detail-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.menu-detail-modal-content {
+  position: relative;
+  width: 100%;
+  max-width: 368px;
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(243, 192, 22, 0.2);
+  padding: 40px 24px 24px;
+  box-shadow: var(--shadow-card-premium);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.menu-detail-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.menu-detail-modal-close:hover {
+  color: var(--color-brand-gold);
+}
+
+.menu-detail-modal-card-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.menu-flip-card--modal {
+  width: 100%;
+  max-width: 320px;
+  height: 380px;
+}
+
+.menu-flip-card--modal .menu-section__card-image-wrapper {
+  height: 200px;
+}
+
+/* --- Floating Info Badge on Card Images --- */
+.menu-card-hint-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(10, 10, 10, 0.75);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--color-brand-gold);
+  padding: 4px 10px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 40px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+  transition: all var(--transition-fast) ease-in-out;
+  z-index: 5;
+}
+
+.menu-flip-card:hover .menu-card-hint-badge {
+  background: var(--color-brand-gold);
+  color: var(--color-bg);
+  border-color: var(--color-brand-gold);
+  box-shadow: var(--shadow-glow-gold);
+}
+
+/* --- Dotted List Info Icon Hover Animation --- */
+.menu-all-dotted-info-icon {
+  transition: opacity var(--transition-fast) ease, transform var(--transition-fast) ease;
+}
+
+.menu-all-dotted-item:hover .menu-all-dotted-info-icon {
+  opacity: 1 !important;
+  transform: scale(1.2);
+}
+
+/* --- Reduced Tilt effect for Modal Card --- */
+.menu-flip-card--modal .menu-flip-card__inner {
+  transform: rotateX(calc(var(--rx, 0deg) * 0.3)) rotateY(calc(var(--ry, 0deg) * 0.3));
+}
+
+.menu-flip-card--modal .menu-flip-card__inner.is-flipped {
+  transform: rotateX(calc(var(--rx, 0deg) * 0.3)) rotateY(calc(180deg - var(--ry, 0deg) * 0.3));
+}
+
+/* --- Larger Desktop Sizing for All Category Menu Item Modal & Card --- */
+@media (min-width: 769px) {
+  .menu-flip-card--modal:hover .menu-flip-card__inner {
+    transform: translateY(-2px) rotateX(calc(var(--rx, 0deg) * 0.3)) rotateY(calc(var(--ry, 0deg) * 0.3));
+  }
+
+  .menu-flip-card--modal:hover .menu-flip-card__inner.is-flipped {
+    transform: translateY(-2px) rotateX(calc(var(--rx, 0deg) * 0.3)) rotateY(calc(180deg - var(--ry, 0deg) * 0.3));
+  }
+
+  .menu-detail-modal-content {
+    max-width: 480px; /* Increased from 368px */
+    padding: 48px 32px 32px; /* Extra breathing room */
+  }
+
+  .menu-flip-card--modal {
+    max-width: 416px; /* Increased from 320px */
+    height: 500px; /* Increased from 380px */
+  }
+
+  .menu-flip-card--modal .menu-section__card-image-wrapper {
+    height: 250px; /* Increased from 200px */
+  }
+
+  .menu-flip-card--modal .menu-section__card-name {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+
+  .menu-flip-card--modal .menu-section__card-description {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+
+  .menu-flip-card--modal .menu-flip-card__back-title {
+    font-size: 24px;
+    margin-bottom: 12px;
+  }
+
+  .menu-flip-card--modal .menu-flip-card__back-description {
+    font-size: 15px;
+    line-height: 1.6;
+  }
+}
+
+/* --- Accessibility: Reduced Motion --- */
+@media (prefers-reduced-motion: reduce) {
+  .menu-all-dotted-info-icon {
+    transition: none !important;
+    transform: none !important;
+  }
+  .menu-all-dotted-item:hover .menu-all-dotted-info-icon {
+    transform: none !important;
+  }
 }
