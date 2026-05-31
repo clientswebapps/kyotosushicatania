@@ -314,7 +314,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform var(--transition-slow);
+  transition: transform var(--transition-slow), opacity 0.3s ease-in-out;
 }
 
 .menu-flip-card:hover .menu-section__card-image {
@@ -496,6 +496,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: opacity 0.3s ease-in-out;
 }
 
 .menu-section__banner-body {
@@ -1052,4 +1053,20 @@
   .menu-all-dotted-item:hover .menu-all-dotted-info-icon {
     transform: none !important;
   }
+}
+
+/* --- Spinner for Loading Images inside cards --- */
+.menu-image-spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  border-top-color: var(--color-brand-gold);
+  animation: spin 1s linear infinite;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -14px;
+  margin-left: -14px;
+  z-index: 2;
 }

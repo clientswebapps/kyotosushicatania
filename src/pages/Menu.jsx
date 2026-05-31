@@ -43,6 +43,26 @@ const itemHighlights = {
   'Grilled Gyoza': ['🥟 Hand-made', '🔥 Grilled to order']
 };
 
+// Reusable Image component with loading spinner
+function ImageWithLoader({ src, alt, className, ...props }) {
+  const [imageLoading, setImageLoading] = useState(true);
+
+  return (
+    <div style={{ position: "relative", width: "100%", height: "100%" }}>
+      {imageLoading && <div className="menu-image-spinner"></div>}
+      <img
+        src={src}
+        alt={alt}
+        className={className}
+        onLoad={() => setImageLoading(false)}
+        onError={() => setImageLoading(false)}
+        style={{ opacity: imageLoading ? 0 : 1 }}
+        {...props}
+      />
+    </div>
+  );
+}
+
 export default function Menu() {
   const { data: categories } = useCollection("menuCategories");
   const { data: items, loading } = useCollection("menuItems");
@@ -292,7 +312,7 @@ export default function Menu() {
                                   style={{ objectFit: "cover", width: "100%", height: "100%" }}
                                 />
                               ) : (
-                                <img
+                                <ImageWithLoader
                                   src={item.imageUrl || imageMap[item.name]}
                                   alt={item.name}
                                   className="menu-section__card-image"
@@ -416,7 +436,7 @@ export default function Menu() {
                                   style={{ objectFit: "cover", width: "100%", height: "100%" }}
                                 />
                               ) : (
-                                <img
+                                <ImageWithLoader
                                   src={item.imageUrl || imageMap[item.name]}
                                   alt={item.name}
                                   className="menu-section__card-image"

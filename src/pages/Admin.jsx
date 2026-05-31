@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   useCollection,
@@ -27,7 +27,8 @@ import {
   Database,
   ChevronUp,
   ChevronDown,
-  Edit
+  Edit,
+  Search
 } from "lucide-react";
 import { collection, doc, setDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
@@ -110,6 +111,22 @@ export default function Admin() {
       setUploadingImage(false);
     }
   };
+
+  const [menuSearchQuery, setMenuSearchQuery] = useState("");
+  const [savingMenuItem, setSavingMenuItem] = useState(false);
+  const [savingHeroSlide, setSavingHeroSlide] = useState(false);
+  const [savingPromo, setSavingPromo] = useState(false);
+
+  // Filtered menu items for the list search functionality
+  const filteredMenuItems = useMemo(() => {
+    if (!menuItems) return [];
+    if (!menuSearchQuery.trim()) return menuItems;
+    const q = menuSearchQuery.toLowerCase();
+    return menuItems.filter((item) =>
+      item.name.toLowerCase().includes(q) ||
+      (item.description && item.description.toLowerCase().includes(q))
+    );
+  }, [menuItems, menuSearchQuery]);
 
   // New Menu Item Form State
   const [newItem, setNewItem] = useState({
@@ -213,6 +230,7 @@ export default function Admin() {
   // Handle Menu Item submission (Add or Update)
   const handleAddMenuItem = async (e) => {
     e.preventDefault();
+    setSavingMenuItem(true);
     try {
       const payload = {
         ...newItem,
@@ -245,6 +263,8 @@ export default function Admin() {
       });
     } catch (err) {
       console.error(err);
+    } finally {
+      setSavingMenuItem(false);
     }
   };
 
@@ -287,6 +307,7 @@ export default function Admin() {
   // --- Hero Actions ---
   const handleAddHeroSlide = async (e) => {
     e.preventDefault();
+    setSavingHeroSlide(true);
     try {
       const payload = {
         ...newHeroSlide,
@@ -304,7 +325,11 @@ export default function Admin() {
         });
       }
       setNewHeroSlide({ title: "", subtitle: "", imageUrl: "", ctaText: "", ctaLink: "", duration: 5, order: 0, active: true });
-    } catch (err) { console.error(err); }
+    } catch (err) { 
+      console.error(err); 
+    } finally {
+      setSavingHeroSlide(false);
+    }
   };
 
   const handleStartHeroEdit = (slide) => {
@@ -334,6 +359,7 @@ export default function Admin() {
   // --- Promo Actions ---
   const handleAddPromotion = async (e) => {
     e.preventDefault();
+    setSavingPromo(true);
     try {
       const minOrder = promotions?.length > 0 ? Math.min(...promotions.map(s => s.order || 0)) : 0;
       await addPromo({
@@ -341,7 +367,11 @@ export default function Admin() {
         order: minOrder - 1,
       });
       setNewPromotion({ title: "", description: "", imageUrl: "", tag: "", link: "", order: 0, active: true });
-    } catch (err) { console.error(err); }
+    } catch (err) { 
+      console.error(err); 
+    } finally {
+      setSavingPromo(false);
+    }
   };
 
   const handlePromoDelete = async (id) => {
@@ -551,7 +581,9 @@ export default function Admin() {
             >
               <h2>Reservation Requests</h2>
               {resLoading ? (
-                <p>Loading reservations...</p>
+                <div className="admin-loading-spinner-wrapper">
+                  <div className="menu-loading-spinner"></div>
+                </div>
               ) : reservations.length === 0 ? (
                 <p className="admin-empty-state">No reservations found.</p>
               ) : (
@@ -831,9 +863,23 @@ export default function Admin() {
                     </div>
 
                     <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
-                      <button type="submit" className="admin-add-item-btn" style={{ flex: 1 }}>
-                        {editingItemId ? <Check size={16} /> : <PlusCircle size={16} />}
-                        <span>{editingItemId ? "Update Dish" : "Add to Menu"}</span>
+                      <button type="submit" className="admin-add-item-btn" style={{ flex: 1 }} disabled={savingMenuItem}>
+                        {savingMenuItem ? (
+                          <div className="admin-spinner" style={{ marginRight: '6px' }}></div>
+                        ) : editingItemId ? (
+                          <Check size={16} />
+                        ) : (
+                          <PlusCircle size={16} />
+                        )}
+                        <span>
+                          {savingMenuItem
+                            ? editingItemId
+                              ? "Saving..."
+                              : "Adding..."
+                            : editingItemId
+                            ? "Update Dish"
+                            : "Add to Menu"}
+                        </span>
                       </button>
                       {editingItemId && (
                         <button
@@ -874,69 +920,104 @@ export default function Admin() {
                       className="admin-toggle-btn active"
                       style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', padding: '8px 12px' }}
                     >
-                      <Database size={14} />
+                      {seeding ? (
+                        <div className="admin-spinner" style={{ width: '12px', height: '12px' }}></div>
+                      ) : (
+                        <Database size={14} />
+                      )}
                       <span>{seeding ? "Importing..." : "Import Demo Menu"}</span>
                     </button>
                   </div>
+
+                  {/* Search Bar for Dishes list */}
+                  <div className="admin-search-wrapper" style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+                    <div style={{ position: 'relative', flex: 1 }}>
+                      <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-secondary)' }} />
+                      <input
+                        type="text"
+                        placeholder="Search dishes by name or description..."
+                        value={menuSearchQuery}
+                        onChange={(e) => setMenuSearchQuery(e.target.value)}
+                        className="admin-search-input"
+                        style={{ paddingLeft: '36px', width: '100%' }}
+                      />
+                    </div>
+                    {menuSearchQuery && (
+                      <button
+                        onClick={() => setMenuSearchQuery("")}
+                        className="admin-toggle-btn"
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px 14px' }}
+                      >
+                        Clear
+                      </button>
+                    )}
+                  </div>
+
                   {menuLoading ? (
-                    <p>Loading dishes...</p>
+                    <div className="admin-loading-spinner-wrapper">
+                      <div className="menu-loading-spinner"></div>
+                    </div>
                   ) : (
                     <div className="admin-menu-items-list">
-                      {menuItems.map((item) => (
-                        <div key={item.id} className="admin-menu-item-row">
-                          <div className="admin-menu-item-info">
-                            <h4>{item.name}</h4>
-                            <p>
-                              €{item.price.toFixed(2)} |{" "}
-                              {categories.find((c) => c.id === item.categoryId)
-                                ?.name || item.categoryId}
-                            </p>
+                      {filteredMenuItems.length === 0 ? (
+                        <p className="admin-empty-state" style={{ padding: '20px 0' }}>No matching dishes found.</p>
+                      ) : (
+                        filteredMenuItems.map((item) => (
+                          <div key={item.id} className="admin-menu-item-row">
+                            <div className="admin-menu-item-info">
+                              <h4>{item.name}</h4>
+                              <p>
+                                €{item.price.toFixed(2)} |{" "}
+                                {categories.find((c) => c.id === item.categoryId)
+                                  ?.name || item.categoryId}
+                              </p>
+                            </div>
+                            <div className="admin-menu-item-actions">
+                              <button
+                                onClick={() => toggleFeatured(item)}
+                                className={`admin-toggle-btn ${
+                                  item.isFeatured ? "active" : ""
+                                }`}
+                                title="Toggle Featured on Homepage"
+                              >
+                                🏠
+                              </button>
+                              <button
+                                onClick={() => toggleBestSeller(item)}
+                                className={`admin-toggle-btn ${
+                                  item.isBestSeller ? "active" : ""
+                                }`}
+                                title="Toggle Best Seller"
+                              >
+                                ⭐
+                              </button>
+                              <button
+                                onClick={() => toggleAvailable(item)}
+                                className={`admin-toggle-btn ${
+                                  item.isAvailable ? "active-available" : ""
+                                }`}
+                              >
+                                {item.isAvailable ? "Active" : "Sold Out"}
+                              </button>
+                              <button
+                                onClick={() => handleStartEdit(item)}
+                                className="admin-delete-row-btn"
+                                style={{ color: 'var(--color-brand-gold)', marginRight: '4px' }}
+                                title="Edit Dish"
+                              >
+                                <Edit size={14} />
+                              </button>
+                              <button
+                                onClick={() => handleMenuItemDelete(item.id)}
+                                className="admin-delete-row-btn"
+                                title="Delete Dish"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </div>
                           </div>
-                          <div className="admin-menu-item-actions">
-                            <button
-                              onClick={() => toggleFeatured(item)}
-                              className={`admin-toggle-btn ${
-                                item.isFeatured ? "active" : ""
-                              }`}
-                              title="Toggle Featured on Homepage"
-                            >
-                              🏠
-                            </button>
-                            <button
-                              onClick={() => toggleBestSeller(item)}
-                              className={`admin-toggle-btn ${
-                                item.isBestSeller ? "active" : ""
-                              }`}
-                              title="Toggle Best Seller"
-                            >
-                              ⭐
-                            </button>
-                            <button
-                              onClick={() => toggleAvailable(item)}
-                              className={`admin-toggle-btn ${
-                                item.isAvailable ? "active-available" : ""
-                              }`}
-                            >
-                              {item.isAvailable ? "Active" : "Sold Out"}
-                            </button>
-                            <button
-                              onClick={() => handleStartEdit(item)}
-                              className="admin-delete-row-btn"
-                              style={{ color: 'var(--color-brand-gold)', marginRight: '4px' }}
-                              title="Edit Dish"
-                            >
-                              <Edit size={14} />
-                            </button>
-                            <button
-                              onClick={() => handleMenuItemDelete(item.id)}
-                              className="admin-delete-row-btn"
-                              title="Delete Dish"
-                            >
-                              <Trash2 size={14} />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
+                        ))
+                      )}
                     </div>
                   )}
                 </div>
@@ -1002,9 +1083,23 @@ export default function Admin() {
                       </label>
                     </div>
                     <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
-                      <button type="submit" className="admin-add-item-btn" style={{ flex: 1 }}>
-                        {editingHeroSlideId ? <Check size={16} /> : <PlusCircle size={16} />}
-                        <span>{editingHeroSlideId ? "Update Slide" : "Add Slide"}</span>
+                      <button type="submit" className="admin-add-item-btn" style={{ flex: 1 }} disabled={savingHeroSlide}>
+                        {savingHeroSlide ? (
+                          <div className="admin-spinner" style={{ marginRight: '6px' }}></div>
+                        ) : editingHeroSlideId ? (
+                          <Check size={16} />
+                        ) : (
+                          <PlusCircle size={16} />
+                        )}
+                        <span>
+                          {savingHeroSlide
+                            ? editingHeroSlideId
+                              ? "Saving..."
+                              : "Adding..."
+                            : editingHeroSlideId
+                            ? "Update Slide"
+                            : "Add Slide"}
+                        </span>
                       </button>
                       {editingHeroSlideId && (
                         <button
@@ -1028,7 +1123,11 @@ export default function Admin() {
                   <div className="admin-menu-list-header">
                     <h2>Manage Existing Slides</h2>
                   </div>
-                  {heroLoading ? <p>Loading slides...</p> : (
+                  {heroLoading ? (
+                    <div className="admin-loading-spinner-wrapper">
+                      <div className="menu-loading-spinner"></div>
+                    </div>
+                  ) : (
                     <div className="admin-menu-items-list">
                       {heroSlides.map((slide, index) => (
                         <div key={slide.id} className="admin-menu-item-row">
@@ -1126,9 +1225,13 @@ export default function Admin() {
                         <span>Active</span>
                       </label>
                     </div>
-                    <button type="submit" className="admin-add-item-btn">
-                      <PlusCircle size={16} />
-                      <span>Add Promotion</span>
+                    <button type="submit" className="admin-add-item-btn" disabled={savingPromo}>
+                      {savingPromo ? (
+                        <div className="admin-spinner" style={{ marginRight: '6px' }}></div>
+                      ) : (
+                        <PlusCircle size={16} />
+                      )}
+                      <span>{savingPromo ? "Adding..." : "Add Promotion"}</span>
                     </button>
                   </form>
                 </div>
@@ -1137,7 +1240,11 @@ export default function Admin() {
                   <div className="admin-menu-list-header">
                     <h2>Manage Promotions</h2>
                   </div>
-                  {promoLoading ? <p>Loading promotions...</p> : (
+                  {promoLoading ? (
+                    <div className="admin-loading-spinner-wrapper">
+                      <div className="menu-loading-spinner"></div>
+                    </div>
+                  ) : (
                     <div className="admin-menu-items-list">
                       {promotions.map((promo, index) => (
                         <div key={promo.id} className="admin-menu-item-row">

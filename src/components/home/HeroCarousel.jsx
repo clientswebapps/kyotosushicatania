@@ -80,7 +80,7 @@ const contentVariants = {
 };
 
 const HeroCarousel = () => {
-  const { data: allSlides } = useCollection('heroSlides', {
+  const { data: allSlides, loading } = useCollection('heroSlides', {
     realtime: true,
   });
 
@@ -119,6 +119,14 @@ const HeroCarousel = () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [goToNext, slides.length, currentSlide, activeSlide]);
+
+  if (loading) {
+    return (
+      <section className="hero onboarding-section" id="hero" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="hero-loading-spinner"></div>
+      </section>
+    );
+  }
 
   if (!activeSlide) return null;
 
