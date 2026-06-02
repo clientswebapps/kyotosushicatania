@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { getAuth } from "firebase/auth";
+import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -23,5 +24,10 @@ export const db = isConfigured ? getFirestore(app) : null;
 export const storage = isConfigured ? getStorage(app) : null;
 // Force auth to be null to use local mock authentication while keeping real Firestore
 export const auth = null;
+
+// Initialize analytics only if configured and in a browser context
+export const analytics = (isConfigured && typeof window !== "undefined" && firebaseConfig.measurementId) 
+  ? getAnalytics(app) 
+  : null;
 
 export default app;
