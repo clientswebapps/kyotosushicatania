@@ -103,7 +103,7 @@ export default function Contact() {
               <div>
                 <h3>Email</h3>
                 <p>
-                  <a href="mailto:info@kyotosushi.it">info@kyotosushi.it</a>
+                  <a href="mailto:reserve@kyotosushicatania.com">reserve@kyotosushicatania.com</a>
                 </p>
               </div>
             </div>

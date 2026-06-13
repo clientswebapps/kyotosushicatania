@@ -24,8 +24,8 @@ const contactInfo = [
   {
     icon: Mail,
     label: 'Email',
-    value: 'info@kyotosushi.it',
-    href: 'mailto:info@kyotosushi.it',
+    value: 'reserve@kyotosushicatania.com',
+    href: 'mailto:reserve@kyotosushicatania.com',
   },
 ];
 
