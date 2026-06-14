@@ -416,9 +416,9 @@
 
 .reservation-submit-btn {
   width: 100%;
-  background: var(--color-brand-red);
-  color: #fff;
-  border: 2px solid var(--color-brand-red);
+  background: var(--color-brand-gold);
+  color: #0a0a0a;
+  border: 2px solid var(--color-brand-gold);
   padding: 16px;
   font-size: 14px;
   font-weight: bold;
@@ -427,12 +427,24 @@
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
-.reservation-submit-btn:hover {
+.reservation-submit-btn:hover:not(:disabled) {
   background: transparent;
-  color: var(--color-brand-red);
-  box-shadow: var(--shadow-glow-red);
+  color: var(--color-brand-gold);
+  box-shadow: var(--shadow-glow-gold);
+}
+
+.reservation-submit-btn:disabled {
+  background: var(--color-border);
+  border-color: var(--color-border);
+  color: var(--color-text-secondary);
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 .form-row {

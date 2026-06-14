@@ -5,6 +5,8 @@ import Home from "./pages/Home";
 import Menu from "./pages/Menu";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 
 const Admin = lazy(() => import("./pages/Admin"));
 import ScrollToTop from "./components/ScrollToTop";
@@ -22,6 +24,8 @@ function App() {
           <Route path="menu" element={<Menu />} />
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="terms-of-service" element={<TermsOfService />} />
           <Route path="admin" element={
             <Suspense fallback={<div className="admin-loading-container"><div className="menu-loading-spinner"></div></div>}>
               <Admin />

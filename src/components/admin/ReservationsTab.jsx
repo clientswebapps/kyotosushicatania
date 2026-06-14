@@ -14,6 +14,7 @@ export default function ReservationsTab({
   const [resPartyFilter, setResPartyFilter] = useState("");
   const [resStatusTab, setResStatusTab] = useState("pending");
   const [deletingResId, setDeletingResId] = useState(null);
+  const [updatingId, setUpdatingId] = useState(null);
 
   const { updateDocument: updateRes } = useUpdateDocument("reservations");
   const { deleteDocument: deleteRes } = useDeleteDocument("reservations");
@@ -71,20 +72,36 @@ export default function ReservationsTab({
   }, [reservations, resStatusTab, resSearch, resDateFilter, resPartyFilter]);
 
   const handleResStatus = async (id, status) => {
+    if (updatingId) return;
+
+    // Accidental click prevention dialog
+    const actionText = status === "confirmed" ? "CONFIRM (Confermare)" : "CANCEL (Annullare)";
+    const confirmMessage = `Are you sure you want to ${actionText} this reservation?\n\nQuesta azione è irreversibile. Sei sicuro?`;
+    if (!window.confirm(confirmMessage)) {
+      return;
+    }
+
+    setUpdatingId(id);
     try {
       await updateRes(id, { status });
     } catch (err) {
       console.error(err);
+    } finally {
+      setUpdatingId(null);
     }
   };
 
   const handleResDelete = async (id) => {
+    if (updatingId) return;
     if (deletingResId === id) {
+      setUpdatingId(id);
       try {
         await deleteRes(id);
         setDeletingResId(null);
       } catch (err) {
         console.error(err);
+      } finally {
+        setUpdatingId(null);
       }
     } else {
       setDeletingResId(id);
@@ -248,28 +265,31 @@ export default function ReservationsTab({
                   </td>
                   <td className="text-right">
                     <div className="admin-res-actions justify-end">
-                      {res.status !== "confirmed" && (
-                        <button
-                          onClick={() => handleResStatus(res.id, "confirmed")}
-                          className="admin-res-btn confirm"
-                          title="Confirm Reservation"
-                        >
-                          <Check size={16} />
-                        </button>
-                      )}
-                      {res.status !== "cancelled" && (
-                        <button
-                          onClick={() => handleResStatus(res.id, "cancelled")}
-                          className="admin-res-btn cancel"
-                          title="Cancel Reservation"
-                        >
-                          <X size={16} />
-                        </button>
+                      {res.status === "pending" && (
+                        <>
+                          <button
+                            onClick={() => handleResStatus(res.id, "confirmed")}
+                            className="admin-res-btn confirm"
+                            title="Confirm Reservation"
+                            disabled={updatingId !== null}
+                          >
+                            <Check size={16} />
+                          </button>
+                          <button
+                            onClick={() => handleResStatus(res.id, "cancelled")}
+                            className="admin-res-btn cancel"
+                            title="Cancel Reservation"
+                            disabled={updatingId !== null}
+                          >
+                            <X size={16} />
+                          </button>
+                        </>
                       )}
                       <button
                         onClick={() => handleResDelete(res.id)}
                         className={`admin-res-btn delete ${deletingResId === res.id ? "confirming" : ""}`}
                         title={deletingResId === res.id ? "Confirm Delete" : "Delete Reservation"}
+                        disabled={updatingId !== null}
                       >
                         {deletingResId === res.id ? (
                           <span className="delete-confirm-text">Confirm?</span>

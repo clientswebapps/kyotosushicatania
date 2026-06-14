@@ -376,6 +376,12 @@
   color: var(--color-bg);
 }
 
+.admin-res-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 /* Menu manager styles */
 .admin-menu-split {
   display: grid;

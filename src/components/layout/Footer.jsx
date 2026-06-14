@@ -7,7 +7,6 @@ const quickLinks = [
   { path: '/menu', label: 'Menu' },
   { path: '/about', label: 'About Us' },
   { path: '/contact', label: 'Contact' },
-  { path: '/admin', label: 'Admin' },
 ];
 
 const Footer = () => {
@@ -84,8 +83,8 @@ const Footer = () => {
           &copy; 2026 Kyō-To Sushi Catania. All rights reserved.
         </p>
         <div className="footer__bottom-links">
-          <Link to="/about">Privacy Policy</Link>
-          <Link to="/contact">Terms of Service</Link>
+          <Link to="/privacy-policy">Privacy Policy</Link>
+          <Link to="/terms-of-service">Terms of Service</Link>
         </div>
       </div>
     </footer>
