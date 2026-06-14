@@ -1,3 +1,6 @@
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../firebase/config";
+
 /**
  * Processes an image upload directly in the browser:
  * 1. Checks file size (max 2MB)
@@ -49,3 +52,63 @@ export const processImageUpload = (file) => {
     reader.readAsDataURL(file);
   });
 };
+
+/**
+ * Uploads a media file (image or video) to Firebase Storage or uses base64 fallback.
+ * @param {File} file - The file to upload
+ * @param {function} setUploadingImage - React state setter to toggle upload spinner
+ * @returns {Promise<string>} - A promise resolving to download URL or base64 string
+ */
+export const uploadMediaFile = async (file, setUploadingImage) => {
+  const isImage = file.type.startsWith("image/");
+  const MAX_SIZE = isImage ? 2 * 1024 * 1024 : 10 * 1024 * 1024;
+  
+  if (file.size > MAX_SIZE) {
+    throw new Error(`File is too large! Max ${isImage ? "2MB" : "10MB"} allowed.`);
+  }
+
+  setUploadingImage(true);
+  try {
+    if (storage) {
+      let fileToUpload = file;
+      let fileName = `${Date.now()}_${file.name}`;
+      
+      if (isImage) {
+        try {
+          const compressedBase64 = await processImageUpload(file);
+          const resBlob = await fetch(compressedBase64).then((r) => r.blob());
+          fileToUpload = resBlob;
+          const cleanName = file.name.substring(0, file.name.lastIndexOf(".")) || file.name;
+          fileName = `${Date.now()}_${cleanName}.webp`;
+        } catch (compressErr) {
+          console.error("Compression failed, using original file:", compressErr);
+        }
+      }
+      
+      const storageRef = ref(storage, `uploads/${fileName}`);
+      const metadata = {
+        contentType: fileToUpload.type || file.type,
+        cacheControl: "public, max-age=31536000"
+      };
+      const uploadResult = await uploadBytes(storageRef, fileToUpload, metadata);
+      const downloadUrl = await getDownloadURL(uploadResult.ref);
+      return downloadUrl;
+    } else {
+      // Fallback: local/mock data-URL encoding
+      if (isImage) {
+        return await processImageUpload(file);
+      } else {
+        // Video fallback
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (event) => resolve(event.target.result);
+          reader.onerror = (err) => reject(err);
+          reader.readAsDataURL(file);
+        });
+      }
+    }
+  } finally {
+    setUploadingImage(false);
+  }
+};
+
