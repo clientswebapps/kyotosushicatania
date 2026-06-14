@@ -2286,7 +2286,8 @@ const fallbackData = {
       active: true,
       createdAt: new Date().toISOString()
     }
-  ]
+  ],
+  menuLogs: []
 };
 
 /**

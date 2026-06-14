@@ -17,17 +17,17 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Temporarily set to false to completely bypass Firebase while the project setup is incomplete
 const isConfigured = !!import.meta.env.VITE_FIREBASE_PROJECT_ID;
 
 export const db = isConfigured ? getFirestore(app) : null;
 export const storage = isConfigured ? getStorage(app) : null;
-// Force auth to be null to use local mock authentication while keeping real Firestore
-export const auth = null;
+export const auth = isConfigured ? getAuth(app) : null;
 
 // Initialize analytics only if configured and in a browser context
 export const analytics = (isConfigured && typeof window !== "undefined" && firebaseConfig.measurementId) 
   ? getAnalytics(app) 
   : null;
 
+// Export config for secondary app instances (e.g., user creation without signing out)
+export { firebaseConfig };
 export default app;

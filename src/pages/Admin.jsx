@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   useCollection,
@@ -6,7 +6,7 @@ import {
   useDeleteDocument,
   useAddDocument,
 } from "../hooks/useFirestore";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth, useAdminUsers } from "../hooks/useAuth";
 import {
   Calendar,
   Users,
@@ -28,7 +28,10 @@ import {
   ChevronUp,
   ChevronDown,
   Edit,
-  Search
+  Search,
+  Shield,
+  UserPlus,
+  Mail
 } from "lucide-react";
 import { collection, doc, setDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -39,18 +42,53 @@ import "../styles/admin.css";
 
 export default function Admin() {
   const { user, loading: authLoading, login, logout } = useAuth();
-  const [username, setUsername] = useState("");
+  const {
+    adminUsers,
+    loading: adminUsersLoading,
+    createAdminUser,
+    removeAdminUser,
+  } = useAdminUsers();
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(true);
   const [loginError, setLoginError] = useState("");
   const [activeTab, setActiveTab] = useState("reservations");
+
+  // User management states
+  const [newUserEmail, setNewUserEmail] = useState("");
+  const [newUserPassword, setNewUserPassword] = useState("");
+  const [newUserName, setNewUserName] = useState("");
+  const [addingUser, setAddingUser] = useState(false);
+  const [userError, setUserError] = useState("");
+  const [userSuccess, setUserSuccess] = useState("");
+  const [deletingUserId, setDeletingUserId] = useState(null);
 
   // Reservation filter and search states
   const [resSearch, setResSearch] = useState("");
   const [resDateFilter, setResDateFilter] = useState("");
   const [resPartyFilter, setResPartyFilter] = useState("");
   const [resStatusTab, setResStatusTab] = useState("pending");
-  const [deletingResId, setDeletingResId] = useState(null);
+  // Auto-register authenticated Firebase Auth users in the adminUsers collection if missing
+  useEffect(() => {
+    if (user && !adminUsersLoading) {
+      const userExists = adminUsers.some((u) => u.id === user.uid);
+      if (!userExists) {
+        const registerUserDoc = async () => {
+          try {
+            await setDoc(doc(db, "adminUsers", user.uid), {
+              uid: user.uid,
+              email: user.email,
+              displayName: user.displayName || "",
+              role: "admin",
+              createdAt: new Date().toISOString()
+            });
+          } catch (err) {
+            console.error("Error auto-registering admin user in Firestore:", err);
+          }
+        };
+        registerUserDoc();
+      }
+    }
+  }, [user, adminUsers, adminUsersLoading]);
 
   // Reservation list
   const { data: reservations, loading: resLoading } = useCollection(
@@ -143,6 +181,24 @@ export default function Admin() {
   const { updateDocument: updateGalleryItem } = useUpdateDocument("galleryItems");
   const { addDocument: addGalleryItem } = useAddDocument("galleryItems");
   const { deleteDocument: deleteGalleryItem } = useDeleteDocument("galleryItems");
+  
+  // Menu activity logs
+  const { data: menuLogs, loading: logsLoading } = useCollection("menuLogs");
+  const { addDocument: addLog } = useAddDocument("menuLogs");
+
+  const logActivity = async (action, itemName, details = "") => {
+    try {
+      await addLog({
+        action,
+        itemName,
+        details,
+        userEmail: user?.email || "unknown@kyotosushicatania.com",
+        createdAt: new Date().toISOString(),
+      });
+    } catch (err) {
+      console.error("Error creating log entry:", err);
+    }
+  };
 
   // Reorder items using up/down arrows
   const handleMoveItem = async (index, direction, items, updateFn) => {
@@ -299,9 +355,76 @@ export default function Admin() {
     e.preventDefault();
     setLoginError("");
     try {
-      await login(username, password, rememberMe);
+      await login(email, password);
     } catch (err) {
-      setLoginError("Invalid credentials. Please try again.");
+      if (err.code === "auth/invalid-credential" || err.code === "auth/user-not-found" || err.code === "auth/wrong-password") {
+        setLoginError("Invalid email or password. Please try again.");
+      } else if (err.code === "auth/too-many-requests") {
+        setLoginError("Too many failed attempts. Please try again later.");
+      } else {
+        setLoginError(err.message || "Login failed. Please try again.");
+      }
+    }
+  };  // Handle Add Admin User
+  const handleAddUser = async (e) => {
+    e.preventDefault();
+    setUserError("");
+    setUserSuccess("");
+    setAddingUser(true);
+
+    if (!newUserEmail || !newUserPassword) {
+      setUserError("Email and Password are required.");
+      setAddingUser(false);
+      return;
+    }
+
+    if (newUserPassword.length < 6) {
+      setUserError("Password must be at least 6 characters long.");
+      setAddingUser(false);
+      return;
+    }
+
+    try {
+      await createAdminUser(newUserEmail, newUserPassword, newUserName);
+      setUserSuccess(`Admin user ${newUserEmail} created successfully.`);
+      setNewUserEmail("");
+      setNewUserPassword("");
+      setNewUserName("");
+    } catch (err) {
+      console.error(err);
+      setUserError(err.message || "Failed to create admin user.");
+    } finally {
+      setAddingUser(false);
+    }
+  };
+
+  // Handle Delete Admin User
+  const handleDeleteUser = async (userId) => {
+    setUserError("");
+    setUserSuccess("");
+
+    // Prevent deletion of the super admin user
+    const userToDelete = adminUsers.find((u) => u.id === userId);
+    if (userToDelete && userToDelete.email === "admin@kyotosushicatania.com") {
+      setUserError("The super admin account cannot be deleted.");
+      return;
+    }
+
+    if (deletingUserId === userId) {
+      try {
+        await removeAdminUser(userId);
+        setUserSuccess("Admin user access revoked successfully.");
+        setDeletingUserId(null);
+      } catch (err) {
+        console.error(err);
+        setUserError(err.message || "Failed to delete admin user.");
+      }
+    } else {
+      setDeletingUserId(userId);
+      // Auto-reset delete state after 4 seconds
+      setTimeout(() => {
+        setDeletingUserId((prev) => (prev === userId ? null : prev));
+      }, 4000);
     }
   };
 
@@ -335,7 +458,13 @@ export default function Admin() {
   // Toggle availability
   const toggleAvailable = async (item) => {
     try {
-      await updateMenuItem(item.id, { isAvailable: !item.isAvailable });
+      const nextState = !item.isAvailable;
+      await updateMenuItem(item.id, { isAvailable: nextState });
+      await logActivity(
+        "toggle_availability",
+        item.name,
+        `Availability set to ${nextState ? "Active" : "Sold Out"}`
+      );
     } catch (err) {
       console.error(err);
     }
@@ -344,7 +473,13 @@ export default function Admin() {
   // Toggle best seller
   const toggleBestSeller = async (item) => {
     try {
-      await updateMenuItem(item.id, { isBestSeller: !item.isBestSeller });
+      const nextState = !item.isBestSeller;
+      await updateMenuItem(item.id, { isBestSeller: nextState });
+      await logActivity(
+        "toggle_bestseller",
+        item.name,
+        `Best Seller status set to ${nextState ? "Yes" : "No"}`
+      );
     } catch (err) {
       console.error(err);
     }
@@ -353,13 +488,18 @@ export default function Admin() {
   // Toggle featured on homepage
   const toggleFeatured = async (item) => {
     try {
-      await updateMenuItem(item.id, { isFeatured: !item.isFeatured });
+      const nextState = !item.isFeatured;
+      await updateMenuItem(item.id, { isFeatured: nextState });
+      await logActivity(
+        "toggle_featured",
+        item.name,
+        `Homepage Featured status set to ${nextState ? "Yes" : "No"}`
+      );
     } catch (err) {
       console.error(err);
     }
   };
 
-  // Handle Menu Item submission (Add or Update)
   const handleAddMenuItem = async (e) => {
     e.preventDefault();
     setSavingMenuItem(true);
@@ -372,7 +512,41 @@ export default function Admin() {
       };
 
       if (editingItemId) {
+        const originalItem = menuItems.find((item) => item.id === editingItemId);
+        const changes = [];
+        if (originalItem) {
+          if (originalItem.name !== payload.name) {
+            changes.push(`Name: "${originalItem.name}" ➔ "${payload.name}"`);
+          }
+          if (Number(originalItem.price) !== Number(payload.price)) {
+            changes.push(`Price: €${Number(originalItem.price).toFixed(2)} ➔ €${Number(payload.price).toFixed(2)}`);
+          }
+          if (Number(originalItem.originalPrice || 0) !== Number(payload.originalPrice || 0)) {
+            changes.push(
+              `Original Price: ${
+                originalItem.originalPrice ? `€${Number(originalItem.originalPrice).toFixed(2)}` : "None"
+              } ➔ ${payload.originalPrice ? `€${Number(payload.originalPrice).toFixed(2)}` : "None"}`
+            );
+          }
+          if (originalItem.categoryId !== payload.categoryId) {
+            changes.push(`Category: "${originalItem.categoryId}" ➔ "${payload.categoryId}"`);
+          }
+          if (originalItem.description !== payload.description) {
+            changes.push("Description updated");
+          }
+          if (!!originalItem.isBestSeller !== !!payload.isBestSeller) {
+            changes.push(`Best Seller: ${originalItem.isBestSeller ? "Yes" : "No"} ➔ ${payload.isBestSeller ? "Yes" : "No"}`);
+          }
+          if (!!originalItem.isFeatured !== !!payload.isFeatured) {
+            changes.push(`Featured: ${originalItem.isFeatured ? "Yes" : "No"} ➔ ${payload.isFeatured ? "Yes" : "No"}`);
+          }
+          if (originalItem.imageUrl !== payload.imageUrl) {
+            changes.push("Image updated");
+          }
+        }
+        const changeString = changes.length > 0 ? changes.join(", ") : "No fields changed";
         await updateMenuItem(editingItemId, payload);
+        await logActivity("update", payload.name, changeString);
         setEditingItemId(null);
       } else {
         if (menuItems && menuItems.length >= 700) {
@@ -383,6 +557,11 @@ export default function Admin() {
           ...payload,
           order: menuItems?.length || 0,
         });
+        await logActivity(
+          "add",
+          payload.name,
+          `Added as new dish. Price: €${payload.price.toFixed(2)}, Category: ${payload.categoryId}`
+        );
       }
 
       setNewItem({
@@ -423,8 +602,12 @@ export default function Admin() {
   // Handle Menu Item delete
   const handleMenuItemDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this menu item?")) {
+      const deletedItem = menuItems.find((item) => item.id === id);
       try {
         await deleteMenuItem(id);
+        if (deletedItem) {
+          await logActivity("delete", deletedItem.name, "Item was deleted from the menu.");
+        }
       } catch (err) {
         console.error(err);
       }
@@ -433,8 +616,17 @@ export default function Admin() {
 
   // Handle Menu Item Toggle Active
   const handleMenuItemToggle = async (id, currentStatus) => {
+    const item = menuItems.find((item) => item.id === id);
     try {
-      await updateMenuItem(id, { isAvailable: !currentStatus });
+      const nextState = !currentStatus;
+      await updateMenuItem(id, { isAvailable: nextState });
+      if (item) {
+        await logActivity(
+          "toggle_availability",
+          item.name,
+          `Availability set to ${nextState ? "Active" : "Sold Out"}`
+        );
+      }
     } catch (err) {
       console.error(err);
     }
@@ -658,13 +850,14 @@ export default function Admin() {
 
           <form onSubmit={handleLogin} className="admin-login-form">
             <div className="form-group">
-              <label>Username</label>
+              <label>Email</label>
               <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="e.g. kyotoadmin"
+                placeholder="admin@kyotosushicatania.com"
+                autoComplete="email"
               />
             </div>
             <div className="form-group">
@@ -675,17 +868,8 @@ export default function Admin() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="••••••••"
+                autoComplete="current-password"
               />
-            </div>
-            <div className="form-row-checkboxes">
-              <label className="checkbox-label" style={{ justifyContent: 'flex-start' }}>
-                <input
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                />
-                <span>Remember Login</span>
-              </label>
             </div>
             {loginError && <div className="form-error">{loginError}</div>}
             <button type="submit" className="admin-login-btn">
@@ -703,7 +887,7 @@ export default function Admin() {
       <header className="admin-dashboard-header">
         <div>
           <h1>Admin Dashboard</h1>
-          <p>Welcome, {user.username || user.email}</p>
+          <p>Welcome, {user.displayName || user.email}</p>
         </div>
         <button onClick={logout} className="admin-logout-btn">
           <LogOut size={16} />
@@ -782,6 +966,13 @@ export default function Admin() {
         >
           <Eye size={18} />
           <span>Gallery Settings</span>
+        </button>
+        <button
+          className={`admin-tab-btn ${activeTab === "users" ? "active" : ""}`}
+          onClick={() => setActiveTab("users")}
+        >
+          <Shield size={18} />
+          <span>Admin Users</span>
         </button>
       </div>
 
@@ -1345,6 +1536,88 @@ export default function Admin() {
                   )}
                 </div>
               </div>
+
+              {/* Menu Settings Activity Logs Section */}
+              <div className="admin-logs-section" style={{ marginTop: "40px" }}>
+                <div className="admin-menu-list-header" style={{ marginBottom: "20px" }}>
+                  <h2>Recent Menu Activity Logs</h2>
+                  <p style={{ color: "var(--color-text-secondary)", fontSize: "14px", marginTop: "4px" }}>
+                    Track changes made to the menu, pricing, availability, and highlights (Rome/Italy time).
+                  </p>
+                </div>
+
+                {logsLoading ? (
+                  <div className="admin-loading-spinner-wrapper" style={{ padding: "20px" }}>
+                    <div className="menu-loading-spinner" style={{ width: "30px", height: "30px" }}></div>
+                  </div>
+                ) : !menuLogs || menuLogs.length === 0 ? (
+                  <p className="admin-empty-state" style={{ padding: "20px 0" }}>No menu activities logged yet.</p>
+                ) : (
+                  <div className="admin-table-responsive">
+                    <table className="admin-res-table">
+                      <thead>
+                        <tr>
+                          <th>Action</th>
+                          <th>Menu Item</th>
+                          <th>Details of Changes</th>
+                          <th>Admin User</th>
+                          <th>Date &amp; Time (Italy Time)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[...menuLogs]
+                          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                          .slice(0, 15)
+                          .map((log) => {
+                            let badgeClass = "log-badge";
+                            let actionLabel = log.action;
+                            if (log.action === "add") {
+                              badgeClass += " add";
+                              actionLabel = "Added";
+                            } else if (log.action === "update") {
+                              badgeClass += " update";
+                              actionLabel = "Updated";
+                            } else if (log.action === "delete") {
+                              badgeClass += " delete";
+                              actionLabel = "Deleted";
+                            } else if (log.action && log.action.startsWith("toggle")) {
+                              badgeClass += " toggle";
+                              actionLabel = log.action === "toggle_availability" ? "Availability" : log.action === "toggle_featured" ? "Featured" : "Best Seller";
+                            }
+
+                            const italyTime = log.createdAt 
+                              ? new Date(log.createdAt).toLocaleString("it-IT", {
+                                  timeZone: "Europe/Rome",
+                                  dateStyle: "short",
+                                  timeStyle: "medium"
+                                }) 
+                              : "";
+
+                            return (
+                              <tr key={log.id} className="admin-res-row">
+                                <td>
+                                  <span className={badgeClass}>{actionLabel}</span>
+                                </td>
+                                <td>
+                                  <strong style={{ color: "var(--color-text)", fontWeight: "600" }}>{log.itemName}</strong>
+                                </td>
+                                <td style={{ color: "var(--color-text-secondary)", fontSize: "13px", maxWidth: "400px", wordBreak: "break-word" }}>
+                                  {log.details}
+                                </td>
+                                <td style={{ color: "var(--color-text-secondary)", fontSize: "13px" }}>
+                                  {log.userEmail}
+                                </td>
+                                <td style={{ color: "var(--color-brand-gold)", fontWeight: "500", whiteSpace: "nowrap" }}>
+                                  {italyTime}
+                                </td>
+                              </tr>
+                            );
+                          })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
             </motion.div>
           )}
 
@@ -1798,6 +2071,199 @@ export default function Admin() {
                       ))}
                       {galleryItems.length === 0 && (
                         <p className="admin-empty-state" style={{ padding: '20px 0' }}>No gallery items found. Click 'Import Demo Menu' to seed or upload some media files!</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          )}
+          {activeTab === "users" && (
+            <motion.div
+              key="users"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="admin-menu-header">
+                <h2>Admin User Settings</h2>
+                <p>Add and manage team members who have admin access to the dashboard</p>
+              </div>
+
+              <div className="admin-menu-grid">
+                <div className="admin-menu-form-container">
+                  <h2>Add Admin User</h2>
+                  <form onSubmit={handleAddUser} className="admin-menu-form">
+                    <div className="form-group">
+                      <label htmlFor="newUserName">Display Name</label>
+                      <input
+                        id="newUserName"
+                        type="text"
+                        value={newUserName}
+                        onChange={(e) => setNewUserName(e.target.value)}
+                        placeholder="e.g. Kyoto Chef"
+                      />
+                    </div>
+                    
+                    <div className="form-group">
+                      <label htmlFor="newUserEmail">Email Address *</label>
+                      <div style={{ position: "relative" }}>
+                        <input
+                          id="newUserEmail"
+                          type="email"
+                          value={newUserEmail}
+                          onChange={(e) => setNewUserEmail(e.target.value)}
+                          required
+                          placeholder="e.g. admin@kyotosushicatania.com"
+                          style={{ paddingLeft: "36px" }}
+                        />
+                        <Mail
+                          size={16}
+                          style={{
+                            position: "absolute",
+                            left: "12px",
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                            color: "#666",
+                          }}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="form-group">
+                      <label htmlFor="newUserPassword">Password *</label>
+                      <input
+                        id="newUserPassword"
+                        type="password"
+                        value={newUserPassword}
+                        onChange={(e) => setNewUserPassword(e.target.value)}
+                        required
+                        placeholder="Min 6 characters"
+                      />
+                    </div>
+
+                    {userError && (
+                      <div className="form-error" style={{ margin: "8px 0" }}>
+                        {userError}
+                      </div>
+                    )}
+                    {userSuccess && (
+                      <div className="form-success" style={{ margin: "8px 0", color: "#4caf50", fontSize: "14px" }}>
+                        {userSuccess}
+                      </div>
+                    )}
+
+                    <button
+                      type="submit"
+                      className="admin-add-item-btn"
+                      disabled={addingUser}
+                      style={{ marginTop: "16px" }}
+                    >
+                      {addingUser ? (
+                        <div className="admin-spinner" style={{ marginRight: "6px" }}></div>
+                      ) : (
+                        <UserPlus size={16} />
+                      )}
+                      <span>{addingUser ? "Adding User..." : "Add Admin User"}</span>
+                    </button>
+                  </form>
+                </div>
+
+                <div className="admin-menu-list-container">
+                  <div className="admin-menu-list-header">
+                    <h2>Manage Admin Access</h2>
+                  </div>
+                  
+                  {adminUsersLoading ? (
+                    <div className="admin-loading-spinner-wrapper">
+                      <div className="menu-loading-spinner"></div>
+                    </div>
+                  ) : (
+                    <div className="admin-menu-items-list">
+                      {adminUsers.map((u) => (
+                        <div key={u.id} className="admin-menu-item-row">
+                          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                            <div
+                              style={{
+                                width: "40px",
+                                height: "40px",
+                                borderRadius: "50%",
+                                background: "rgba(224, 169, 109, 0.1)",
+                                border: "1px solid rgba(224, 169, 109, 0.2)",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                color: "var(--color-brand-gold)",
+                                flexShrink: 0,
+                              }}
+                            >
+                              <Shield size={18} />
+                            </div>
+                            
+                            <div className="admin-menu-item-info">
+                              <h4 style={{ margin: 0 }}>{u.displayName || "Admin User"}</h4>
+                              <p style={{ fontSize: "12px", color: "#888", margin: "2px 0 0 0" }}>
+                                {u.email}
+                              </p>
+                              {u.createdAt && (
+                                <p style={{ fontSize: "10px", color: "#555", margin: "2px 0 0 0" }}>
+                                  Added: {new Date(u.createdAt).toLocaleDateString()}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="admin-menu-item-actions">
+                            {u.email === "admin@kyotosushicatania.com" ? (
+                              <span
+                                style={{
+                                  fontSize: "11px",
+                                  color: "var(--color-brand-gold)",
+                                  background: "rgba(224, 169, 109, 0.15)",
+                                  padding: "4px 10px",
+                                  borderRadius: "4px",
+                                  fontWeight: "600",
+                                  border: "1px solid rgba(224, 169, 109, 0.3)",
+                                }}
+                              >
+                                Super Admin
+                              </span>
+                            ) : user && user.uid === u.id ? (
+                              <span
+                                style={{
+                                  fontSize: "11px",
+                                  color: "var(--color-brand-gold)",
+                                  background: "rgba(224, 169, 109, 0.1)",
+                                  padding: "4px 8px",
+                                  borderRadius: "4px",
+                                }}
+                              >
+                                You (Active)
+                              </span>
+                            ) : (
+                              <button
+                                onClick={() => handleDeleteUser(u.id)}
+                                className="admin-delete-row-btn"
+                                title="Revoke Access"
+                                style={{
+                                  background: deletingUserId === u.id ? "#dc3545" : "",
+                                  color: deletingUserId === u.id ? "#fff" : "",
+                                  padding: deletingUserId === u.id ? "4px 8px" : "",
+                                  borderRadius: deletingUserId === u.id ? "4px" : "",
+                                }}
+                              >
+                                {deletingUserId === u.id ? "Confirm?" : <Trash2 size={16} />}
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                      
+                      {adminUsers.length === 0 && (
+                        <p className="admin-empty-state" style={{ padding: "20px 0" }}>
+                          No registered admin users.
+                        </p>
                       )}
                     </div>
                   )}

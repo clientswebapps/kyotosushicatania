@@ -546,16 +546,6 @@
   color: var(--color-brand-gold);
 }
 
-.admin-tab-btn.active::after {
-  content: '';
-  position: absolute;
-  bottom: -17px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: var(--color-brand-gold);
-}
-
 .admin-res-list {
   display: flex;
   flex-direction: column;
