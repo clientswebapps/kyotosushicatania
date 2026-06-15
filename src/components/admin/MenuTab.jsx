@@ -44,6 +44,7 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
     isAvailable: true,
     imageUrl: "",
     highlights: [],
+    hasPhotoDisclaimer: false,
   });
 
   const logActivity = async (action, itemName, details = "") => {
@@ -159,6 +160,9 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
           if (originalItem.imageUrl !== payload.imageUrl) {
             changes.push("Image updated");
           }
+          if (!!originalItem.hasPhotoDisclaimer !== !!payload.hasPhotoDisclaimer) {
+            changes.push(`Photo Disclaimer: ${originalItem.hasPhotoDisclaimer ? "Yes" : "No"} ➔ ${payload.hasPhotoDisclaimer ? "Yes" : "No"}`);
+          }
         }
         const changeString = changes.length > 0 ? changes.join(", ") : "No fields changed";
         await updateMenuItem(editingItemId, payload);
@@ -191,6 +195,7 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
         isAvailable: true,
         imageUrl: "",
         highlights: [],
+        hasPhotoDisclaimer: false,
       });
     } catch (err) {
       console.error(err);
@@ -212,6 +217,7 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
       isAvailable: item.isAvailable !== undefined ? !!item.isAvailable : true,
       imageUrl: item.imageUrl || "",
       highlights: Array.isArray(item.highlights) ? item.highlights : [],
+      hasPhotoDisclaimer: !!item.hasPhotoDisclaimer,
     });
   };
 
@@ -443,6 +449,19 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
                 />
                 <span>Feature on Homepage</span>
               </label>
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={newItem.hasPhotoDisclaimer}
+                  onChange={(e) =>
+                    setNewItem((p) => ({
+                      ...p,
+                      hasPhotoDisclaimer: e.target.checked,
+                    }))
+                  }
+                />
+                <span>Photo may not exactly represent the actual dish</span>
+              </label>
             </div>
 
             <div style={{ display: "flex", gap: "12px", marginTop: "8px" }}>
@@ -481,6 +500,7 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
                       isAvailable: true,
                       imageUrl: "",
                       highlights: [],
+                      hasPhotoDisclaimer: false,
                     });
                   }}
                   style={{ margin: 0, padding: "14px" }}

@@ -251,6 +251,11 @@ const MenuPreview = () => {
                             {item.isBestSeller && (
                               <span className="menu-modal-badge">Best Seller</span>
                             )}
+                            {item.hasPhotoDisclaimer && (
+                              <div className="menu-card-photo-disclaimer">
+                                Photo may not exactly represent the actual dish
+                              </div>
+                            )}
                           </div>
                           <div className="menu-section__card-body">
                             <h3 className="menu-section__card-name">{item.name}</h3>
@@ -345,6 +350,11 @@ const MenuPreview = () => {
                               {item.isBestSeller && (
                                 <span className="menu-modal-badge">Best Seller</span>
                               )}
+                              {item.hasPhotoDisclaimer && (
+                                <div className="menu-card-photo-disclaimer">
+                                  Photo may not exactly represent the actual dish
+                                </div>
+                              )}
                             </div>
                             <div className="menu-section__card-body">
                               <h3 className="menu-section__card-name">{item.name}</h3>
@@ -392,8 +402,13 @@ const MenuPreview = () => {
 
                 {bannerItem && (
                   <motion.div className="menu-section__banner" variants={cardVariants}>
-                    <div className="menu-section__banner-image">
+                    <div className="menu-section__banner-image" style={{ position: 'relative' }}>
                       <ImageWithLoader src={getImage(bannerItem)} alt={bannerItem.name} loading="lazy" />
+                      {bannerItem.hasPhotoDisclaimer && (
+                        <div className="menu-card-photo-disclaimer">
+                          Photo may not exactly represent the actual dish
+                        </div>
+                      )}
                     </div>
                     <div className="menu-section__banner-body">
                       <div>
@@ -469,6 +484,11 @@ const MenuPreview = () => {
                                 </div>
                                 {item.isBestSeller && (
                                   <span className="menu-modal-badge">Best Seller</span>
+                                )}
+                                {item.hasPhotoDisclaimer && (
+                                  <div className="menu-card-photo-disclaimer">
+                                    Photo may not exactly represent the actual dish
+                                  </div>
                                 )}
                               </div>
                               <div className="menu-section__card-body">

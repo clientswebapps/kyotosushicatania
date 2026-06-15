@@ -333,6 +333,11 @@ export default function Menu() {
                             {!item.isAvailable && (
                               <div className="menu-card-unavailable">Unavailable</div>
                             )}
+                            {item.hasPhotoDisclaimer && (
+                              <div className="menu-card-photo-disclaimer">
+                                Photo may not exactly represent the actual dish
+                              </div>
+                            )}
                           </div>
                           <div className="menu-section__card-body">
                             <h3 className="menu-section__card-name">{item.name}</h3>
@@ -457,6 +462,11 @@ export default function Menu() {
                             )}
                             {!item.isAvailable && (
                               <div className="menu-card-unavailable">Unavailable</div>
+                            )}
+                            {item.hasPhotoDisclaimer && (
+                              <div className="menu-card-photo-disclaimer">
+                                Photo may not exactly represent the actual dish
+                              </div>
                             )}
                           </div>
                           <div className="menu-section__card-body">
