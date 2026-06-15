@@ -129,7 +129,7 @@
 .footer__social-icon svg {
   width: 18px;
   height: 18px;
-  fill: currentColor;
+  display: block;
 }
 
 /* Footer Hours */

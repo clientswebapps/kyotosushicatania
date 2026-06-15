@@ -19,6 +19,8 @@ const AboutSection = () => {
             alt="Kyō-To restaurant atmosphere"
             className="about__image"
             loading="lazy"
+            width={600}
+            height={450}
           />
         </motion.div>
 

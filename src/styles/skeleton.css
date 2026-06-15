@@ -1,0 +1,205 @@
+/* ============================================
+   KYOTO SUSHI CATANIA — Loading Skeletons
+   ============================================ */
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(18, 18, 18, 0.6) 25%,
+    rgba(34, 34, 34, 0.7) 37%,
+    rgba(18, 18, 18, 0.6) 63%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite ease-in-out;
+}
+
+/* Accessibility: Respect preferred reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-shimmer {
+    animation: none !important;
+    background: #1c1c1c !important;
+  }
+}
+
+/* --- Category Tabs Skeleton --- */
+.skeleton-category-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 48px;
+  flex-wrap: wrap;
+}
+
+.skeleton-category-tab {
+  width: 120px;
+  height: 42px;
+  border-radius: 20px;
+  opacity: 0.7;
+}
+
+/* --- Menu Grid Skeleton --- */
+.skeleton-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 32px;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.skeleton-card {
+  background: rgba(20, 20, 20, 0.3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  height: 380px;
+  display: flex;
+  flex-direction: column;
+}
+
+.skeleton-card-image {
+  width: 100%;
+  height: 180px;
+}
+
+.skeleton-card-body {
+  padding: 20px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeleton-title-line {
+  width: 70%;
+  height: 20px;
+  border-radius: 4px;
+}
+
+.skeleton-text-line {
+  width: 100%;
+  height: 14px;
+  border-radius: 4px;
+  opacity: 0.6;
+}
+
+.skeleton-text-line-short {
+  width: 85%;
+  height: 14px;
+  border-radius: 4px;
+  opacity: 0.6;
+}
+
+.skeleton-price-line {
+  width: 30%;
+  height: 18px;
+  border-radius: 4px;
+  margin-top: auto;
+}
+
+/* --- Menu Gallery Skeleton --- */
+.skeleton-gallery-container {
+  display: flex;
+  gap: 24px;
+  overflow: hidden;
+  padding: 20px 0;
+  width: 100%;
+}
+
+.skeleton-gallery-card {
+  flex: 0 0 320px;
+  height: 420px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  position: relative;
+}
+
+.skeleton-gallery-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+}
+
+.skeleton-gallery-title {
+  width: 60%;
+  height: 16px;
+  border-radius: 4px;
+}
+
+.skeleton-gallery-subtitle {
+  width: 40%;
+  height: 12px;
+  border-radius: 4px;
+  opacity: 0.7;
+}
+
+/* --- Hero Carousel Skeleton --- */
+.skeleton-hero {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.skeleton-hero-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  max-width: 800px;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  z-index: 2;
+}
+
+.skeleton-hero-title {
+  width: 60%;
+  height: 48px;
+  border-radius: 6px;
+}
+
+.skeleton-hero-subtitle {
+  width: 40%;
+  height: 20px;
+  border-radius: 4px;
+  opacity: 0.8;
+}
+
+.skeleton-hero-button {
+  width: 160px;
+  height: 48px;
+  border-radius: 4px;
+  opacity: 0.9;
+}
+
+/* Image loader specific shimmers */
+.menu-image-shimmer {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}

@@ -233,7 +233,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="contact-page">
+    <main className="contact-page">
       <Helmet>
         <title>Contact & Reservations - Kyō-To Sushi Catania</title>
         <meta name="description" content="Reserve your table at Kyō-To Sushi Catania. Find our location, opening hours, and contact information. Experience the best Japanese cuisine in Catania." />
@@ -508,6 +508,6 @@ export default function Contact() {
           )}
         </motion.div>
       </div>
-    </div>
+    </main>
   );
 }

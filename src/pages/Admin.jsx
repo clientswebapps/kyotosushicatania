@@ -131,16 +131,16 @@ export default function Admin() {
 
   if (authLoading) {
     return (
-      <div className="admin-loading-container">
+      <main className="admin-loading-container">
         <div className="menu-loading-spinner"></div>
-      </div>
+      </main>
     );
   }
 
   // Not logged in: Show premium login form
   if (!user) {
     return (
-      <div className="admin-login-page">
+      <main className="admin-login-page">
         <motion.div
           className="admin-login-card"
           initial={{ opacity: 0, y: 30 }}
@@ -184,13 +184,13 @@ export default function Admin() {
             </button>
           </form>
         </motion.div>
-      </div>
+      </main>
     );
   }
 
   // Logged in: Show beautiful admin dashboard
   return (
-    <div className="admin-dashboard-page">
+    <main className="admin-dashboard-page">
       <header className="admin-dashboard-header">
         <div>
           <h1>Admin Dashboard</h1>
@@ -283,7 +283,7 @@ export default function Admin() {
         </button>
       </div>
 
-      <main className="admin-tab-content">
+      <section className="admin-tab-content">
         <AnimatePresence mode="wait">
           {activeTab === "reservations" && (
             <ReservationsTab
@@ -318,7 +318,7 @@ export default function Admin() {
             />
           )}
         </AnimatePresence>
-      </main>
-    </div>
+      </section>
+    </main>
   );
 }

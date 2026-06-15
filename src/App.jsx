@@ -7,6 +7,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
+import NotFound from "./pages/NotFound";
 
 const Admin = lazy(() => import("./pages/Admin"));
 import ScrollToTop from "./components/ScrollToTop";
@@ -31,6 +32,7 @@ function App() {
               <Admin />
             </Suspense>
           } />
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </Router>

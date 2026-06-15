@@ -41,13 +41,13 @@ const fallbackItems = [
   { id: '6', name: 'Grilled Gyoza', description: 'Japanese dumplings filled with pork and vegetables, served with ponzu sauce', price: 8.9, categoryId: 'antipasti', imageUrl: '/images/gyoza.avif', isBestSeller: false },
 ];
 
-// Reusable Image component with loading spinner
+// Reusable Image component with loading shimmer
 function ImageWithLoader({ src, alt, className, ...props }) {
   const [imageLoading, setImageLoading] = useState(true);
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
-      {imageLoading && <div className="menu-image-spinner"></div>}
+      {imageLoading && <div className="menu-image-shimmer skeleton-shimmer"></div>}
       <img
         src={src}
         alt={alt}

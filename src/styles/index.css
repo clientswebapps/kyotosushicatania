@@ -7,6 +7,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=Noto+Serif+JP:wght@400;500&display=swap');
 
 @import './pages.css';
+@import './skeleton.css';
 
 /* ============================================
    CSS Custom Properties
@@ -686,4 +687,160 @@ hr {
    ============================================ */
 .main--home {
   width: 100%;
+}
+
+/* ============================================
+   404 Page Styles
+   ============================================ */
+.not-found-page {
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px;
+  background: var(--color-bg);
+  position: relative;
+  overflow: hidden;
+}
+
+.not-found-page::before {
+  content: '';
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  width: 250px;
+  height: 250px;
+  background: linear-gradient(135deg, rgba(243, 192, 22, 0.15) 0%, rgba(28, 59, 135, 0.1) 100%);
+  border-radius: 50%;
+  filter: blur(80px);
+  z-index: 1;
+}
+
+.not-found-container {
+  max-width: 540px;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+.not-found-card {
+  background: rgba(13, 13, 13, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 48px 40px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.not-found-icon-wrapper {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(243, 192, 22, 0.1);
+  border: 1px solid rgba(243, 192, 22, 0.3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  box-shadow: 0 0 20px rgba(243, 192, 22, 0.05);
+}
+
+.not-found-code {
+  font-family: var(--font-heading);
+  font-size: 88px;
+  font-weight: 700;
+  color: var(--color-brand-gold);
+  line-height: 1;
+  margin: 0 0 12px 0;
+  letter-spacing: -2px;
+  text-shadow: 0 0 40px rgba(243, 192, 22, 0.3);
+}
+
+.not-found-title {
+  font-family: var(--font-heading);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0 0 6px 0;
+  letter-spacing: 0.5px;
+}
+
+.not-found-subtitle {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 0 0 24px 0;
+}
+
+.not-found-divider {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-brand-gold), transparent);
+  margin: 0 auto 28px;
+}
+
+.not-found-text {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin: 0 0 16px 0;
+}
+
+.not-found-text-en {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin: 0 0 36px 0;
+}
+
+.not-found-action {
+  display: flex;
+  justify-content: center;
+}
+
+.not-found-action .btn-gold {
+  background: var(--color-brand-gold);
+  color: #000;
+  font-weight: 600;
+  padding: 12px 28px;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  border: 1px solid var(--color-brand-gold);
+}
+
+.not-found-action .btn-gold:hover {
+  background: transparent;
+  color: var(--color-brand-gold);
+  box-shadow: var(--shadow-glow-gold);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 576px) {
+  .not-found-card {
+    padding: 36px 24px;
+  }
+  
+  .not-found-code {
+    font-size: 72px;
+  }
+  
+  .not-found-title {
+    font-size: 22px;
+  }
+  
+  .not-found-text {
+    font-size: 14px;
+  }
 }

@@ -1,0 +1,134 @@
+/* ============================================
+   KYOTO SUSHI CATANIA — Floating WhatsApp Button
+   ============================================ */
+
+.whatsapp-float-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 999;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform var(--transition-fast) cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.whatsapp-icon-bg {
+  width: 60px;
+  height: 60px;
+  background-color: #25D366;
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.3), 
+              0 0 0 1px rgba(255, 255, 255, 0.05);
+  position: relative;
+}
+
+/* Pulsing outline effect */
+.whatsapp-icon-bg::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0px rgba(37, 211, 102, 0.5);
+  animation: whatsapp-pulse 2s infinite;
+  z-index: -1;
+}
+
+.whatsapp-svg {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  transition: transform var(--transition-fast) ease;
+}
+
+/* Tooltip badge appearing on hover */
+.whatsapp-tooltip {
+  position: absolute;
+  right: 76px;
+  background: rgba(13, 13, 13, 0.9);
+  color: var(--color-text);
+  border: 1px solid var(--color-brand-gold-subtle);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(10px);
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* Hover States */
+.whatsapp-float-btn:hover {
+  transform: scale(1.08);
+}
+
+.whatsapp-float-btn:hover .whatsapp-svg {
+  transform: rotate(10deg);
+}
+
+.whatsapp-float-btn:hover .whatsapp-tooltip {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Pulsing keyframe animation */
+@keyframes whatsapp-pulse {
+  0% {
+    box-shadow: 0 0 0 0px rgba(37, 211, 102, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(37, 211, 102, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0px rgba(37, 211, 102, 0);
+  }
+}
+
+/* Accessibility: respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .whatsapp-icon-bg::after {
+    animation: none !important;
+  }
+  
+  .whatsapp-float-btn:hover {
+    transform: none !important;
+  }
+  
+  .whatsapp-float-btn:hover .whatsapp-svg {
+    transform: none !important;
+  }
+}
+
+/* Mobile responsive adjustments to avoid overlapping key layout items */
+@media (max-width: 768px) {
+  .whatsapp-float-btn {
+    bottom: 20px;
+    right: 20px;
+  }
+  
+  .whatsapp-icon-bg {
+    width: 52px;
+    height: 52px;
+  }
+  
+  .whatsapp-svg {
+    width: 24px;
+    height: 24px;
+  }
+  
+  /* Disable tooltip on touch screens to prevent screen clogging */
+  .whatsapp-tooltip {
+    display: none !important;
+  }
+}

@@ -50,7 +50,7 @@ export default function Home() {
   };
 
   return (
-    <div className="home-onboarding">
+    <main className="home-onboarding">
       <Helmet>
         <title>Kyō-To Sushi Catania | Japanese Asian Contemporary Cuisine</title>
         <meta name="description" content="Kyō-To Sushi Catania offers the finest contemporary sushi and traditional Asian cuisine in Catania. Discover our signature dishes and reserve your table." />
@@ -71,6 +71,6 @@ export default function Home() {
       <MenuGallery />
       <ContactSection />
       <Footer />
-    </div>
+    </main>
   );
 }

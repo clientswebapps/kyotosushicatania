@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useCollection } from "../hooks/useFirestore";
 import { Search, AlertCircle, X, Info } from "lucide-react";
 import AllergenModal from "../components/common/AllergenModal";
+import { MenuSkeleton } from "../components/common/SkeletonComponents";
 import "../styles/menu.css";
 
 const imageMap = {
@@ -43,13 +44,13 @@ const itemHighlights = {
   'Grilled Gyoza': ['🥟 Hand-made', '🔥 Grilled to order']
 };
 
-// Reusable Image component with loading spinner
+// Reusable Image component with loading shimmer
 function ImageWithLoader({ src, alt, className, ...props }) {
   const [imageLoading, setImageLoading] = useState(true);
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
-      {imageLoading && <div className="menu-image-spinner"></div>}
+      {imageLoading && <div className="menu-image-shimmer skeleton-shimmer"></div>}
       <img
         src={src}
         alt={alt}
@@ -141,7 +142,7 @@ export default function Menu() {
   const getImage = (item) => item.imageUrl || imageMap[item.name] || "/images/dragon-roll.avif";
 
   return (
-    <section className="menu-section">
+    <main className="menu-section">
       <Helmet>
         <title>Our Menu - Kyō-To Sushi Catania</title>
         <meta name="description" content="Explore the authentic menu of Kyō-To Sushi Catania. From Dragon Rolls to 18-hour Tonkotsu Ramen, discover our fresh, premium Japanese cuisine." />
@@ -227,10 +228,7 @@ export default function Menu() {
       )}
 
       {loading ? (
-        <div className="menu-loading">
-          <div className="menu-loading-spinner"></div>
-          <p>Loading menu...</p>
-        </div>
+        <MenuSkeleton />
       ) : (
         <AnimatePresence mode="wait">
           <motion.div
@@ -512,6 +510,6 @@ export default function Menu() {
       </AnimatePresence>
 
       <AllergenModal isOpen={showAllergens} onClose={() => setShowAllergens(false)} />
-    </section>
+    </main>
   );
 }

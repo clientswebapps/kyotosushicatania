@@ -4,7 +4,7 @@ import "../styles/about.css";
 
 export default function About() {
   return (
-    <div className="about-page">
+    <main className="about-page">
       <Helmet>
         <title>About Us - Kyō-To Sushi Catania</title>
         <meta name="description" content="Discover the story and philosophy behind Kyō-To Sushi Catania. We blend traditional Japanese Washoku art with contemporary culinary innovation." />
@@ -33,7 +33,7 @@ export default function About() {
           transition={{ duration: 0.8 }}
         >
           <div className="about-story-image">
-            <img src="/images/2.jpeg" alt="Our restaurant and menu" />
+            <img src="/images/2.jpeg" alt="Our restaurant and menu" width={600} height={400} />
           </div>
           <div className="about-story-text">
             <span className="about-label">OUR STORY</span>
@@ -55,7 +55,7 @@ export default function About() {
           transition={{ duration: 0.8 }}
         >
           <div className="about-story-image">
-            <img src="/images/3.jpeg" alt="Our menu varieties" />
+            <img src="/images/3.jpeg" alt="Our menu varieties" width={600} height={400} />
           </div>
           <div className="about-story-text">
             <span className="about-label">OUR PHILOSOPHY</span>
@@ -81,7 +81,7 @@ export default function About() {
           transition={{ duration: 0.8 }}
         >
           <div className="about-founder-image">
-            <img src="/images/Founder.jpeg" alt="Chef Jay Nalzaro - Founder of Kyō-To Sushi Catania" />
+            <img src="/images/Founder.jpeg" alt="Chef Jay Nalzaro - Founder of Kyō-To Sushi Catania" width={600} height={600} />
           </div>
           <div className="about-founder-text">
             <span className="about-label">Meet the Chef & Founder</span>
@@ -153,6 +153,6 @@ export default function About() {
           </div>
         </motion.div>
       </div>
-    </div>
+    </main>
   );
 }

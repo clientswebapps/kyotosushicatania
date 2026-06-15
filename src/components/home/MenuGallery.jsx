@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { useCollection } from '../../hooks/useFirestore';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { GallerySkeleton } from '../common/SkeletonComponents';
 import '../../styles/menu-gallery.css';
 
 function GalleryMediaItem({ item }) {
@@ -9,10 +10,9 @@ function GalleryMediaItem({ item }) {
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }} draggable={false}>
-      {mediaLoading && <div className="menu-gallery__image-spinner"></div>}
+      {mediaLoading && <div className="menu-image-shimmer skeleton-shimmer"></div>}
       {isVideo ? (
         <video
-          src={item.imageUrl}
           className="menu-gallery__media"
           autoPlay
           loop
@@ -21,10 +21,15 @@ function GalleryMediaItem({ item }) {
           preload="auto"
           onLoadedData={() => setMediaLoading(false)}
           onCanPlay={() => setMediaLoading(false)}
+          onPlay={() => setMediaLoading(false)}
+          onPlaying={() => setMediaLoading(false)}
+          onError={() => setMediaLoading(false)}
           draggable={false}
           onDragStart={(e) => e.preventDefault()}
           style={{ opacity: mediaLoading ? 0 : 1, transition: 'opacity 0.3s ease-in-out' }}
-        />
+        >
+          <source src={item.imageUrl} type={item.imageUrl.match(/\.(mp4|webm|ogg)(\?.*)?$/i)?.[1] ? `video/${item.imageUrl.match(/\.(mp4|webm|ogg)(\?.*)?$/i)[1].toLowerCase()}` : 'video/mp4'} />
+        </video>
       ) : (
         <img
           src={item.imageUrl}
@@ -193,8 +198,8 @@ const MenuGallery = () => {
             </p>
           </div>
         </div>
-        <div className="menu-gallery__loading-container">
-          <div className="menu-gallery__spinner"></div>
+        <div className="menu-gallery__loading-container" style={{ width: '100%' }}>
+          <GallerySkeleton />
         </div>
       </section>
     );

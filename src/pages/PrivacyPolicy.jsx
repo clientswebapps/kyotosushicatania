@@ -6,7 +6,7 @@ import "../styles/policy.css";
 
 export default function PrivacyPolicy() {
   return (
-    <div className="policy-page">
+    <main className="policy-page">
       <Helmet>
         <title>Privacy Policy - Kyō-To Sushi Catania</title>
         <meta name="description" content="Privacy Policy e informativa sul trattamento dei dati personali (GDPR) di Kyō-To Sushi Catania." />
@@ -127,6 +127,6 @@ export default function PrivacyPolicy() {
           </section>
         </motion.div>
       </div>
-    </div>
+    </main>
   );
 }

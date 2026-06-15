@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCollection } from '../../hooks/useFirestore';
+import { HeroSkeleton } from '../common/SkeletonComponents';
 import ScrollHint from './ScrollHint';
 import ItemModal from '../common/ItemModal';
 import '../../styles/hero.css';
@@ -122,9 +123,7 @@ const HeroCarousel = () => {
 
   if (loading) {
     return (
-      <section className="hero onboarding-section" id="hero" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div className="hero-loading-spinner"></div>
-      </section>
+      <HeroSkeleton />
     );
   }
 
@@ -144,7 +143,6 @@ const HeroCarousel = () => {
           >
             {/\.(mp4|webm|ogg)(\?.*)?$/i.test(activeSlide.imageUrl) ? (
               <video
-                src={activeSlide.imageUrl}
                 className="hero__slide-image"
                 autoPlay
                 loop
@@ -152,12 +150,17 @@ const HeroCarousel = () => {
                 playsInline
                 preload="auto"
                 style={{ objectFit: "cover", width: "100%", height: "100%" }}
-              />
+              >
+                <source src={activeSlide.imageUrl} type={activeSlide.imageUrl.match(/\.(mp4|webm|ogg)(\?.*)?$/i)?.[1] ? `video/${activeSlide.imageUrl.match(/\.(mp4|webm|ogg)(\?.*)?$/i)[1].toLowerCase()}` : 'video/mp4'} />
+              </video>
             ) : (
               <img
                 src={activeSlide.imageUrl}
                 alt={activeSlide.title}
                 className="hero__slide-image"
+                fetchpriority={currentSlide === 0 ? "high" : "auto"}
+                width={1920}
+                height={1080}
               />
             )}
             <div className="hero__overlay" />

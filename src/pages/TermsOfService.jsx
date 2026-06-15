@@ -6,7 +6,7 @@ import "../styles/policy.css";
 
 export default function TermsOfService() {
   return (
-    <div className="policy-page">
+    <main className="policy-page">
       <Helmet>
         <title>Terms of Service - Kyō-To Sushi Catania</title>
         <meta name="description" content="Termini e condizioni del servizio di prenotazione di Kyō-To Sushi Catania." />
@@ -84,6 +84,6 @@ export default function TermsOfService() {
           </section>
         </motion.div>
       </div>
-    </div>
+    </main>
   );
 }
