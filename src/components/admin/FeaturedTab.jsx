@@ -47,6 +47,7 @@ export default function FeaturedTab() {
   const [newItem, setNewItem] = useState({
     name: "",
     price: "",
+    price6: "",
     description: "",
     imageUrl: "",
     link: "",
@@ -99,6 +100,7 @@ export default function FeaturedTab() {
       const payload = {
         name: newItem.name || "",
         price: newItem.price ? parseFloat(newItem.price) : "",
+        price6: newItem.price6 ? parseFloat(newItem.price6) : "",
         description: newItem.description || "",
         imageUrl: newItem.imageUrl,
         link: resolvedLink,
@@ -122,6 +124,7 @@ export default function FeaturedTab() {
       setNewItem({
         name: "",
         price: "",
+        price6: "",
         description: "",
         imageUrl: "",
         link: "",
@@ -163,6 +166,7 @@ export default function FeaturedTab() {
     setNewItem({
       name: item.name || "",
       price: item.price !== undefined && item.price !== null ? item.price.toString() : "",
+      price6: item.price6 !== undefined && item.price6 !== null ? item.price6.toString() : "",
       description: item.description || "",
       imageUrl: item.imageUrl || "",
       link: item.link || "",
@@ -182,6 +186,7 @@ export default function FeaturedTab() {
     setNewItem({
       name: "",
       price: "",
+      price6: "",
       description: "",
       imageUrl: "",
       link: "",
@@ -232,15 +237,27 @@ export default function FeaturedTab() {
             </div>
             <div className="form-row">
               <div className="form-group">
-                <label>Price (€) (Optional)</label>
+                <label>Price (1pz / Std) (€) (Optional)</label>
                 <input
                   type="number"
                   step="0.01"
                   value={newItem.price}
                   onChange={(e) => setNewItem((p) => ({ ...p, price: e.target.value }))}
-                  placeholder="14.90"
+                  placeholder="2.00"
                 />
               </div>
+              <div className="form-group">
+                <label>Price (6pz) (€) (Optional)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={newItem.price6}
+                  onChange={(e) => setNewItem((p) => ({ ...p, price6: e.target.value }))}
+                  placeholder="11.00"
+                />
+              </div>
+            </div>
+            <div className="form-row">
               <div className="form-group">
                 <label>Card Size</label>
                 <select
@@ -252,8 +269,6 @@ export default function FeaturedTab() {
                   <option value="short">Short Card (Standard - 1 Col)</option>
                 </select>
               </div>
-            </div>
-            <div className="form-row">
               <div className="form-group">
                 <label>Link Type</label>
                 <select
@@ -273,6 +288,7 @@ export default function FeaturedTab() {
                           imageUrl: selectedItem.imageUrl || prev.imageUrl,
                           name: prev.name || selectedItem.name || "",
                           price: prev.price || (selectedItem.price !== undefined && selectedItem.price !== null ? selectedItem.price.toString() : ""),
+                          price6: prev.price6 || (selectedItem.price6 !== undefined && selectedItem.price6 !== null ? selectedItem.price6.toString() : ""),
                           description: prev.description || selectedItem.description || "",
                         }));
                       }
@@ -286,8 +302,10 @@ export default function FeaturedTab() {
                   <option value="item">Link to Menu Item</option>
                 </select>
               </div>
+            </div>
 
-              <div className="form-group">
+            {linkType && (
+              <div className="form-group" style={{ marginBottom: "16px" }}>
                 {linkType === "custom" && (
                   <>
                     <label>URL / Route Path</label>
@@ -329,6 +347,7 @@ export default function FeaturedTab() {
                             imageUrl: selectedItem.imageUrl || prev.imageUrl,
                             name: prev.name || selectedItem.name || "",
                             price: prev.price || (selectedItem.price !== undefined && selectedItem.price !== null ? selectedItem.price.toString() : ""),
+                            price6: prev.price6 || (selectedItem.price6 !== undefined && selectedItem.price6 !== null ? selectedItem.price6.toString() : ""),
                             description: prev.description || selectedItem.description || "",
                           }));
                         }
@@ -336,14 +355,14 @@ export default function FeaturedTab() {
                     >
                       {menuItems.map((item) => (
                         <option key={item.id} value={item.id}>
-                          {item.name} {item.price ? `(€${Number(item.price).toFixed(2)})` : ""}
+                          {item.name} {item.price ? `(€${Number(item.price).toFixed(2)})` : ""}{item.price6 ? ` [6pz: €${Number(item.price6).toFixed(2)}]` : ""}
                         </option>
                       ))}
                     </select>
                   </>
                 )}
               </div>
-            </div>
+            )}
             <div className="form-group" style={{ marginBottom: "16px" }}>
               <label>Card Image *</label>
               <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
@@ -454,7 +473,12 @@ export default function FeaturedTab() {
                         {item.name || "(Untitled Card)"}{" "}
                         {item.price && (
                           <span style={{ color: "var(--color-brand-gold)", fontSize: "13px", marginLeft: "8px" }}>
-                            €{Number(item.price).toFixed(2)}
+                            1pz: €{Number(item.price).toFixed(2)}
+                          </span>
+                        )}
+                        {item.price6 && (
+                          <span style={{ color: "var(--color-brand-gold)", fontSize: "13px", marginLeft: "8px" }}>
+                            6pz: €{Number(item.price6).toFixed(2)}
                           </span>
                         )}
                       </h4>

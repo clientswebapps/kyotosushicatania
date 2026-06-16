@@ -45,6 +45,25 @@ const itemHighlights = {
   'Grilled Gyoza': ['🥟 Hand-made', '🔥 Grilled to order']
 };
 
+const formatPrice = (price, price6, isCard = false) => {
+  const hasPrice = price !== undefined && price !== null && price !== "";
+  const hasPrice6 = price6 !== undefined && price6 !== null && price6 !== "";
+  
+  if (hasPrice && hasPrice6) {
+    const p1 = Number(price).toFixed(2);
+    const p6 = Number(price6).toFixed(2);
+    return isCard ? `1 pz: €${p1} | 6 pz: €${p6}` : `1pz €${p1} | 6pz €${p6}`;
+  }
+  if (hasPrice6) {
+    const p6 = Number(price6).toFixed(2);
+    return isCard ? `6 pz: €${p6}` : `6pz €${p6}`;
+  }
+  if (hasPrice) {
+    return `€${Number(price).toFixed(2)}`;
+  }
+  return "";
+};
+
 // Reusable Image component with loading shimmer
 function ImageWithLoader({ src, alt, className, ...props }) {
   const [imageLoading, setImageLoading] = useState(true);
@@ -292,7 +311,7 @@ export default function Menu() {
                               <span className="menu-all-dotted-name">{item.name}</span>
                               <span className="menu-all-dotted-connector"></span>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                <span className="menu-all-dotted-price">€{item.price.toFixed(2)}</span>
+                                <span className="menu-all-dotted-price">{formatPrice(item.price, item.price6, false)}</span>
                                 <Info size={14} className="menu-all-dotted-info-icon" style={{ color: 'var(--color-brand-gold)', opacity: 0.6, flexShrink: 0 }} />
                               </div>
                             </div>
@@ -380,13 +399,13 @@ export default function Menu() {
                               <p className="menu-section__card-description">{item.description}</p>
                             )}
                             <div className="menu-price-wrapper">
-                              {item.originalPrice && Number(item.originalPrice) > Number(item.price) && (
+                              {item.price && item.originalPrice && Number(item.originalPrice) > Number(item.price) && (
                                 <span className="menu-price-original">
                                   €{Number(item.originalPrice).toFixed(2)}
                                 </span>
                               )}
                               <span className="menu-section__card-price">
-                                €{item.price.toFixed(2)}
+                                {formatPrice(item.price, item.price6, true)}
                               </span>
                             </div>
                           </div>
@@ -510,13 +529,13 @@ export default function Menu() {
                               <p className="menu-section__card-description">{item.description}</p>
                             )}
                             <div className="menu-price-wrapper">
-                              {item.originalPrice && Number(item.originalPrice) > Number(item.price) && (
+                              {item.price && item.originalPrice && Number(item.originalPrice) > Number(item.price) && (
                                 <span className="menu-price-original">
                                   €{Number(item.originalPrice).toFixed(2)}
                                 </span>
                               )}
                               <span className="menu-section__card-price">
-                                €{item.price.toFixed(2)}
+                                {formatPrice(item.price, item.price6, true)}
                               </span>
                             </div>
                           </div>

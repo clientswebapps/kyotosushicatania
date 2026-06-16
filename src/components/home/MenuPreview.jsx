@@ -28,6 +28,25 @@ function ImageWithLoader({ src, alt, className, ...props }) {
   );
 }
 
+const formatPrice = (price, price6) => {
+  const hasPrice = price !== undefined && price !== null && price !== "";
+  const hasPrice6 = price6 !== undefined && price6 !== null && price6 !== "";
+  
+  if (hasPrice && hasPrice6) {
+    const p1 = Number(price).toFixed(2);
+    const p6 = Number(price6).toFixed(2);
+    return `1 pz: €${p1} | 6 pz: €${p6}`;
+  }
+  if (hasPrice6) {
+    const p6 = Number(price6).toFixed(2);
+    return `6 pz: €${p6}`;
+  }
+  if (hasPrice) {
+    return `€${Number(price).toFixed(2)}`;
+  }
+  return "";
+};
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -60,7 +79,7 @@ const cardVariants = {
 function FeaturedCard({ item }) {
   const hasMedia = !!item.imageUrl;
   const isVideo = hasMedia && /\.(mp4|webm|ogg)(\?.*)?$/i.test(item.imageUrl || "");
-  const hasCardBody = !!item.name || (item.price !== undefined && item.price !== "") || !!item.description;
+  const hasCardBody = !!item.name || (item.price !== undefined && item.price !== "") || (item.price6 !== undefined && item.price6 !== "") || !!item.description;
 
   const sizeClass = `card-size--${item.cardSize || "long"}`;
   const bodyClass = hasCardBody ? "has-card-body" : "is-full-image";
@@ -120,9 +139,9 @@ function FeaturedCard({ item }) {
                   <>
                     <div className="menu-featured-row-header">
                       {item.name && <h3 className="menu-section__card-name">{item.name}</h3>}
-                      {item.price && (
+                      {(item.price || item.price6) && (
                         <span className="menu-section__card-price menu-section__card-price--red">
-                          €{Number(item.price).toFixed(2)}
+                          {formatPrice(item.price, item.price6)}
                         </span>
                       )}
                     </div>
@@ -133,9 +152,9 @@ function FeaturedCard({ item }) {
                   <>
                     {item.name && <h3 className="menu-section__card-name">{item.name}</h3>}
                     {item.description && <p className="menu-section__card-description">{item.description}</p>}
-                    {item.price && (
+                    {(item.price || item.price6) && (
                       <div className="menu-section__card-footer" style={{ marginTop: "auto" }}>
-                        <span className="menu-section__card-price">€{Number(item.price).toFixed(2)}</span>
+                        <span className="menu-section__card-price">{formatPrice(item.price, item.price6)}</span>
                       </div>
                     )}
                   </>

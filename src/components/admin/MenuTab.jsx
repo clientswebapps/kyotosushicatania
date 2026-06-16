@@ -37,6 +37,7 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
     name: "",
     description: "",
     price: "",
+    price6: "",
     originalPrice: "",
     categoryId: "",
     isBestSeller: false,
@@ -109,7 +110,8 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
     try {
       const payload = {
         ...newItem,
-        price: parseFloat(newItem.price),
+        price: newItem.price ? parseFloat(newItem.price) : 0,
+        price6: newItem.price6 ? parseFloat(newItem.price6) : null,
         originalPrice: newItem.originalPrice ? parseFloat(newItem.originalPrice) : null,
         highlights: Array.isArray(newItem.highlights) ? newItem.highlights : [],
       };
@@ -121,8 +123,11 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
           if (originalItem.name !== payload.name) {
             changes.push(`Name: "${originalItem.name}" ➔ "${payload.name}"`);
           }
-          if (Number(originalItem.price) !== Number(payload.price)) {
-            changes.push(`Price: €${Number(originalItem.price).toFixed(2)} ➔ €${Number(payload.price).toFixed(2)}`);
+          if (Number(originalItem.price || 0) !== Number(payload.price || 0)) {
+            changes.push(`Price: €${Number(originalItem.price || 0).toFixed(2)} ➔ €${Number(payload.price || 0).toFixed(2)}`);
+          }
+          if (Number(originalItem.price6 || 0) !== Number(payload.price6 || 0)) {
+            changes.push(`Price 6pz: €${Number(originalItem.price6 || 0).toFixed(2)} ➔ €${Number(payload.price6 || 0).toFixed(2)}`);
           }
           if (Number(originalItem.originalPrice || 0) !== Number(payload.originalPrice || 0)) {
             changes.push(
@@ -164,7 +169,7 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
         await logActivity(
           "add",
           payload.name,
-          `Added as new dish. Price: €${payload.price.toFixed(2)}, Category: ${payload.categoryId}`
+          `Added as new dish. Price: €${payload.price.toFixed(2)}, Price6: ${payload.price6 ? `€${payload.price6.toFixed(2)}` : "None"}, Category: ${payload.categoryId}`
         );
       }
 
@@ -172,6 +177,7 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
         name: "",
         description: "",
         price: "",
+        price6: "",
         originalPrice: "",
         categoryId: "",
         isBestSeller: false,
@@ -192,7 +198,8 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
     setNewItem({
       name: item.name || "",
       description: item.description || "",
-      price: item.price !== undefined ? item.price.toString() : "",
+      price: item.price !== undefined && item.price !== null ? item.price.toString() : "",
+      price6: item.price6 !== undefined && item.price6 !== null ? item.price6.toString() : "",
       originalPrice: item.originalPrice !== undefined && item.originalPrice !== null ? item.originalPrice.toString() : "",
       categoryId: item.categoryId || "",
       isBestSeller: !!item.isBestSeller,
@@ -222,11 +229,15 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
     if (!menuItems) return [];
     if (!menuSearchQuery.trim()) return menuItems;
     const q = menuSearchQuery.toLowerCase();
-    return menuItems.filter((item) =>
-      item.name.toLowerCase().includes(q) ||
-      (item.description && item.description.toLowerCase().includes(q))
-    );
-  }, [menuItems, menuSearchQuery]);
+    return menuItems.filter((item) => {
+      const categoryName = categories.find((c) => c.id === item.categoryId)?.name || "";
+      return (
+        item.name.toLowerCase().includes(q) ||
+        (item.description && item.description.toLowerCase().includes(q)) ||
+        categoryName.toLowerCase().includes(q)
+      );
+    });
+  }, [menuItems, menuSearchQuery, categories]);
 
   return (
     <motion.div
@@ -284,7 +295,7 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
                 </select>
               </div>
               <div className="form-group">
-                <label>Active Price (€) *</label>
+                <label>Price (1pz / Standard) (€) *</label>
                 <input
                   type="number"
                   step="0.01"
@@ -292,8 +303,22 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
                   onChange={(e) =>
                     setNewItem((p) => ({ ...p, price: e.target.value }))
                   }
-                  required
-                  placeholder="9.90"
+                  required={!newItem.price6}
+                  placeholder="2.00"
+                />
+              </div>
+            </div>
+            <div className="form-row">
+              <div className="form-group">
+                <label>Price (6pz) (€) (Optional)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={newItem.price6}
+                  onChange={(e) =>
+                    setNewItem((p) => ({ ...p, price6: e.target.value }))
+                  }
+                  placeholder="11.00"
                 />
               </div>
               <div className="form-group">
@@ -506,7 +531,7 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
               <Search size={16} style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "var(--color-text-secondary)" }} />
               <input
                 type="text"
-                placeholder="Search dishes by name or description..."
+                placeholder="Search dishes by name, description or category..."
                 value={menuSearchQuery}
                 onChange={(e) => setMenuSearchQuery(e.target.value)}
                 className="admin-search-input"
@@ -538,9 +563,15 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
                     <div className="admin-menu-item-info">
                       <h4>{item.name}</h4>
                       <p>
-                        €{item.price.toFixed(2)} |{" "}
-                        {categories.find((c) => c.id === item.categoryId)
-                          ?.name || item.categoryId}
+                        {item.price6 ? (
+                          <>
+                            {item.price && item.price > 0 ? `1pz: €${item.price.toFixed(2)} | ` : ""}
+                            {`6pz: €${item.price6.toFixed(2)}`}
+                          </>
+                        ) : (
+                          `€${item.price.toFixed(2)}`
+                        )}{" "}
+                        | {categories.find((c) => c.id === item.categoryId)?.name || item.categoryId}
                       </p>
                     </div>
                     <div className="admin-menu-item-actions">
