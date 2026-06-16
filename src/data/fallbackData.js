@@ -2269,5 +2269,55 @@ export const fallbackData = {
             createdAt: new Date().toISOString()
         }
     ],
-    menuLogs: []
+    menuLogs: [],
+    featuredItems: [
+        {
+            id: "feat-1",
+            name: "Dragon Roll",
+            price: 18.9,
+            description: "Eel, cucumber, avocado, crunch, tobiko and Kyoto sauce",
+            imageUrl: "/images/dragon-roll.avif",
+            link: "/menu",
+            order: 1,
+            active: true,
+            isBestSeller: true,
+            cardSize: "short"
+        },
+        {
+            id: "feat-2",
+            name: "Premium Mixed Sashimi",
+            price: 19,
+            description: "Premium mixed sashimi platter",
+            imageUrl: "/images/sashimi-platter.avif",
+            link: "/menu",
+            order: 2,
+            active: true,
+            isBestSeller: true,
+            cardSize: "short"
+        },
+        {
+            id: "feat-3",
+            name: "Tonkotsu Ramen",
+            price: 16.9,
+            description: "18-hour pork broth, chashu, marinated egg, nori, and scallion",
+            imageUrl: "/images/tonkotsu-ramen.avif",
+            link: "/menu",
+            order: 3,
+            active: true,
+            isBestSeller: true,
+            cardSize: "short"
+        },
+        {
+            id: "feat-4",
+            name: "Rainbow Roll",
+            price: 16,
+            description: "King crab meat, avocado, Japanese mayonnaise, salmon, tuna and Kyoto sauce",
+            imageUrl: "/images/rainbow-roll.avif",
+            link: "/menu",
+            order: 4,
+            active: true,
+            isBestSeller: false,
+            cardSize: "long"
+        }
+    ]
 };

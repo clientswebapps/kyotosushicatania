@@ -11,7 +11,8 @@ import {
   Eye,
   CheckCircle,
   AlertCircle,
-  Shield
+  Shield,
+  Star
 } from "lucide-react";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
@@ -25,6 +26,7 @@ import PromotionsTab from "../components/admin/PromotionsTab";
 import MenuTab from "../components/admin/MenuTab";
 import GalleryTab from "../components/admin/GalleryTab";
 import UsersTab from "../components/admin/UsersTab";
+import FeaturedTab from "../components/admin/FeaturedTab";
 
 export default function Admin() {
   const { user, loading: authLoading, login, logout } = useAuth();
@@ -118,6 +120,12 @@ export default function Admin() {
       if (fallbackData.galleryItems) {
         for (const item of fallbackData.galleryItems) {
           await setDoc(doc(db, "galleryItems", item.id), item);
+        }
+      }
+      // 6. Add featured items
+      if (fallbackData.featuredItems) {
+        for (const item of fallbackData.featuredItems) {
+          await setDoc(doc(db, "featuredItems", item.id), item);
         }
       }
       alert("Database populated successfully! Reload the page.");
@@ -268,6 +276,13 @@ export default function Admin() {
           <span>Menu Settings</span>
         </button>
         <button
+          className={`admin-tab-btn ${activeTab === "featured" ? "active" : ""}`}
+          onClick={() => setActiveTab("featured")}
+        >
+          <Star size={18} />
+          <span>Featured Menu</span>
+        </button>
+        <button
           className={`admin-tab-btn ${activeTab === "gallery" ? "active" : ""}`}
           onClick={() => setActiveTab("gallery")}
         >
@@ -304,6 +319,10 @@ export default function Admin() {
               seeding={seeding}
               handleSeedDatabase={handleSeedDatabase}
             />
+          )}
+
+          {activeTab === "featured" && (
+            <FeaturedTab />
           )}
 
           {activeTab === "gallery" && <GalleryTab />}

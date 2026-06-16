@@ -1095,3 +1095,206 @@
   color: var(--color-brand-gold);
   border-color: rgba(243, 192, 22, 0.35);
 }
+
+/* --- Featured Menu Link Cards reset --- */
+.menu-featured-card {
+  text-decoration: none !important;
+  color: inherit !important;
+  display: block;
+}
+
+/* --- Featured Card Size Layouts (Width-based) --- */
+/* Short Card Size (Standard 1 Column) */
+.featured-card-grid-item.card-size--short {
+  grid-column: span 1;
+}
+
+/* Medium Card Size (Wide 2 Columns) */
+.featured-card-grid-item.card-size--medium {
+  grid-column: span 2; /* Spans 2 columns on desktop */
+}
+
+/* Long Card Size (Wide 3 Columns) */
+.featured-card-grid-item.card-size--long {
+  grid-column: span 3; /* Spans all 3 columns on desktop */
+}
+
+/* Set explicit card heights based on size to ensure grid uniformity */
+.menu-featured-card.card-size--short,
+.menu-featured-card.card-size--medium,
+.menu-featured-card.card-size--long {
+  height: 360px !important;
+}
+
+/* Horizontal split for Wide cards on desktop and tablet screens */
+@media (min-width: 481px) {
+  .menu-featured-card.card-size--long .menu-flip-card__inner,
+  .menu-featured-card.card-size--long .menu-flip-card__face,
+  .menu-featured-card.card-size--medium .menu-flip-card__inner,
+  .menu-featured-card.card-size--medium .menu-flip-card__face {
+    height: 100% !important;
+  }
+
+  .menu-featured-card.card-size--long .menu-flip-card__front,
+  .menu-featured-card.card-size--medium .menu-flip-card__front {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: stretch !important;
+  }
+  
+  .menu-featured-card.card-size--long .menu-section__card-image-wrapper.has-card-body,
+  .menu-featured-card.card-size--medium .menu-section__card-image-wrapper.has-card-body {
+    width: 45% !important;
+    height: 100% !important;
+    border-radius: calc(var(--radius-md) - 1px) 0 0 calc(var(--radius-md) - 1px) !important;
+  }
+  
+  .menu-featured-card.card-size--long .menu-section__card-image-wrapper.has-card-body .menu-section__card-image,
+  .menu-featured-card.card-size--medium .menu-section__card-image-wrapper.has-card-body .menu-section__card-image {
+    height: 100% !important;
+    width: 100% !important;
+    object-fit: cover !important;
+  }
+
+  .menu-featured-card.card-size--long .menu-section__card-body,
+  .menu-featured-card.card-size--medium .menu-section__card-body {
+    width: 55% !important;
+    padding: 32px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    margin: 0 !important;
+  }
+}
+
+/* Layout for title, description and red price inside wide horizontal cards */
+.menu-featured-row-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  margin-bottom: var(--space-sm, 8px);
+}
+
+.menu-featured-row-header .menu-section__card-name {
+  margin-bottom: 0;
+  font-size: 24px;
+}
+
+.menu-section__card-price--red {
+  color: var(--color-brand-red) !important;
+  font-size: 22px;
+  font-weight: 700;
+  font-family: var(--font-body);
+  white-space: nowrap;
+}
+
+.menu-featured-card.card-size--long .menu-section__card-description,
+.menu-featured-card.card-size--medium .menu-section__card-description {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin: 8px 0 0 0;
+}
+
+
+
+@media (max-width: 768px) {
+  .featured-card-grid-item.card-size--long,
+  .featured-card-grid-item.card-size--medium {
+    grid-column: span 2 !important; /* Spans full width of 2-column layout */
+  }
+  
+  .menu-featured-card.card-size--long,
+  .menu-featured-card.card-size--medium {
+    height: 240px !important;
+  }
+  
+  .menu-featured-card.card-size--long .menu-section__card-body,
+  .menu-featured-card.card-size--medium .menu-section__card-body {
+    padding: 20px !important;
+  }
+  
+  .menu-featured-row-header .menu-section__card-name {
+    font-size: 20px;
+  }
+  
+  .menu-section__card-price--red {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .featured-card-grid-item.card-size--long,
+  .featured-card-grid-item.card-size--medium {
+    grid-column: span 1 !important; /* Spans full width of 1-column layout */
+  }
+  
+  .menu-featured-card.card-size--long,
+  .menu-featured-card.card-size--medium {
+    height: 340px !important; /* Standard vertical height on phone screens */
+  }
+  
+  /* Reset to vertical column layout on phone screens */
+  .menu-featured-card.card-size--long .menu-flip-card__front,
+  .menu-featured-card.card-size--medium .menu-flip-card__front {
+    flex-direction: column !important;
+  }
+  
+  .menu-featured-card.card-size--long .menu-section__card-image-wrapper.has-card-body,
+  .menu-featured-card.card-size--medium .menu-section__card-image-wrapper.has-card-body {
+    width: 100% !important;
+    height: 160px !important;
+    border-radius: calc(var(--radius-md) - 1px) calc(var(--radius-md) - 1px) 0 0 !important;
+  }
+  
+  .menu-featured-card.card-size--long .menu-section__card-body,
+  .menu-featured-card.card-size--medium .menu-section__card-body {
+    width: 100% !important;
+    padding: 16px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+  }
+  
+  .menu-featured-row-header {
+    flex-direction: row !important;
+    align-items: center !important;
+  }
+
+  .menu-featured-row-header .menu-section__card-name {
+    font-size: 18px;
+  }
+  
+  .menu-section__card-price--red {
+    font-size: 16px;
+  }
+}
+
+/* --- Remove Card Hover Effects on Homescreen Menu --- */
+.menu-featured-card:hover .menu-flip-card__inner {
+  transform: none !important;
+}
+
+.menu-featured-card:hover .menu-flip-card__front {
+  border-color: rgba(243, 192, 22, 0.65) !important; /* Highlight border with brand gold */
+  box-shadow: var(--shadow-card-premium) !important;
+}
+
+.menu-featured-card:hover .menu-section__card-image {
+  transform: none !important;
+}
+
+.menu-featured-card:hover .menu-section__card-name::after {
+  display: none !important;
+}
+
+.menu-featured-card:hover .menu-card-photo-disclaimer {
+  background: rgba(0, 0, 0, 0.65) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}

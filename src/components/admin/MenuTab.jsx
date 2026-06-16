@@ -40,7 +40,6 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
     originalPrice: "",
     categoryId: "",
     isBestSeller: false,
-    isFeatured: false,
     isAvailable: true,
     imageUrl: "",
     highlights: [],
@@ -102,20 +101,7 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
     }
   };
 
-  // Toggle featured on homepage
-  const toggleFeatured = async (item) => {
-    try {
-      const nextState = !item.isFeatured;
-      await updateMenuItem(item.id, { isFeatured: nextState });
-      await logActivity(
-        "toggle_featured",
-        item.name,
-        `Homepage Featured status set to ${nextState ? "Yes" : "No"}`
-      );
-    } catch (err) {
-      console.error(err);
-    }
-  };
+
 
   const handleAddMenuItem = async (e) => {
     e.preventDefault();
@@ -154,9 +140,7 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
           if (!!originalItem.isBestSeller !== !!payload.isBestSeller) {
             changes.push(`Best Seller: ${originalItem.isBestSeller ? "Yes" : "No"} ➔ ${payload.isBestSeller ? "Yes" : "No"}`);
           }
-          if (!!originalItem.isFeatured !== !!payload.isFeatured) {
-            changes.push(`Featured: ${originalItem.isFeatured ? "Yes" : "No"} ➔ ${payload.isFeatured ? "Yes" : "No"}`);
-          }
+
           if (originalItem.imageUrl !== payload.imageUrl) {
             changes.push("Image updated");
           }
@@ -191,7 +175,6 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
         originalPrice: "",
         categoryId: "",
         isBestSeller: false,
-        isFeatured: false,
         isAvailable: true,
         imageUrl: "",
         highlights: [],
@@ -213,7 +196,6 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
       originalPrice: item.originalPrice !== undefined && item.originalPrice !== null ? item.originalPrice.toString() : "",
       categoryId: item.categoryId || "",
       isBestSeller: !!item.isBestSeller,
-      isFeatured: !!item.isFeatured,
       isAvailable: item.isAvailable !== undefined ? !!item.isAvailable : true,
       imageUrl: item.imageUrl || "",
       highlights: Array.isArray(item.highlights) ? item.highlights : [],
@@ -439,19 +421,6 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
               <label className="checkbox-label">
                 <input
                   type="checkbox"
-                  checked={newItem.isFeatured}
-                  onChange={(e) =>
-                    setNewItem((p) => ({
-                      ...p,
-                      isFeatured: e.target.checked,
-                    }))
-                  }
-                />
-                <span>Feature on Homepage</span>
-              </label>
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
                   checked={newItem.hasPhotoDisclaimer}
                   onChange={(e) =>
                     setNewItem((p) => ({
@@ -496,7 +465,6 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
                       originalPrice: "",
                       categoryId: "",
                       isBestSeller: false,
-                      isFeatured: false,
                       isAvailable: true,
                       imageUrl: "",
                       highlights: [],
@@ -576,15 +544,6 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
                       </p>
                     </div>
                     <div className="admin-menu-item-actions">
-                      <button
-                        onClick={() => toggleFeatured(item)}
-                        className={`admin-toggle-btn ${
-                          item.isFeatured ? "active" : ""
-                        }`}
-                        title="Toggle Featured on Homepage"
-                      >
-                        🏠
-                      </button>
                       <button
                         onClick={() => toggleBestSeller(item)}
                         className={`admin-toggle-btn ${

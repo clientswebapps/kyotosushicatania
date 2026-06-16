@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
+import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCollection } from "../hooks/useFirestore";
 import { Search, AlertCircle, X, Info } from "lucide-react";
@@ -65,6 +66,10 @@ function ImageWithLoader({ src, alt, className, ...props }) {
 }
 
 export default function Menu() {
+  const [searchParams] = useSearchParams();
+  const categoryParam = searchParams.get("category");
+  const itemParam = searchParams.get("item");
+
   const { data: categories } = useCollection("menuCategories");
   const { data: items, loading } = useCollection("menuItems");
   const [activeCategory, setActiveCategory] = useState(null);
@@ -72,6 +77,29 @@ export default function Menu() {
   const [flippedCards, setFlippedCards] = useState({});
   const [showAllergens, setShowAllergens] = useState(false);
   const [selectedModalItem, setSelectedModalItem] = useState(null);
+
+  // Parse URL query parameters to auto-select category or auto-open specific item details
+  useEffect(() => {
+    if (loading) return;
+
+    if (itemParam && items && items.length > 0) {
+      const matchedItem = items.find((i) => i.id === itemParam);
+      if (matchedItem) {
+        setSelectedModalItem(matchedItem);
+        if (matchedItem.categoryId) {
+          setActiveCategory(matchedItem.categoryId);
+        }
+        setTimeout(() => {
+          tabsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 150);
+      }
+    } else if (categoryParam) {
+      setActiveCategory(categoryParam);
+      setTimeout(() => {
+        tabsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 150);
+    }
+  }, [categoryParam, itemParam, items, loading]);
 
   useEffect(() => {
     if (selectedModalItem) {
