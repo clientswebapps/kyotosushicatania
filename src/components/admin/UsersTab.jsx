@@ -17,6 +17,8 @@ export default function UsersTab({
   const [userSuccess, setUserSuccess] = useState("");
   const [deletingUserId, setDeletingUserId] = useState(null);
 
+  const displayAdmins = adminUsers.filter((u) => u.email !== "admin@kyotosushicatania.com");
+
   const handleAddUser = async (e) => {
     e.preventDefault();
     setUserError("");
@@ -181,7 +183,7 @@ export default function UsersTab({
             </div>
           ) : (
             <div className="admin-menu-items-list">
-              {adminUsers.map((u) => (
+              {displayAdmins.map((u) => (
                 <div key={u.id} className="admin-menu-item-row">
                   <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                     <div
@@ -260,7 +262,7 @@ export default function UsersTab({
                 </div>
               ))}
 
-              {adminUsers.length === 0 && (
+              {displayAdmins.length === 0 && (
                 <p className="admin-empty-state" style={{ padding: "20px 0" }}>
                   No registered admin users.
                 </p>

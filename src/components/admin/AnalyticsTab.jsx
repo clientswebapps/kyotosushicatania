@@ -154,6 +154,22 @@ export default function AnalyticsTab() {
     }).sort((a, b) => b.activeUsers - a.activeUsers);
   }, [reportData]);
 
+  // Country distribution details
+  const countryStats = useMemo(() => {
+    if (!reportData || !reportData.countries || reportData.countries.length === 0) return [];
+    
+    const total = reportData.countries.reduce((sum, c) => sum + c.activeUsers, 0);
+    
+    return reportData.countries.map(c => {
+      const pct = total > 0 ? ((c.activeUsers / total) * 100).toFixed(0) : 0;
+      return {
+        country: c.country,
+        activeUsers: c.activeUsers,
+        percentage: Number(pct)
+      };
+    }).sort((a, b) => b.activeUsers - a.activeUsers);
+  }, [reportData]);
+
   // Helper icons for device types
   const getDeviceIcon = (category) => {
     const cat = category.toLowerCase();
@@ -513,40 +529,77 @@ export default function AnalyticsTab() {
               )}
             </article>
 
-            {/* Device Distribution Cards */}
-            <article className="analytics-devices-container">
-              <h3>Devices (30 Days)</h3>
-              <div className="devices-list">
-                {deviceStats.length === 0 ? (
-                  <p className="empty-devices-text">No device data available.</p>
-                ) : (
-                  deviceStats.map(item => (
-                    <div key={item.category} className="device-row">
-                      <div className="device-label-row">
-                        <div className="device-name">
-                          <span className={`device-icon-wrapper ${getDeviceColorClass(item.category)}`}>
-                            {getDeviceIcon(item.category)}
-                          </span>
-                          <span className="capitalize">{item.category}</span>
+            <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+              {/* Device Distribution Cards */}
+              <article className="analytics-devices-container" style={{ margin: 0 }}>
+                <h3>Devices (30 Days)</h3>
+                <div className="devices-list">
+                  {deviceStats.length === 0 ? (
+                    <p className="empty-devices-text">No device data available.</p>
+                  ) : (
+                    deviceStats.map(item => (
+                      <div key={item.category} className="device-row">
+                        <div className="device-label-row">
+                          <div className="device-name">
+                            <span className={`device-icon-wrapper ${getDeviceColorClass(item.category)}`}>
+                              {getDeviceIcon(item.category)}
+                            </span>
+                            <span className="capitalize">{item.category}</span>
+                          </div>
+                          <div className="device-values">
+                            <span>{item.activeUsers.toLocaleString()} users</span>
+                            <strong>{item.percentage}%</strong>
+                          </div>
                         </div>
-                        <div className="device-values">
-                          <span>{item.activeUsers.toLocaleString()} users</span>
-                          <strong>{item.percentage}%</strong>
+                        <div className="device-progress-bar-bg">
+                          <motion.div 
+                            className={`device-progress-bar-fill ${getDeviceColorClass(item.category)}`}
+                            initial={{ width: 0 }}
+                            animate={{ width: `${item.percentage}%` }}
+                            transition={shouldReduceMotion ? { duration: 0 } : { duration: 1, ease: "easeOut" }}
+                          />
                         </div>
                       </div>
-                      <div className="device-progress-bar-bg">
-                        <motion.div 
-                          className={`device-progress-bar-fill ${getDeviceColorClass(item.category)}`}
-                          initial={{ width: 0 }}
-                          animate={{ width: `${item.percentage}%` }}
-                          transition={shouldReduceMotion ? { duration: 0 } : { duration: 1, ease: "easeOut" }}
-                        />
+                    ))
+                  )}
+                </div>
+              </article>
+
+              {/* Country Distribution Cards */}
+              <article className="analytics-devices-container" style={{ margin: 0 }}>
+                <h3>Top Countries (30 Days)</h3>
+                <div className="devices-list">
+                  {countryStats.length === 0 ? (
+                    <p className="empty-devices-text">No country data available.</p>
+                  ) : (
+                    countryStats.map(item => (
+                      <div key={item.country} className="device-row">
+                        <div className="device-label-row">
+                          <div className="device-name">
+                            <span className="device-icon-wrapper gold">
+                              <Globe size={16} />
+                            </span>
+                            <span>{item.country}</span>
+                          </div>
+                          <div className="device-values">
+                            <span>{item.activeUsers.toLocaleString()} users</span>
+                            <strong>{item.percentage}%</strong>
+                          </div>
+                        </div>
+                        <div className="device-progress-bar-bg">
+                          <motion.div 
+                            className="device-progress-bar-fill gold"
+                            initial={{ width: 0 }}
+                            animate={{ width: `${item.percentage}%` }}
+                            transition={shouldReduceMotion ? { duration: 0 } : { duration: 1, ease: "easeOut" }}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </article>
+                    ))
+                  )}
+                </div>
+              </article>
+            </div>
           </div>
 
           {/* Top Visited Pages Table */}

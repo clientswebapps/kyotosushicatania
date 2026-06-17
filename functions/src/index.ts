@@ -370,6 +370,38 @@ export const getAnalyticsReport = onCall({ cors: true }, async (request) => {
     // 4. Run Reports
     logger.info(`getAnalyticsReport: Fetching GA4 reports for Property ${propertyId}...`);
 
+    // Filter out traffic from lyricastudios.com domain or any page with "lyricastudios" in the title
+    const lyricastudiosFilter: any = {
+      andGroup: {
+        expressions: [
+          {
+            notExpression: {
+              filter: {
+                fieldName: "hostName",
+                stringFilter: {
+                  matchType: "CONTAINS",
+                  value: "lyricastudios",
+                  caseSensitive: false,
+                },
+              },
+            },
+          },
+          {
+            notExpression: {
+              filter: {
+                fieldName: "pageTitle",
+                stringFilter: {
+                  matchType: "CONTAINS",
+                  value: "lyricastudios",
+                  caseSensitive: false,
+                },
+              },
+            },
+          },
+        ],
+      },
+    };
+
     // Report A: 30-day traffic trend
     const [trendResponse] = await analyticsClient.runReport({
       property: `properties/${propertyId}`,
@@ -379,7 +411,8 @@ export const getAnalyticsReport = onCall({ cors: true }, async (request) => {
         { name: "activeUsers" },
         { name: "screenPageViews" }
       ],
-      orderBys: [{ dimension: { dimensionName: "date" } }]
+      orderBys: [{ dimension: { dimensionName: "date" } }],
+      dimensionFilter: lyricastudiosFilter,
     });
 
     // Report B: Device distribution
@@ -387,7 +420,8 @@ export const getAnalyticsReport = onCall({ cors: true }, async (request) => {
       property: `properties/${propertyId}`,
       dateRanges: [{ startDate: "30daysAgo", endDate: "today" }],
       dimensions: [{ name: "deviceCategory" }],
-      metrics: [{ name: "activeUsers" }]
+      metrics: [{ name: "activeUsers" }],
+      dimensionFilter: lyricastudiosFilter,
     });
 
     // Report C: Top pages
@@ -400,7 +434,8 @@ export const getAnalyticsReport = onCall({ cors: true }, async (request) => {
         { name: "screenPageViews" }
       ],
       limit: 10,
-      orderBys: [{ metric: { metricName: "screenPageViews" }, desc: true }]
+      orderBys: [{ metric: { metricName: "screenPageViews" }, desc: true }],
+      dimensionFilter: lyricastudiosFilter,
     });
 
     // Report D: Realtime active users (last 30 minutes)
@@ -414,6 +449,17 @@ export const getAnalyticsReport = onCall({ cors: true }, async (request) => {
     } catch (realtimeErr: any) {
       logger.warn("getAnalyticsReport: Realtime report failed (may not be supported or initialized):", realtimeErr);
     }
+
+    // Report E: Country distribution
+    const [countryResponse] = await analyticsClient.runReport({
+      property: `properties/${propertyId}`,
+      dateRanges: [{ startDate: "30daysAgo", endDate: "today" }],
+      dimensions: [{ name: "country" }],
+      metrics: [{ name: "activeUsers" }],
+      limit: 10,
+      orderBys: [{ metric: { metricName: "activeUsers" }, desc: true }],
+      dimensionFilter: lyricastudiosFilter,
+    });
 
     // Standardize dates: format "YYYYMMDD" to "YYYY-MM-DD"
     const trendData = (trendResponse.rows || []).map(row => {
@@ -434,11 +480,18 @@ export const getAnalyticsReport = onCall({ cors: true }, async (request) => {
       activeUsers: Number(row.metricValues?.[0]?.value || 0)
     }));
 
-    const pagesData = (pagesResponse.rows || []).map(row => ({
-      title: row.dimensionValues?.[0]?.value || "Untitled",
-      path: row.dimensionValues?.[1]?.value || "/",
-      activeUsers: Number(row.metricValues?.[0]?.value || 0),
-      pageViews: Number(row.metricValues?.[1]?.value || 0)
+    const pagesData = (pagesResponse.rows || [])
+      .map(row => ({
+        title: row.dimensionValues?.[0]?.value || "Untitled",
+        path: row.dimensionValues?.[1]?.value || "/",
+        activeUsers: Number(row.metricValues?.[0]?.value || 0),
+        pageViews: Number(row.metricValues?.[1]?.value || 0)
+      }))
+      .filter(page => !page.title.toLowerCase().includes("lyricastudios") && !page.path.toLowerCase().includes("lyricastudios"));
+
+    const countryData = (countryResponse.rows || []).map(row => ({
+      country: row.dimensionValues?.[0]?.value || "Unknown",
+      activeUsers: Number(row.metricValues?.[0]?.value || 0)
     }));
 
     return {
@@ -447,6 +500,7 @@ export const getAnalyticsReport = onCall({ cors: true }, async (request) => {
         trend: trendData,
         devices: deviceData,
         pages: pagesData,
+        countries: countryData,
         realtimeUsers
       }
     };
