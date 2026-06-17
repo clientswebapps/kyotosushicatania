@@ -1,9 +1,12 @@
 import { initializeApp } from "firebase-admin/app";
 import { setGlobalOptions } from "firebase-functions";
 import { onDocumentCreated, onDocumentUpdated } from "firebase-functions/v2/firestore";
+import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { defineString, defineInt } from "firebase-functions/params";
 import * as logger from "firebase-functions/logger";
 import * as nodemailer from "nodemailer";
+import { getFirestore } from "firebase-admin/firestore";
+import { BetaAnalyticsDataClient } from "@google-analytics/data";
 
 // Initialize Firebase Admin SDK
 initializeApp();
@@ -304,5 +307,169 @@ export const onReservationUpdated = onDocumentUpdated("reservations/{reservation
     logger.info(`Status update email successfully sent to ${email} (${status})`);
   } catch (err) {
     logger.error(`Failed to send status update email to ${email}:`, err);
+  }
+});
+
+// Initialize Google Analytics Data API client
+// Let's load credentials if provided in GA_SERVICE_ACCOUNT_KEY env/secret,
+// otherwise use Application Default Credentials.
+let analyticsClient: BetaAnalyticsDataClient;
+try {
+  const saKey = process.env.GA_SERVICE_ACCOUNT_KEY;
+  if (saKey) {
+    logger.info("Initializing BetaAnalyticsDataClient with GA_SERVICE_ACCOUNT_KEY");
+    analyticsClient = new BetaAnalyticsDataClient({
+      credentials: JSON.parse(saKey)
+    });
+  } else {
+    logger.info("Initializing BetaAnalyticsDataClient with Application Default Credentials");
+    analyticsClient = new BetaAnalyticsDataClient();
+  }
+} catch (err) {
+  logger.error("Failed to initialize BetaAnalyticsDataClient:", err);
+}
+
+export const getAnalyticsReport = onCall({ cors: true }, async (request) => {
+  // 1. Authentication Check
+  const auth = request.auth;
+  if (!auth) {
+    logger.warn("getAnalyticsReport: Unauthenticated access attempt");
+    throw new HttpsError("unauthenticated", "User must be authenticated.");
+  }
+
+  const uid = auth.uid;
+  const db = getFirestore();
+
+  try {
+    // 2. Authorization Check (Must have role: "admin")
+    const userDoc = await db.collection("adminUsers").doc(uid).get();
+    if (!userDoc.exists || userDoc.data()?.role !== "admin") {
+      logger.warn(`getAnalyticsReport: Unauthorized access attempt by UID ${uid}`);
+      throw new HttpsError("permission-denied", "User is not authorized as admin.");
+    }
+
+    // 3. Property ID Configuration Check
+    const propertyId = process.env.GA4_PROPERTY_ID;
+    if (!propertyId) {
+      logger.warn("getAnalyticsReport: GA4_PROPERTY_ID env variable is not set");
+      return {
+        success: false,
+        error: "PROPERTY_ID_MISSING",
+        message: "Google Analytics Property ID is not configured. Please add GA4_PROPERTY_ID to your environment variables."
+      };
+    }
+
+    if (!analyticsClient) {
+      return {
+        success: false,
+        error: "CLIENT_INITIALIZATION_FAILED",
+        message: "Analytics API client failed to initialize. Check service account credentials."
+      };
+    }
+
+    // 4. Run Reports
+    logger.info(`getAnalyticsReport: Fetching GA4 reports for Property ${propertyId}...`);
+
+    // Report A: 30-day traffic trend
+    const [trendResponse] = await analyticsClient.runReport({
+      property: `properties/${propertyId}`,
+      dateRanges: [{ startDate: "30daysAgo", endDate: "today" }],
+      dimensions: [{ name: "date" }],
+      metrics: [
+        { name: "activeUsers" },
+        { name: "screenPageViews" }
+      ],
+      orderBys: [{ dimension: { dimensionName: "date" } }]
+    });
+
+    // Report B: Device distribution
+    const [deviceResponse] = await analyticsClient.runReport({
+      property: `properties/${propertyId}`,
+      dateRanges: [{ startDate: "30daysAgo", endDate: "today" }],
+      dimensions: [{ name: "deviceCategory" }],
+      metrics: [{ name: "activeUsers" }]
+    });
+
+    // Report C: Top pages
+    const [pagesResponse] = await analyticsClient.runReport({
+      property: `properties/${propertyId}`,
+      dateRanges: [{ startDate: "30daysAgo", endDate: "today" }],
+      dimensions: [{ name: "pageTitle" }, { name: "pagePath" }],
+      metrics: [
+        { name: "activeUsers" },
+        { name: "screenPageViews" }
+      ],
+      limit: 10,
+      orderBys: [{ metric: { metricName: "screenPageViews" }, desc: true }]
+    });
+
+    // Report D: Realtime active users (last 30 minutes)
+    let realtimeUsers = 0;
+    try {
+      const [realtimeResponse] = await analyticsClient.runRealtimeReport({
+        property: `properties/${propertyId}`,
+        metrics: [{ name: "activeUsers" }]
+      });
+      realtimeUsers = Number(realtimeResponse.rows?.[0]?.metricValues?.[0]?.value || 0);
+    } catch (realtimeErr: any) {
+      logger.warn("getAnalyticsReport: Realtime report failed (may not be supported or initialized):", realtimeErr);
+    }
+
+    // Standardize dates: format "YYYYMMDD" to "YYYY-MM-DD"
+    const trendData = (trendResponse.rows || []).map(row => {
+      const rawDate = row.dimensionValues?.[0]?.value || "";
+      let formattedDate = rawDate;
+      if (rawDate.length === 8) {
+        formattedDate = `${rawDate.substring(0, 4)}-${rawDate.substring(4, 6)}-${rawDate.substring(6, 8)}`;
+      }
+      return {
+        date: formattedDate,
+        activeUsers: Number(row.metricValues?.[0]?.value || 0),
+        pageViews: Number(row.metricValues?.[1]?.value || 0)
+      };
+    });
+
+    const deviceData = (deviceResponse.rows || []).map(row => ({
+      category: row.dimensionValues?.[0]?.value || "unknown",
+      activeUsers: Number(row.metricValues?.[0]?.value || 0)
+    }));
+
+    const pagesData = (pagesResponse.rows || []).map(row => ({
+      title: row.dimensionValues?.[0]?.value || "Untitled",
+      path: row.dimensionValues?.[1]?.value || "/",
+      activeUsers: Number(row.metricValues?.[0]?.value || 0),
+      pageViews: Number(row.metricValues?.[1]?.value || 0)
+    }));
+
+    return {
+      success: true,
+      data: {
+        trend: trendData,
+        devices: deviceData,
+        pages: pagesData,
+        realtimeUsers
+      }
+    };
+
+  } catch (err: any) {
+    logger.error("getAnalyticsReport: Unexpected error during GA4 fetch:", err);
+    
+    // Check for specific API error signatures
+    const errMsg = err.message || "";
+    if (errMsg.includes("permission") || errMsg.includes("auth") || errMsg.includes("credential")) {
+      return {
+        success: false,
+        error: "AUTHENTICATION_FAILED",
+        message: "Google Analytics API authentication failed. Verify the service account has access as Viewer to the property.",
+        details: errMsg
+      };
+    }
+
+    return {
+      success: false,
+      error: "API_ERROR",
+      message: errMsg || "Failed to fetch analytics data.",
+      details: JSON.stringify(err)
+    };
   }
 });

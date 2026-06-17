@@ -12,6 +12,7 @@
       "ignore": [
         "node_modules",
         ".git",
+        "package-lock.json",
         "firebase-debug.log",
         "firestore-debug.log",
         "pubsub-debug.log"

@@ -3,6 +3,7 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { getAuth } from "firebase/auth";
 import { getAnalytics } from "firebase/analytics";
+import { getFunctions } from "firebase/functions";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -22,6 +23,7 @@ const isConfigured = !!import.meta.env.VITE_FIREBASE_PROJECT_ID;
 export const db = isConfigured ? getFirestore(app) : null;
 export const storage = isConfigured ? getStorage(app) : null;
 export const auth = isConfigured ? getAuth(app) : null;
+export const functions = isConfigured ? getFunctions(app, "europe-west8") : null;
 
 // Initialize analytics only if configured and in a browser context
 export const analytics = (isConfigured && typeof window !== "undefined" && firebaseConfig.measurementId) 

@@ -12,7 +12,8 @@ import {
   CheckCircle,
   AlertCircle,
   Shield,
-  Star
+  Star,
+  BarChart2
 } from "lucide-react";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
@@ -27,6 +28,7 @@ import MenuTab from "../components/admin/MenuTab";
 import GalleryTab from "../components/admin/GalleryTab";
 import UsersTab from "../components/admin/UsersTab";
 import FeaturedTab from "../components/admin/FeaturedTab";
+import AnalyticsTab from "../components/admin/AnalyticsTab";
 
 export default function Admin() {
   const { user, loading: authLoading, login, logout } = useAuth();
@@ -290,6 +292,13 @@ export default function Admin() {
           <span>Gallery Settings</span>
         </button>
         <button
+          className={`admin-tab-btn ${activeTab === "analytics" ? "active" : ""}`}
+          onClick={() => setActiveTab("analytics")}
+        >
+          <BarChart2 size={18} />
+          <span>Analytics</span>
+        </button>
+        <button
           className={`admin-tab-btn ${activeTab === "users" ? "active" : ""}`}
           onClick={() => setActiveTab("users")}
         >
@@ -307,6 +316,10 @@ export default function Admin() {
               seeding={seeding}
               handleSeedDatabase={handleSeedDatabase}
             />
+          )}
+
+          {activeTab === "analytics" && (
+            <AnalyticsTab />
           )}
 
           {activeTab === "hero" && <HeroTab />}
