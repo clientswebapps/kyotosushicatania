@@ -47,6 +47,12 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
     hasPhotoDisclaimer: false,
   });
 
+  // Check if selected category is Nigiri al pezzo
+  const selectedCategory = categories.find((c) => c.id === newItem.categoryId);
+  const isNigiriAlPezzo = selectedCategory
+    ? (selectedCategory.name === "Nigiri al pezzo" || selectedCategory.nameIt === "Nigiri al pezzo")
+    : (newItem.categoryId === "nigiri");
+
   const logActivity = async (action, itemName, details = "") => {
     try {
       await addLog({
@@ -111,7 +117,7 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
       const payload = {
         ...newItem,
         price: newItem.price ? parseFloat(newItem.price) : 0,
-        price6: newItem.price6 ? parseFloat(newItem.price6) : null,
+        price6: (isNigiriAlPezzo && newItem.price6) ? parseFloat(newItem.price6) : null,
         originalPrice: newItem.originalPrice ? parseFloat(newItem.originalPrice) : null,
         highlights: Array.isArray(newItem.highlights) ? newItem.highlights : [],
       };
@@ -295,7 +301,7 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
                 </select>
               </div>
               <div className="form-group">
-                <label>Price (1pz / Standard) (€) *</label>
+                <label>{isNigiriAlPezzo ? "Price (1pz) (€) *" : "Price (€) *"}</label>
                 <input
                   type="number"
                   step="0.01"
@@ -303,24 +309,26 @@ export default function MenuTab({ user, seeding, handleSeedDatabase }) {
                   onChange={(e) =>
                     setNewItem((p) => ({ ...p, price: e.target.value }))
                   }
-                  required={!newItem.price6}
-                  placeholder="2.00"
+                  required={isNigiriAlPezzo ? !newItem.price6 : true}
+                  placeholder={isNigiriAlPezzo ? "2.00" : "10.00"}
                 />
               </div>
             </div>
             <div className="form-row">
-              <div className="form-group">
-                <label>Price (6pz) (€) (Optional)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={newItem.price6}
-                  onChange={(e) =>
-                    setNewItem((p) => ({ ...p, price6: e.target.value }))
-                  }
-                  placeholder="11.00"
-                />
-              </div>
+              {isNigiriAlPezzo && (
+                <div className="form-group">
+                  <label>Price (6pz) (€) (Optional)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={newItem.price6}
+                    onChange={(e) =>
+                      setNewItem((p) => ({ ...p, price6: e.target.value }))
+                    }
+                    placeholder="11.00"
+                  />
+                </div>
+              )}
               <div className="form-group">
                 <label>Original Price (€) (Optional)</label>
                 <input
