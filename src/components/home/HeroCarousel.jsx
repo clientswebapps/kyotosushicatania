@@ -209,9 +209,11 @@ const HeroCarousel = () => {
               </h1>
               <p className="hero__subtitle">{activeSlide.subtitle}</p>
               {activeSlide.ctaLink && (
-                <Link to={activeSlide.ctaLink} className="hero__cta">
-                  {activeSlide.ctaText || "Scopri di più"}
-                </Link>
+                <div className="hero__cta-wrapper">
+                  <Link to={activeSlide.ctaLink} className="hero__cta">
+                    {activeSlide.ctaText || "Scopri di più"}
+                  </Link>
+                </div>
               )}
             </motion.div>
           </motion.div>

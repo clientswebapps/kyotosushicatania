@@ -1,6 +1,9 @@
 import React from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, AlertCircle } from "lucide-react";
+import { generateRoundWavyPath } from "../../utils/wavyPath";
+import "../../styles/modal.css";
 
 const allergensList = [
   {
@@ -88,10 +91,10 @@ export default function AllergenModal({ isOpen, onClose }) {
     };
   }, [isOpen]);
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}>
+        <div className="modal-overlay">
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -102,178 +105,68 @@ export default function AllergenModal({ isOpen, onClose }) {
               position: "absolute",
               inset: 0,
               background: "rgba(0, 0, 0, 0.8)",
-              backdropFilter: "blur(8px)",
+              backdropFilter: "blur(5px)",
+              zIndex: 1000,
             }}
           />
 
           {/* Modal Container */}
           <motion.div
+            className="allergen-modal-content"
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: "spring", duration: 0.4 }}
-            style={{
-              position: "relative",
-              width: "100%",
-              maxWidth: "750px",
-              maxHeight: "85vh",
-              background: "linear-gradient(135deg, #121212 0%, #080808 100%)",
-              border: "1px solid rgba(243, 192, 22, 0.2)",
-              borderRadius: "12px",
-              boxShadow: "0 24px 48px rgba(0, 0, 0, 0.8), 0 0 40px rgba(243, 192, 22, 0.05)",
-              display: "flex",
-              flexDirection: "column",
-              overflow: "hidden",
-              zIndex: 1001,
-            }}
+            onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              padding: "24px",
-              borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
-            }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <div style={{
-                  width: "40px",
-                  height: "40px",
-                  borderRadius: "50%",
-                  background: "rgba(243, 192, 22, 0.1)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "var(--color-brand-gold)",
-                }}>
+            <div className="allergen-modal-header">
+              <div className="allergen-modal-header-info">
+                <div className="allergen-modal-icon-wrapper">
                   <AlertCircle size={22} />
                 </div>
-                <div>
-                  <h3 style={{
-                    fontFamily: "var(--font-heading)",
-                    fontSize: "22px",
-                    fontWeight: 600,
-                    color: "var(--color-text)",
-                    margin: 0,
-                  }}>
-                    Allergeni Alimentari
-                  </h3>
-                  <p style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: "12px",
-                    color: "var(--color-text-secondary)",
-                    margin: "4px 0 0 0",
-                  }}>
-                    Sostanze o prodotti che provocano allergie o intolleranze
-                  </p>
+                <div className="allergen-modal-title-group">
+                  <h3>Allergeni Alimentari</h3>
+                  <p>Sostanze o prodotti che provocano allergie o intolleranze</p>
                 </div>
               </div>
               <button
                 onClick={onClose}
-                style={{
-                  background: "rgba(255, 255, 255, 0.05)",
-                  border: "none",
-                  borderRadius: "50%",
-                  width: "36px",
-                  height: "36px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "var(--color-text-secondary)",
-                  cursor: "pointer",
-                  transition: "all 0.2s",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "rgba(244, 67, 54, 0.1)";
-                  e.currentTarget.style.color = "#f44336";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
-                  e.currentTarget.style.color = "var(--color-text-secondary)";
-                }}
+                className="allergen-modal-close-btn"
+                aria-label="Chiudi modal"
               >
                 <X size={20} />
               </button>
+
+              {/* Wavy cutout header divider (cutout transitions into light body) */}
+              <div className="allergen-modal-wave" aria-hidden="true">
+                <svg viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d={generateRoundWavyPath()} fill="var(--color-bg)" />
+                </svg>
+              </div>
             </div>
 
             {/* Scrollable Content */}
-            <div style={{
-              overflowY: "auto",
-              padding: "24px",
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-              gap: "16px",
-            }}>
+            <div className="allergen-modal-body">
               {allergensList.map((allergen) => (
-                <div
-                  key={allergen.num}
-                  style={{
-                    background: "rgba(255, 255, 255, 0.02)",
-                    border: "1px solid rgba(255, 255, 255, 0.04)",
-                    borderRadius: "8px",
-                    padding: "16px",
-                    display: "flex",
-                    gap: "12px",
-                    transition: "all 0.3s",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = "rgba(243, 192, 22, 0.15)";
-                    e.currentTarget.style.background = "rgba(243, 192, 22, 0.01)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.04)";
-                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.02)";
-                  }}
-                >
-                  <div style={{
-                    fontFamily: "var(--font-heading)",
-                    fontSize: "20px",
-                    fontWeight: 700,
-                    color: "var(--color-brand-gold)",
-                    opacity: 0.6,
-                    lineHeight: 1,
-                    minWidth: "24px",
-                  }}>
-                    {allergen.num}
-                  </div>
+                <div key={allergen.num} className="allergen-card">
+                  <div className="allergen-card-num">{allergen.num}</div>
                   <div>
-                    <h4 style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "14px",
-                      fontWeight: 600,
-                      color: "var(--color-text)",
-                      margin: "0 0 6px 0",
-                    }}>
-                      {allergen.title}
-                    </h4>
-                    <p style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "12px",
-                      color: "var(--color-text-secondary)",
-                      lineHeight: "1.5",
-                      margin: 0,
-                    }}>
-                      {allergen.desc}
-                    </p>
+                    <h4 className="allergen-card-title">{allergen.title}</h4>
+                    <p className="allergen-card-desc">{allergen.desc}</p>
                   </div>
                 </div>
               ))}
             </div>
 
             {/* Footer note */}
-            <div style={{
-              padding: "16px 24px",
-              borderTop: "1px solid rgba(255, 255, 255, 0.08)",
-              background: "rgba(0, 0, 0, 0.3)",
-              fontSize: "11px",
-              color: "var(--color-text-muted)",
-              textAlign: "center",
-            }}>
+            <div className="allergen-modal-footer">
               * Regolamento UE 1169/2011 relativo all'informazione sugli alimenti ai consumatori.
             </div>
           </motion.div>
         </div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }

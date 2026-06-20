@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ShoppingBag } from 'lucide-react';
 import '../../styles/menu.css';
@@ -17,7 +18,7 @@ export default function MenuItemModal({ item, isOpen, onClose }) {
 
   if (!item) return null;
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
         <>
@@ -83,6 +84,7 @@ export default function MenuItemModal({ item, isOpen, onClose }) {
           </motion.div>
         </>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }

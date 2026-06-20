@@ -203,7 +203,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px; /* Adjusted to 8px grid spacing */
   background: var(--color-brand-red);
   color: #fff;
   font-family: var(--font-body);
@@ -211,19 +211,26 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 2px;
-  padding: 20px 56px;
-  border-radius: var(--radius-sm);
-  border: 2px solid var(--color-brand-red);
+  padding: 16px 48px; /* Adjusted to 8px grid (16px, 48px) */
+  border: none;
   cursor: pointer;
   text-decoration: none;
   transition: all var(--transition-fast);
+
+  /* Cutout theme: organic wiggly paper button border */
+  clip-path: polygon(
+    0% 6%, 15% 2%, 30% 7%, 45% 1%, 60% 5%, 75% 0%, 90% 4%, 100% 2%,
+    97.5% 25%, 101% 50%, 98% 75%, 99.5% 100%,
+    85% 96%, 70% 98%, 55% 95%, 40% 101%, 25% 97%, 10% 99%, 0% 96%,
+    1.5% 75%, -1% 50%, 2% 25%
+  );
 }
 
 .contact__cta-btn:hover {
-  background: transparent;
-  color: var(--color-brand-red);
-  box-shadow: var(--shadow-glow-red);
+  background: var(--color-brand-red-hover);
+  color: #fff;
   transform: translateY(-2px);
+  filter: drop-shadow(0 6px 16px rgba(200, 16, 46, 0.3));
 }
 
 /* ============================================

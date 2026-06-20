@@ -1,9 +1,10 @@
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import '../../styles/modal.css';
 
 const ItemModal = ({ isOpen, onClose, item }) => {
-  return (
+  return createPortal(
     <AnimatePresence>
       {isOpen && item && (
         <div className="modal-overlay" onClick={onClose}>
@@ -34,7 +35,8 @@ const ItemModal = ({ isOpen, onClose, item }) => {
           </motion.div>
         </div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 };
 

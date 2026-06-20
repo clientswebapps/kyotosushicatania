@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Phone, Mail, MapPin, Clock } from 'lucide-react';
+import { generateRoundWavyPath } from '../../utils/wavyPath';
 import '../../styles/footer.css';
 
 const quickLinks = [
@@ -12,6 +13,13 @@ const quickLinks = [
 const Footer = () => {
   return (
     <footer className="footer" id="footer">
+      {/* Top wiggly rounded cutout */}
+      <div className="footer__wave-cutout" aria-hidden="true">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path d={generateRoundWavyPath()} fill="#0d0d0d" />
+        </svg>
+      </div>
+
       <div className="footer__container">
         <div className="footer__brand">
           <Link to="/">

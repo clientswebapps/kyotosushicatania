@@ -428,25 +428,32 @@
   width: 100%;
   background: var(--color-brand-gold);
   color: #0a0a0a;
-  border: 2px solid var(--color-brand-gold);
-  padding: 16px;
+  border: none;
+  padding: 16px 32px; /* Adjusted to 8px grid (16px, 32px) */
   font-size: 14px;
   font-weight: bold;
   text-transform: uppercase;
   letter-spacing: 2px;
-  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all var(--transition-fast);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 8px; /* 8px grid spacing */
+
+  /* Cutout theme: organic wiggly paper button border */
+  clip-path: polygon(
+    0% 6%, 15% 2%, 30% 7%, 45% 1%, 60% 5%, 75% 0%, 90% 4%, 100% 2%,
+    97.5% 25%, 101% 50%, 98% 75%, 99.5% 100%,
+    85% 96%, 70% 98%, 55% 95%, 40% 101%, 25% 97%, 10% 99%, 0% 96%,
+    1.5% 75%, -1% 50%, 2% 25%
+  );
 }
 
 .reservation-submit-btn:hover:not(:disabled) {
-  background: transparent;
-  color: var(--color-brand-gold);
-  box-shadow: var(--shadow-glow-gold);
+  background: var(--color-brand-gold-hover);
+  color: #0a0a0a;
+  filter: drop-shadow(0 6px 16px rgba(243, 192, 22, 0.3));
 }
 
 .reservation-submit-btn:disabled {

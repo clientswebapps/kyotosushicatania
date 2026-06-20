@@ -90,7 +90,7 @@
   font-size: 28px;
   font-weight: 500;
   color: var(--color-brand-gold);
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   letter-spacing: 1px;
 }
 
@@ -118,7 +118,7 @@
   text-transform: uppercase;
   color: #ffffff; /* White font color on the light glass container */
   line-height: 1.1;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   position: relative;
   letter-spacing: -1px;
 }
@@ -134,15 +134,26 @@
   color: #ffffff; /* White font color on the light glass container */
   opacity: 0.95;
   line-height: 1.6;
-  margin: 0 auto 36px;
-  max-width: 650px;
+  margin: 0 auto 32px;
+  max-width: 648px; /* 648px is divisible by 8 (81 * 8) */
+}
+
+.hero__cta-wrapper {
+  display: inline-block;
+  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.25));
+  transition: transform var(--transition-fast), filter var(--transition-fast);
+}
+
+.hero__cta-wrapper:hover {
+  transform: translateY(-2px);
+  filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.35));
 }
 
 .hero__cta {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   background: var(--color-brand-gold);
   color: #1a1a1a;
   font-family: var(--font-body);
@@ -150,15 +161,21 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 2px;
-  padding: 16px 44px;
-  border-radius: 50px;
-  border: 2px solid var(--color-brand-gold);
+  padding: 16px 40px;
+  border: none;
   cursor: pointer;
   text-decoration: none;
-  transition: all var(--transition-fast);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  
+  /* Unified theme: wiggly cutout clip-path for button aspect ratio */
+  clip-path: polygon(
+    0% 6%, 15% 2%, 30% 7%, 45% 1%, 60% 5%, 75% 0%, 90% 4%, 100% 2%,
+    97.5% 25%, 101% 50%, 98% 75%, 99.5% 100%,
+    85% 96%, 70% 98%, 55% 95%, 40% 101%, 25% 97%, 10% 99%, 0% 96%,
+    1.5% 75%, -1% 50%, 2% 25%
+  );
 }
 
 .hero__cta::before {
@@ -175,10 +192,7 @@
 
 .hero__cta:hover {
   background: var(--color-brand-gold-hover);
-  border-color: var(--color-brand-gold-hover);
   color: #1a1a1a;
-  box-shadow: var(--shadow-glow-gold);
-  transform: translateY(-2px);
 }
 
 .hero__cta:hover::before {
@@ -194,12 +208,12 @@
 /* --- Navigation Dots --- */
 .hero__dots {
   position: absolute;
-  bottom: 110px;
+  bottom: 112px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   z-index: 6;
 }
 
@@ -230,8 +244,8 @@
   top: 50%;
   transform: translateY(-50%);
   z-index: 6;
-  width: 52px;
-  height: 52px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -292,55 +306,73 @@
 
 @media (max-width: 768px) {
   .hero {
-    min-height: 500px;
+    min-height: 480px; /* Divisible by 8 */
   }
 
   .hero__content {
-    padding: 36px 20px;
+    padding: 24px 16px; /* Divisible by 8 (8px grid) */
     border-radius: var(--radius-lg);
-    max-width: calc(100% - 32px);
-    width: auto;
+    width: calc(100% - 64px); /* Divisible by 8 — narrows card, leaving 32px margin on each side */
+    max-width: 480px; /* Divisible by 8 */
+  }
+
+  .hero__tagline {
+    font-size: 14px; /* Reduced from 16px to shrink vertical footprint */
+    margin-bottom: 8px; /* Divisible by 8 */
+  }
+
+  .hero__decorations {
+    margin-bottom: 8px; /* Divisible by 8 */
+    gap: 8px; /* Divisible by 8 */
+  }
+
+  .hero__decoration-star {
+    font-size: 10px;
+  }
+
+  .hero__decoration-star--large {
+    font-size: 14px;
   }
 
   .hero__title {
-    font-size: 36px;
-    margin-bottom: 16px;
+    font-size: 32px; /* Shrunk title slightly for compact layout */
+    margin-bottom: 8px; /* Divisible by 8 */
   }
 
   .hero__subtitle {
-    font-size: 16px;
-    margin-bottom: 32px;
-    max-width: 400px;
+    font-size: 14px; /* Shrunk text for compact layout */
+    margin-bottom: 16px; /* Divisible by 8 */
+    max-width: 320px; /* Divisible by 8 */
   }
 
   .hero__cta {
     font-size: 12px;
-    padding: 14px 32px;
+    padding: 16px 32px; /* Divisible by 8 */
     letter-spacing: 1.5px;
   }
 
   .hero__dots {
-    bottom: 90px;
-    gap: 10px;
+    bottom: 80px; /* Divisible by 8 */
+    gap: 8px; /* Divisible by 8 */
   }
 
   .hero__dot {
-    width: 9px;
-    height: 9px;
+    width: 8px; /* Divisible by 8 */
+    height: 8px; /* Divisible by 8 */
   }
 
   .hero__arrow {
-    width: 40px;
-    height: 40px;
+    width: 40px; /* Divisible by 8 */
+    height: 40px; /* Divisible by 8 */
     font-size: 16px;
   }
 
   .hero__arrow--prev {
-    left: 12px;
+    left: 16px; /* Divisible by 8 */
   }
 
   .hero__arrow--next {
-    right: 12px;
+    right: 16px; /* Divisible by 8 */
   }
 
   .hero__arrow svg {
@@ -350,12 +382,44 @@
 }
 
 @media (max-width: 480px) {
+  .hero__content {
+    padding: 16px 16px; /* Divisible by 8 — highly compact for small viewports */
+    width: calc(100% - 48px); /* Divisible by 8 — narrows card on mobile, leaving 24px margin on each side */
+  }
+
+  .hero__tagline {
+    font-size: 12px; /* Reduced to minimize layout presence */
+    margin-bottom: 8px; /* Divisible by 8 */
+  }
+
+  .hero__decorations {
+    margin-bottom: 8px; /* Divisible by 8 */
+    gap: 8px; /* Divisible by 8 */
+  }
+
+  .hero__decoration-star {
+    font-size: 8px;
+  }
+
+  .hero__decoration-star--large {
+    font-size: 12px;
+  }
+
   .hero__title {
-    font-size: 30px;
+    font-size: 24px; /* Reduced to shrink vertical footprint */
+    margin-bottom: 8px; /* Divisible by 8 */
   }
 
   .hero__subtitle {
-    font-size: 14px;
+    font-size: 12px; /* Reduced to shrink vertical footprint */
+    margin-bottom: 16px; /* Divisible by 8 */
+    max-width: 256px; /* Divisible by 8 */
+  }
+
+  .hero__cta {
+    font-size: 11px;
+    padding: 16px 24px; /* Divisible by 8, compact and highly clickable */
+    letter-spacing: 1px;
   }
 
   .hero__arrow {

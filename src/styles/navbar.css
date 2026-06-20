@@ -118,26 +118,33 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-brand-gold);
-  color: var(--color-bg);
+  background: var(--color-brand-red);
+  color: var(--color-white, #ffffff);
   font-family: var(--font-body);
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  padding: 10px 24px;
-  border-radius: var(--radius-xl);
-  border: 2px solid var(--color-brand-gold);
+  padding: 12px 28px; /* Adjusted slightly to preserve clickable area inside the cutout */
+  border: none;
   cursor: pointer;
   transition: all var(--transition-fast);
   text-decoration: none;
+
+  /* Cutout theme: organic wiggly paper button border */
+  clip-path: polygon(
+    0% 6%, 15% 2%, 30% 7%, 45% 1%, 60% 5%, 75% 0%, 90% 4%, 100% 2%,
+    97.5% 25%, 101% 50%, 98% 75%, 99.5% 100%,
+    85% 96%, 70% 98%, 55% 95%, 40% 101%, 25% 97%, 10% 99%, 0% 96%,
+    1.5% 75%, -1% 50%, 2% 25%
+  );
 }
 
 .navbar__reserve-btn:hover {
-  background: transparent;
-  color: var(--color-brand-gold);
-  box-shadow: var(--shadow-glow-gold);
+  background: var(--color-brand-red-hover);
+  color: var(--color-white, #ffffff);
   transform: translateY(-1px);
+  filter: drop-shadow(0 4px 12px var(--color-brand-red-glow));
 }
 
 /* --- Hamburger Button --- */
@@ -202,7 +209,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 0 40px;
+  padding: 0 32px; /* Adjusted to 8px grid (32px) */
   z-index: 999;
 }
 
@@ -212,9 +219,9 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: linear-gradient(rgba(10, 10, 10, 0.9), rgba(10, 10, 10, 0.98)), url('/images/bg-leaves.avif');
-  background-size: cover;
-  background-position: center;
+  background: rgba(255, 255, 255, 0.98); /* Matches the brand's premium light theme */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   z-index: -1;
 }
 
@@ -222,15 +229,15 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 32px;
+  gap: 32px; /* Divisible by 8 */
   list-style: none;
   width: 100%;
-  margin-top: -60px;
+  margin-top: -64px; /* Adjusted to 8px grid (64px) */
 }
 
 .navbar__overlay-links a {
   font-family: var(--font-heading);
-  font-size: 42px;
+  font-size: 40px; /* Sized down slightly for elegant presence */
   font-weight: 700;
   color: var(--color-text-secondary);
   text-decoration: none;
@@ -241,26 +248,26 @@
 
 .navbar__overlay-links a.active,
 .navbar__overlay-links a:hover {
-  color: var(--color-brand-gold);
-  transform: translateX(10px);
+  color: var(--color-brand-red); /* brand-red to match scrolled navbar state active link */
+  transform: translateX(8px); /* Adjusted to 8px grid (8px) */
 }
 
 .navbar__overlay-footer {
-  margin-top: 60px;
+  margin-top: 64px; /* Adjusted to 8px grid (64px) */
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 32px; /* Divisible by 8 */
 }
 
 .navbar__overlay-footer .navbar__reserve-btn {
   align-self: flex-start;
   font-size: 13px;
-  padding: 16px 40px;
+  padding: 16px 40px; /* Both padding values are multiples of 8 */
 }
 
 .navbar__overlay-socials {
   display: flex;
-  gap: 24px;
+  gap: 24px; /* Divisible by 8 */
 }
 
 .navbar__overlay-socials a {
@@ -268,13 +275,13 @@
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 2px;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   text-decoration: none;
   transition: color var(--transition-fast);
 }
 
 .navbar__overlay-socials a:hover {
-  color: var(--color-text);
+  color: var(--color-brand-red);
 }
 
 /* ============================================

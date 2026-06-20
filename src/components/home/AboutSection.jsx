@@ -81,9 +81,11 @@ const AboutSection = () => {
           </div>
 
           <div style={{ marginTop: '32px' }}>
-            <Link to="/about" className="bestsellers__badge" style={{ position: 'static', display: 'inline-block', textDecoration: 'none', background: 'var(--color-brand-gold)', color: 'var(--color-bg)', padding: '12px 28px', borderRadius: '4px', fontWeight: 600, letterSpacing: '1px' }}>
-              Learn More
-            </Link>
+            <div className="btn-wiggle-wrapper">
+              <Link to="/about" className="btn-wiggle">
+                Learn More
+              </Link>
+            </div>
           </div>
         </motion.div>
       </div>
