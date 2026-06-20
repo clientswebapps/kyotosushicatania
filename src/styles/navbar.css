@@ -252,6 +252,9 @@
 
   .navbar.is-open {
     height: auto; /* Expands to fit vertical dropdown links */
+    /* Switch to the SVG card clip-path designed for taller aspect ratios,
+       preventing the percentage-based wiggles from becoming deep cuts */
+    clip-path: url(#wavy-card-clip);
   }
 
   .navbar__header-row {
