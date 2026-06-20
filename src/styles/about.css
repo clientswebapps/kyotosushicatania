@@ -28,17 +28,23 @@
 .about__image-wrapper {
   flex: 0 0 45%;
   position: relative;
+  filter: drop-shadow(0 12px 32px rgba(0, 0, 0, 0.12));
+  transition: transform var(--transition-medium);
+}
+
+.about__image-wrapper:hover {
+  transform: scale(1.02);
 }
 
 .about__image {
   width: 100%;
-  border-radius: var(--radius-lg);
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 0; /* Removed border-radius for cutout theme */
+  border: none;
   display: block;
   object-fit: cover;
   position: relative;
   z-index: 2;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  clip-path: url(#wavy-card-clip); /* Cutout theme: organic wiggly paper clip-path from WavyClipDefs */
 }
 
 /* --- Decorative Brush Stroke (Pseudo-element) --- */
