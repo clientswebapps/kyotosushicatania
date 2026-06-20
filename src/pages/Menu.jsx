@@ -189,6 +189,114 @@ export default function Menu() {
 
   const getImage = (item) => item.imageUrl || imageMap[item.name] || "/images/dragon-roll.avif";
 
+  const floatingFoodItems = useMemo(() => {
+    const isAllCategory = currentCategory === "all";
+    if (isAllCategory) {
+      return [
+        {
+          src: '/images/decorations/single-nigiri.png',
+          position: 'right',
+          top: '10%',
+          size: 'lg',
+          rotate: '-15deg',
+          opacity: 0.12,
+        },
+        {
+          src: '/images/decorations/single-tempura.png',
+          position: 'left',
+          top: '22%',
+          size: 'lg',
+          rotate: '18deg',
+          opacity: 1,
+        },
+        {
+          src: '/images/decorations/single-maki.png',
+          position: 'right',
+          top: '34%',
+          size: 'md',
+          rotate: '-8deg',
+          opacity: 1,
+        },
+        {
+          src: '/images/decorations/sushi-nigiri.png',
+          position: 'left',
+          top: '46%',
+          size: 'lg',
+          rotate: '-25deg',
+          opacity: 0.12,
+        },
+        {
+          src: '/images/decorations/chopsticks.png',
+          position: 'right',
+          top: '58%',
+          size: 'lg',
+          rotate: '22deg',
+          opacity: 0.12,
+        },
+        {
+          src: '/images/decorations/maki-rolls.png',
+          position: 'left',
+          top: '70%',
+          size: 'lg',
+          rotate: '20deg',
+          opacity: 1,
+        },
+        {
+          src: '/images/decorations/single-wasabi.png',
+          position: 'right',
+          top: '82%',
+          size: 'md',
+          rotate: '24deg',
+          opacity: 1,
+        },
+        {
+          src: '/images/decorations/single-tempura.png',
+          position: 'left',
+          top: '92%',
+          size: 'lg',
+          rotate: '-15deg',
+          opacity: 0.12,
+        },
+      ];
+    } else {
+      // Reduced items for specific category pages to prevent layout crowding on shorter pages
+      return [
+        {
+          src: '/images/decorations/single-nigiri.png',
+          position: 'right',
+          top: '15%',
+          size: 'lg',
+          rotate: '-15deg',
+          opacity: 0.12,
+        },
+        {
+          src: '/images/decorations/single-tempura.png',
+          position: 'left',
+          top: '40%',
+          size: 'lg',
+          rotate: '18deg',
+          opacity: 1,
+        },
+        {
+          src: '/images/decorations/chopsticks.png',
+          position: 'right',
+          top: '65%',
+          size: 'lg',
+          rotate: '22deg',
+          opacity: 1,
+        },
+        {
+          src: '/images/decorations/maki-rolls.png',
+          position: 'left',
+          top: '88%',
+          size: 'lg',
+          rotate: '20deg',
+          opacity: 0.12,
+        },
+      ];
+    }
+  }, [currentCategory]);
+
   return (
     <main className="menu-section">
       <Helmet>
@@ -199,62 +307,10 @@ export default function Menu() {
         <meta property="og:url" content="https://www.kyotosushicatania.com/menu" />
       </Helmet>
 
-      {/* Foreground Floating Foods */}
-      <FloatingFood
-        items={[
-          {
-            src: '/images/decorations/single-nigiri.png',
-            position: 'right',
-            top: '350px',
-            size: 'lg',
-            rotate: '-15deg',
-          },
-          {
-            src: '/images/decorations/single-maki.png',
-            position: 'left',
-            top: '1100px',
-            size: 'md',
-            rotate: '-8deg',
-          },
-          {
-            src: '/images/decorations/chopsticks.png',
-            position: 'right',
-            top: '1800px',
-            size: 'lg',
-            rotate: '22deg',
-          },
-        ]}
-      />
-
-      {/* Background Floating Foods */}
+      {/* Floating Foods Behind Menu Items */}
       <FloatingFood
         className="floating-food--behind"
-        items={[
-          {
-            src: '/images/decorations/single-tempura.png',
-            position: 'left',
-            top: '900px',
-            size: 'lg',
-            rotate: '18deg',
-            opacity: 0.12,
-          },
-          {
-            src: '/images/decorations/sushi-nigiri.png',
-            position: 'right',
-            top: '1300px',
-            size: 'lg',
-            rotate: '-25deg',
-            opacity: 0.12,
-          },
-          {
-            src: '/images/decorations/maki-rolls.png',
-            position: 'left',
-            top: '2100px',
-            size: 'lg',
-            rotate: '20deg',
-            opacity: 0.12,
-          },
-        ]}
+        items={floatingFoodItems}
       />
       <motion.div
         className="menu-section__logo-lockup"

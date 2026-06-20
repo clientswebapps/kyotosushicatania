@@ -76,10 +76,17 @@
   object-fit: contain;
   width: var(--food-width);
   height: auto;
-  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.12)); /* Beautiful soft shadow matching the food shape */
   animation: floatUpDown 6s ease-in-out infinite;
   transform: translate(var(--float-offsetX), var(--float-offsetY)) rotate(var(--float-rotate));
   will-change: transform;
+}
+
+.floating-food__item--foreground {
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.12)); /* Crisp, tighter shadow for 100% opacity food */
+}
+
+.floating-food__item--behind {
+  filter: none; /* No shadow for low-opacity background watermark items */
 }
 
 /* Position variants — offset exactly 1/4 of their width off-screen */

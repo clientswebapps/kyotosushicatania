@@ -115,7 +115,7 @@
 }
 
 .promotions__card:hover {
-  transform: scale(1.03);
+  transform: translateY(-8px);
 }
 
 .promotions__card-bg {

@@ -59,7 +59,7 @@ const FloatingItem = ({ item, index }) => {
         src={item.src}
         alt=""
         role="presentation"
-        className="floating-food__item"
+        className={`floating-food__item ${isBehind ? 'floating-food__item--behind' : 'floating-food__item--foreground'}`}
         style={itemStyle}
         loading="lazy"
         draggable={false}

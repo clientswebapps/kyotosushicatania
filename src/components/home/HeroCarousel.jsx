@@ -12,7 +12,7 @@ import '../../styles/hero.css';
 const fallbackSlides = [
   {
     id: 'fallback-1',
-    tagline: 'Choose your destination!',
+    tagline: 'Contemporary Japanese Cuisine',
     title: 'Welcome to Kyō-To',
     subtitle: 'Japanese Asian Contemporary Cuisine in the heart of Catania',
     ctaText: 'Explore the Menu',
@@ -178,7 +178,13 @@ const HeroCarousel = () => {
               exit="exit"
             >
               <span className="hero__tagline">
-                {activeSlide.tagline || 'Choose your destination!'}
+                {(() => {
+                  const tag = activeSlide.tagline || "";
+                  if (!tag || /destination/i.test(tag)) {
+                    return "Premium Sushi Experience";
+                  }
+                  return tag;
+                })()}
               </span>
               <div className="hero__decorations" aria-hidden="true">
                 <span className="hero__decoration-star">✦</span>
@@ -187,12 +193,15 @@ const HeroCarousel = () => {
               </div>
               <h1 className="hero__title">
                 {(() => {
-                  const title = activeSlide.title || "";
+                  const rawTitle = activeSlide.title || "";
+                  const title = rawTitle
+                    .replace(/Kyō-To/g, "Kyō\u2011To")
+                    .replace(/Kyo-To/g, "Kyo\u2011To");
                   const parts = title.split(/(\*\*[^*]+\*\*)/g);
                   return parts.map((part, idx) => {
                     if (part.startsWith("**") && part.endsWith("**")) {
                       const cleanText = part.slice(2, -2);
-                      return <span key={idx} className="text-gold">{cleanText}</span>;
+                      return <span key={idx} className="text-gold" style={{ whiteSpace: 'nowrap' }}>{cleanText}</span>;
                     }
                     return part;
                   });
