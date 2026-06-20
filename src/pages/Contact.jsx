@@ -5,6 +5,7 @@ import { MapPin, Phone, Clock, Mail, Send, Users, Calendar } from "lucide-react"
 import { useAddDocument } from "../hooks/useFirestore";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../firebase/config";
+import FloatingFood from "../components/home/FloatingFood";
 import "../styles/contact.css";
 
 const validateReservationTime = (dateStr, timeStr) => {
@@ -241,6 +242,50 @@ export default function Contact() {
         <meta property="og:description" content="Reserve your table at Kyō-To Sushi Catania. Experience the best Japanese cuisine in Catania." />
         <meta property="og:url" content="https://www.kyotosushicatania.com/contact" />
       </Helmet>
+
+      {/* Foreground Floating Foods */}
+      <FloatingFood
+        items={[
+          {
+            src: '/images/decorations/chopsticks.png',
+            position: 'right',
+            top: '250px',
+            size: 'lg',
+            rotate: '22deg',
+          },
+          {
+            src: '/images/decorations/single-maki.png',
+            position: 'left',
+            top: '700px',
+            size: 'md',
+            rotate: '-8deg',
+          },
+        ]}
+      />
+
+      {/* Background Floating Foods */}
+      <FloatingFood
+        className="floating-food--behind"
+        items={[
+          {
+            src: '/images/decorations/single-nigiri.png',
+            position: 'left',
+            top: '350px',
+            size: 'lg',
+            rotate: '30deg',
+            opacity: 0.12,
+          },
+          {
+            src: '/images/decorations/single-tempura.png',
+            position: 'right',
+            top: '850px',
+            size: 'lg',
+            rotate: '18deg',
+            opacity: 0.12,
+          },
+        ]}
+      />
+
       <div className="contact-page-header">
         <motion.h1
           className="section-title"

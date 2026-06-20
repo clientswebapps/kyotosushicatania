@@ -158,7 +158,7 @@ export default function Admin() {
           transition={{ duration: 0.5 }}
         >
           <img
-            src="/images/logo-white.avif"
+            src="/images/logo.avif"
             alt="Kyō-To Sushi Catania"
             className="admin-login-logo"
           />

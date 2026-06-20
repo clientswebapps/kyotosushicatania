@@ -22,10 +22,26 @@
 }
 
 .navbar.scrolled {
-  background: rgba(0, 0, 0, 0.92);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6),
-              0 1px 15px var(--color-brand-gold-subtle);
-  border-bottom: 1px solid rgba(243, 192, 22, 0.15);
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08),
+              0 1px 6px rgba(0, 0, 0, 0.04);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.navbar.scrolled .navbar__links a {
+  color: #1a1a1a;
+}
+
+.navbar.scrolled .navbar__links a:hover {
+  color: var(--color-brand-red);
+}
+
+.navbar.scrolled .navbar__links a.active {
+  color: var(--color-brand-red);
+}
+
+.navbar.scrolled .navbar__hamburger span {
+  background: #1a1a1a;
 }
 
 /* --- Logo --- */
@@ -58,7 +74,7 @@
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 2px;
-  color: var(--color-text);
+  color: #f5f0e8;
   text-decoration: none;
   position: relative;
   padding: 4px 0;
@@ -144,7 +160,7 @@
   display: block;
   width: 24px;
   height: 2px;
-  background: var(--color-text);
+  background: #f5f0e8;
   transition: all var(--transition-fast);
   transform-origin: center;
 }

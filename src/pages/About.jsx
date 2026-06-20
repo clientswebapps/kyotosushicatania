@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
+import FloatingFood from "../components/home/FloatingFood";
 import "../styles/about.css";
 
 export default function About() {
@@ -12,6 +13,58 @@ export default function About() {
         <meta property="og:description" content="Discover the story and philosophy behind Kyō-To Sushi Catania. Traditional Japanese Washoku art with contemporary innovation." />
         <meta property="og:url" content="https://www.kyotosushicatania.com/about" />
       </Helmet>
+
+      {/* Foreground Floating Foods */}
+      <FloatingFood
+        items={[
+          {
+            src: '/images/decorations/single-nigiri.png',
+            position: 'left',
+            top: '450px',
+            size: 'lg',
+            rotate: '30deg',
+          },
+          {
+            src: '/images/decorations/chopsticks.png',
+            position: 'right',
+            top: '1100px',
+            size: 'lg',
+            rotate: '22deg',
+          },
+        ]}
+      />
+
+      {/* Background Floating Foods */}
+      <FloatingFood
+        className="floating-food--behind"
+        items={[
+          {
+            src: '/images/decorations/single-maki.png',
+            position: 'right',
+            top: '250px',
+            size: 'md',
+            rotate: '-8deg',
+            opacity: 0.12,
+          },
+          {
+            src: '/images/decorations/single-tempura.png',
+            position: 'left',
+            top: '1150px',
+            size: 'lg',
+            rotate: '18deg',
+            opacity: 0.12,
+          },
+          {
+            src: '/images/decorations/single-wasabi.png',
+            position: 'right',
+            top: '1400px',
+            size: 'md',
+            rotate: '-15deg',
+            opacity: 0.12,
+          },
+        ]}
+      />
+
       <div className="about-page-header">
         <motion.h1
           className="section-title"

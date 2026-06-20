@@ -4,13 +4,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCollection } from '../../hooks/useFirestore';
 import { HeroSkeleton } from '../common/SkeletonComponents';
-import ScrollHint from './ScrollHint';
 import ItemModal from '../common/ItemModal';
+import FloatingFood from './FloatingFood';
+import { generateRoundWavyPath } from '../../utils/wavyPath';
 import '../../styles/hero.css';
 
 const fallbackSlides = [
   {
     id: 'fallback-1',
+    tagline: 'Choose your destination!',
     title: 'Welcome to Kyō-To',
     subtitle: 'Japanese Asian Contemporary Cuisine in the heart of Catania',
     ctaText: 'Explore the Menu',
@@ -19,6 +21,7 @@ const fallbackSlides = [
   },
   {
     id: 'fallback-2',
+    tagline: 'Handcrafted Premium Selection',
     title: 'Fresh Sushi Every Day',
     subtitle: 'Selected ingredients for a unique experience',
     ctaText: 'Reserve Now',
@@ -27,6 +30,7 @@ const fallbackSlides = [
   },
   {
     id: 'fallback-3',
+    tagline: 'Exclusive Dining Experience',
     title: 'Special Promotion',
     subtitle: 'All You Can Eat starting from €24.90',
     ctaText: 'Learn More',
@@ -81,6 +85,7 @@ const contentVariants = {
 };
 
 const HeroCarousel = () => {
+
   const { data: allSlides, loading } = useCollection('heroSlides', {
     realtime: true,
   });
@@ -172,6 +177,14 @@ const HeroCarousel = () => {
               animate="center"
               exit="exit"
             >
+              <span className="hero__tagline">
+                {activeSlide.tagline || 'Choose your destination!'}
+              </span>
+              <div className="hero__decorations" aria-hidden="true">
+                <span className="hero__decoration-star">✦</span>
+                <span className="hero__decoration-star hero__decoration-star--large">✦</span>
+                <span className="hero__decoration-star">✦</span>
+              </div>
               <h1 className="hero__title">
                 {(() => {
                   const title = activeSlide.title || "";
@@ -227,7 +240,12 @@ const HeroCarousel = () => {
         </>
       )}
 
-      <ScrollHint targetId="promotions" text="View Offers" />
+      {/* Bottom round curve cutout with wiggles */}
+      <div className="hero__wave-cutout hero__wave-cutout--bottom" aria-hidden="true">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path d={generateRoundWavyPath()} fill="#ffffff" />
+        </svg>
+      </div>
     </section>
   );
 };

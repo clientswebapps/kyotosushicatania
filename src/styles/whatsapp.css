@@ -52,9 +52,9 @@
 .whatsapp-tooltip {
   position: absolute;
   right: 76px;
-  background: rgba(13, 13, 13, 0.9);
-  color: var(--color-text);
-  border: 1px solid var(--color-brand-gold-subtle);
+  background: rgba(255, 255, 255, 0.95);
+  color: #1a1a1a;
+  border: 1px solid rgba(0, 0, 0, 0.08);
   padding: 8px 16px;
   border-radius: 20px;
   font-size: 13px;
@@ -65,7 +65,7 @@
   opacity: 0;
   transform: translateX(10px);
   transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* Hover States */

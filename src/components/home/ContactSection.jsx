@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { MapPin, Phone, Clock, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import FloatingFood from './FloatingFood';
 
 import '../../styles/contact.css';
 
@@ -57,6 +58,19 @@ const itemVariants = {
 const ContactSection = () => {
   return (
     <section className="contact onboarding-section--flexible" id="contact-us">
+      <FloatingFood
+        className="floating-food--behind"
+        items={[
+          {
+            src: '/images/decorations/single-nigiri.png',
+            position: 'left',
+            top: '150px',
+            size: 'lg',
+            rotate: '30deg',
+            opacity: 0.12,
+          },
+        ]}
+      />
       <div className="contact__header">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

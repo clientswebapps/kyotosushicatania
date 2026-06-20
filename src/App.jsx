@@ -12,11 +12,13 @@ import NotFound from "./pages/NotFound";
 const Admin = lazy(() => import("./pages/Admin"));
 import ScrollToTop from "./components/ScrollToTop";
 import AnalyticsTracker from "./components/AnalyticsTracker";
+import WavyClipDefs from "./components/WavyClipDefs";
 import "./styles/index.css";
 
 function App() {
   return (
     <Router>
+      <WavyClipDefs />
       <ScrollToTop />
       <AnalyticsTracker />
       <Routes>

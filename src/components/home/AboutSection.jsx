@@ -1,11 +1,25 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import FloatingFood from './FloatingFood';
 
 import '../../styles/about.css';
 
 const AboutSection = () => {
   return (
     <section className="about onboarding-section--flexible" id="about-us">
+      <FloatingFood
+        className="floating-food--behind"
+        items={[
+          {
+            src: '/images/decorations/tempura.png',
+            position: 'left',
+            top: '250px',
+            size: 'lg',
+            rotate: '15deg',
+            opacity: 0.12,
+          },
+        ]}
+      />
       <div className="about__container">
         <motion.div
           className="about__image-wrapper"

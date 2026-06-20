@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from 'react';
 import { useCollection } from '../../hooks/useFirestore';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { GallerySkeleton } from '../common/SkeletonComponents';
+import FloatingFood from './FloatingFood';
 import '../../styles/menu-gallery.css';
 
 function GalleryMediaItem({ item }) {
@@ -211,6 +212,19 @@ const MenuGallery = () => {
 
   return (
     <section className="menu-gallery-section" id="gallery">
+      <FloatingFood
+        className="floating-food--behind"
+        items={[
+          {
+            src: '/images/decorations/maki-rolls.png',
+            position: 'right',
+            top: '200px',
+            size: 'lg',
+            rotate: '-12deg',
+            opacity: 0.12,
+          },
+        ]}
+      />
       <div className="menu-gallery__header">
         <div className="menu-gallery__header-text">
           <h2 className="section-title">Visual Gallery</h2>

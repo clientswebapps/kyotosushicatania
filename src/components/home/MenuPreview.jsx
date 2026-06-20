@@ -5,6 +5,7 @@ import { useCollection } from '../../hooks/useFirestore';
 import { ArrowRight, Star, AlertCircle, Info } from 'lucide-react';
 import AllergenModal from '../common/AllergenModal';
 import { fallbackData } from '../../data/fallbackData';
+import FloatingFood from './FloatingFood';
 
 import '../../styles/menu.css';
 
@@ -115,7 +116,7 @@ function FeaturedCard({ item }) {
                 )
               ) : (
                 <div className="menu-section__card-image-placeholder">
-                  <img src="/images/logo-white.avif" alt="" className="placeholder-logo" />
+                  <img src="/images/logo.avif" alt="" className="placeholder-logo" />
                 </div>
               )}
               <div className="menu-card-hint-badge">
@@ -194,7 +195,35 @@ const MenuPreview = () => {
   }, [firebaseFeatured]);
 
   return (
-    <section className="menu-section onboarding-section--flexible" id="menu-preview">
+    <section className="menu-section onboarding-section--flexible" id="menu-preview" style={{ zIndex: 1 }}>
+      <FloatingFood
+        className="floating-food--behind"
+        items={[
+          {
+            src: '/images/decorations/single-tempura.png',
+            position: 'left',
+            top: '1250px',
+            size: 'lg',
+            rotate: '18deg',
+          },
+          {
+            src: '/images/decorations/sushi-nigiri.png',
+            position: 'left',
+            top: '150px',
+            size: 'lg',
+            rotate: '25deg',
+            opacity: 0.15,
+          },
+          {
+            src: '/images/decorations/maki-rolls.png',
+            position: 'right',
+            top: '550px',
+            size: 'lg',
+            rotate: '-15deg',
+            opacity: 0.15,
+          },
+        ]}
+      />
       <div className="menu-section__container" style={{ display: 'block' }}>
         <motion.div
           className="menu-section__logo-lockup"
@@ -204,7 +233,7 @@ const MenuPreview = () => {
           transition={{ duration: 0.8, ease: 'easeOut' }}
         >
           <img
-            src="/images/logo-white.avif"
+            src="/images/logo.avif"
             alt="Kyō-To"
             className="menu-section__logo"
           />

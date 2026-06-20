@@ -5,7 +5,10 @@ import AboutSection from "../components/home/AboutSection";
 import MenuGallery from "../components/home/MenuGallery";
 import ContactSection from "../components/home/ContactSection";
 import Footer from "../components/layout/Footer";
+import SectionDivider from "../components/home/SectionDivider";
+import FloatingFood from "../components/home/FloatingFood";
 import '../styles/onboarding.css';
+import '../styles/floating-food.css';
 
 import { Helmet } from 'react-helmet-async';
 
@@ -64,12 +67,83 @@ export default function Home() {
           {JSON.stringify(structuredData)}
         </script>
       </Helmet>
+
+      {/* Hero — dark section with wave cutout built in */}
       <HeroCarousel />
-      <PromotionsSection />
-      <MenuPreview />
-      <AboutSection />
-      <MenuGallery />
-      <ContactSection />
+
+      {/* Promotions → white background, floating sushi scattered */}
+      <div style={{ position: 'relative' }}>
+        <PromotionsSection />
+        <FloatingFood
+          items={[
+            {
+              src: '/images/decorations/single-nigiri.png',
+              position: 'right',
+              top: '-150px',
+              size: 'lg',
+              rotate: '-15deg',
+            },
+          ]}
+        />
+      </div>
+
+      {/* Divider: Promotions → Menu Preview */}
+      <div style={{ position: 'relative' }}>
+        <SectionDivider variant="gentle" fillColor="#ffffff" position="top" />
+        <MenuPreview />
+      </div>
+
+      {/* Divider: Menu Preview → About */}
+      <div style={{ position: 'relative' }}>
+        <AboutSection />
+        <SectionDivider variant="hero-wave" fillColor="#ffffff" position="bottom" />
+        <FloatingFood
+          items={[
+            {
+              src: '/images/decorations/single-maki.png',
+              position: 'right',
+              top: '-100px',
+              size: 'md',
+              rotate: '-8deg',
+            },
+          ]}
+        />
+      </div>
+
+      {/* Gallery — white background */}
+      <div style={{ position: 'relative' }}>
+        <MenuGallery />
+        <FloatingFood
+          items={[
+            {
+              src: '/images/decorations/single-wasabi.png',
+              position: 'left',
+              top: '60px',
+              size: 'md',
+              rotate: '24deg',
+            },
+          ]}
+        />
+      </div>
+
+      {/* Contact — with divider and floating chopsticks */}
+      <div style={{ position: 'relative' }}>
+        <SectionDivider variant="curve" fillColor="#ffffff" position="top" />
+        <ContactSection />
+        <FloatingFood
+          items={[
+            {
+              src: '/images/decorations/chopsticks.png',
+              position: 'right',
+              top: '500px',
+              size: 'lg',
+              rotate: '22deg',
+            },
+          ]}
+        />
+      </div>
+
+      {/* Footer — stays dark */}
       <Footer />
     </main>
   );

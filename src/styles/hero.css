@@ -82,15 +82,47 @@
   align-items: center;
 }
 
-.hero__title {
+/* --- Tagline & Star Decorations --- */
+.hero__tagline {
   font-family: var(--font-heading);
-  font-size: 84px; /* increased for Cormorant Garamond */
-  font-weight: 700;
-  color: var(--color-text);
-  line-height: 1.05;
+  font-style: italic;
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--color-brand-gold);
+  margin-bottom: 12px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  letter-spacing: 1px;
+}
+
+.hero__decorations {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin-bottom: 24px;
-  text-shadow: 0 4px 40px rgba(0, 0, 0, 0.8), 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.hero__decoration-star {
+  color: var(--color-brand-gold);
+  font-size: 12px;
+  line-height: 1;
+  text-shadow: 0 0 10px rgba(243, 192, 22, 0.6);
+}
+
+.hero__decoration-star--large {
+  font-size: 18px;
+}
+
+.hero__title {
+  font-family: var(--font-body);
+  font-size: 72px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #ffffff;
+  line-height: 1.1;
+  margin-bottom: 20px;
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.7), 0 2px 10px rgba(0, 0, 0, 0.4);
   position: relative;
+  letter-spacing: -1px;
 }
 
 .hero__title .text-gold {
@@ -99,14 +131,14 @@
 
 .hero__subtitle {
   font-family: var(--font-body);
-  font-size: 22px;
-  font-weight: 300;
-  color: var(--color-text);
-  opacity: 0.95;
-  line-height: 1.5;
-  margin: 0 auto 40px;
-  max-width: 600px;
-  text-shadow: 0 4px 15px rgba(0, 0, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 1);
+  font-size: 18px;
+  font-weight: 400;
+  color: #ffffff;
+  opacity: 0.9;
+  line-height: 1.6;
+  margin: 0 auto 36px;
+  max-width: 650px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
 }
 
 .hero__cta {
@@ -114,21 +146,22 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: var(--color-brand-red);
-  color: #fff;
+  background: var(--color-brand-gold);
+  color: #1a1a1a;
   font-family: var(--font-body);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 2px;
-  padding: 18px 48px;
-  border-radius: var(--radius-sm);
-  border: 2px solid var(--color-brand-red);
+  padding: 16px 44px;
+  border-radius: 50px;
+  border: 2px solid var(--color-brand-gold);
   cursor: pointer;
   text-decoration: none;
   transition: all var(--transition-fast);
   position: relative;
   overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .hero__cta::before {
@@ -144,9 +177,10 @@
 }
 
 .hero__cta:hover {
-  background: var(--color-brand-red-hover);
-  border-color: var(--color-brand-red-hover);
-  box-shadow: var(--shadow-glow-red);
+  background: var(--color-brand-gold-hover);
+  border-color: var(--color-brand-gold-hover);
+  color: #1a1a1a;
+  box-shadow: var(--shadow-glow-gold);
   transform: translateY(-2px);
 }
 
@@ -208,7 +242,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: var(--color-text);
+  color: #ffffff;
   font-size: 20px;
   transition: all var(--transition-fast);
   opacity: 0.4;
@@ -344,5 +378,41 @@
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* --- Hero Wave Cutouts (Organic cutouts) --- */
+.hero__wave-cutout {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  z-index: 3;
+  line-height: 0;
+  pointer-events: none;
+}
+
+.hero__wave-cutout svg {
+  display: block;
+  width: 100%;
+  height: 120px;
+}
+
+.hero__wave-cutout--top {
+  top: -1px;
+}
+
+.hero__wave-cutout--bottom {
+  bottom: -1px;
+}
+
+@media (max-width: 768px) {
+  .hero__wave-cutout svg {
+    height: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero__wave-cutout svg {
+    height: 60px;
   }
 }

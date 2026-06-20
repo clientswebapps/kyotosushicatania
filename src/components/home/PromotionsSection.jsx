@@ -5,6 +5,7 @@ import { useCollection } from '../../hooks/useFirestore';
 import { Link } from 'react-router-dom';
 
 import ItemModal from '../common/ItemModal';
+import FloatingFood from './FloatingFood';
 import '../../styles/promotions.css';
 
 const PromotionsSection = () => {
@@ -44,6 +45,19 @@ const PromotionsSection = () => {
 
   return (
     <section className={`promotions-section promotions--items-${promotions.length}`} id="promotions">
+      <FloatingFood
+        className="floating-food--behind"
+        items={[
+          {
+            src: '/images/decorations/maki-rolls.png',
+            position: 'left',
+            top: '250px',
+            size: 'lg',
+            rotate: '20deg',
+            opacity: 0.12,
+          },
+        ]}
+      />
       <div className="promotions__header">
         <div className="promotions__header-text">
           <motion.h2

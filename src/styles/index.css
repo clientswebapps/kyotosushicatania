@@ -13,23 +13,23 @@
    CSS Custom Properties
    ============================================ */
 :root {
-  /* Colors — Background */
-  --color-bg: #0a0a0a;
-  --color-bg-elevated: #141414;
-  --color-bg-card: #1a1a1a;
-  --color-bg-card-hover: #222222;
+  /* Colors — Background (Light Theme) */
+  --color-bg: #ffffff;
+  --color-bg-elevated: #f5f6f8;
+  --color-bg-card: #ffffff;
+  --color-bg-card-hover: #eef0f3;
 
-  /* Colors — Text */
-  --color-text: #f5f0e8;
-  --color-text-secondary: #8a8a8a;
-  --color-text-muted: #555555;
+  /* Colors — Text (Dark on Light) */
+  --color-text: #1a1a1a;
+  --color-text-secondary: #666666;
+  --color-text-muted: #999999;
   --color-white: #ffffff;
 
   /* Colors — Brand: Gold (Primary Accent) */
   --color-brand-gold: #F3C016;
   --color-brand-gold-hover: #d4a628;
-  --color-brand-gold-subtle: rgba(243, 192, 22, 0.08);
-  --color-brand-gold-glow: rgba(243, 192, 22, 0.15);
+  --color-brand-gold-subtle: rgba(243, 192, 22, 0.1);
+  --color-brand-gold-glow: rgba(243, 192, 22, 0.2);
 
   /* Colors — Brand: Red (Energy Accent) */
   --color-brand-red: #C8102E;
@@ -44,8 +44,8 @@
   --color-brand-blue-glow: rgba(28, 59, 135, 0.15);
 
   /* Colors — UI */
-  --color-border: #2a2a2a;
-  --color-border-light: rgba(255, 255, 255, 0.06);
+  --color-border: #e5e5e5;
+  --color-border-light: rgba(0, 0, 0, 0.06);
 
   /* Typography */
   --font-heading: 'Cormorant Garamond', serif;
@@ -58,13 +58,13 @@
   --radius-lg: 20px;
   --radius-xl: 32px;
 
-  /* Shadows */
-  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
-  --shadow-card-premium: 0 8px 32px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
-  --shadow-glow-gold: 0 0 30px rgba(243, 192, 22, 0.15);
+  /* Shadows (lighter for white theme) */
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.08);
+  --shadow-card-premium: 0 8px 32px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-glow-gold: 0 0 30px rgba(243, 192, 22, 0.2);
   --shadow-glow-red: 0 0 30px rgba(200, 16, 46, 0.15);
   --shadow-glow-blue: 0 0 30px rgba(28, 59, 135, 0.15);
-  --shadow-modal: 0 24px 80px rgba(0, 0, 0, 0.6), 0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-modal: 0 24px 80px rgba(0, 0, 0, 0.2), 0 4px 24px rgba(0, 0, 0, 0.1);
 
   /* Transitions */
   --transition-fast: 0.2s ease;
@@ -225,12 +225,12 @@ hr {
    ============================================ */
 ::selection {
   background-color: var(--color-brand-gold);
-  color: var(--color-bg);
+  color: #1a1a1a;
 }
 
 ::-moz-selection {
   background-color: var(--color-brand-gold);
-  color: var(--color-bg);
+  color: #1a1a1a;
 }
 
 /* ============================================
@@ -242,22 +242,22 @@ hr {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-bg);
+  background: #f5f5f5;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #333333;
+  background: #cccccc;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #444444;
+  background: #aaaaaa;
 }
 
 /* Firefox scrollbar */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #333333 var(--color-bg);
+  scrollbar-color: #cccccc #f5f5f5;
 }
 
 /* ============================================
@@ -494,6 +494,21 @@ hr {
   background: linear-gradient(90deg, var(--color-brand-red), var(--color-brand-gold));
   margin: 0 auto var(--space-3xl);
   border: none;
+}
+
+/* --- Dark sections utility (hero, footer, mobile overlay) --- */
+.dark-section {
+  --color-text: #f5f0e8;
+  --color-text-secondary: #8a8a8a;
+  --color-text-muted: #555555;
+  --color-border: #2a2a2a;
+  --color-border-light: rgba(255, 255, 255, 0.06);
+  --color-bg: #0a0a0a;
+  --color-bg-elevated: #141414;
+  --color-bg-card: #1a1a1a;
+  --color-bg-card-hover: #222222;
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-card-premium: 0 8px 32px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 /* --- Buttons --- */

@@ -1,0 +1,160 @@
+/* ============================================
+   KYOTO SUSHI CATANIA — Floating Food & Section Dividers
+   Decorative elements between sections
+   ============================================ */
+
+/* --- Section Divider Waves --- */
+.section-divider-wave {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  z-index: 5;
+  line-height: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.section-divider-wave svg {
+  display: block;
+  width: 100%;
+  height: 100px;
+}
+
+.section-divider-wave--hero-wave svg {
+  height: 120px;
+}
+
+.section-divider-wave--bottom {
+  bottom: -1px;
+}
+
+.section-divider-wave--top {
+  top: -1px;
+}
+
+@media (max-width: 768px) {
+  .section-divider-wave svg {
+    height: 64px;
+  }
+  .section-divider-wave--hero-wave svg {
+    height: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-divider-wave svg {
+    height: 48px;
+  }
+  .section-divider-wave--hero-wave svg {
+    height: 60px;
+  }
+}
+
+
+
+/* --- Floating Food Container --- */
+.floating-food {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 900; /* Stacks below navbar (z-index 1000) and WhatsApp button (z-index 999) but above sections */
+  overflow: visible;
+}
+
+/* --- Parallax Wrapper --- */
+.floating-food__wrapper {
+  position: absolute;
+  will-change: transform;
+}
+
+/* --- Individual Food Item --- */
+.floating-food__item {
+  position: relative;
+  object-fit: contain;
+  width: var(--food-width);
+  height: auto;
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.12)); /* Beautiful soft shadow matching the food shape */
+  animation: floatUpDown 6s ease-in-out infinite;
+  transform: translate(var(--float-offsetX), var(--float-offsetY)) rotate(var(--float-rotate));
+  will-change: transform;
+}
+
+/* Position variants — offset exactly 1/4 of their width off-screen */
+.floating-food__item--right {
+  right: calc(var(--food-width) * -0.25) !important;
+}
+
+.floating-food__item--left {
+  left: calc(var(--food-width) * -0.25) !important;
+}
+
+/* Size variants */
+.floating-food__item--sm {
+  --food-width: 160px;
+}
+
+.floating-food__item--md {
+  --food-width: 260px;
+}
+
+.floating-food__item--lg {
+  --food-width: 360px; /* Scaled down from 480px to avoid text overlap */
+}
+
+/* --- Float Animations --- */
+@keyframes floatUpDown {
+  0%, 100% {
+    transform: translate(var(--float-offsetX), var(--float-offsetY)) rotate(var(--float-rotate));
+  }
+  50% {
+    transform: translate(var(--float-offsetX), calc(var(--float-offsetY) - 12px)) rotate(var(--float-rotate));
+  }
+}
+
+@keyframes floatSway {
+  0%, 100% {
+    transform: translate(var(--float-offsetX), var(--float-offsetY)) rotate(var(--float-rotate));
+  }
+  25% {
+    transform: translate(calc(var(--float-offsetX) + 5px), calc(var(--float-offsetY) - 8px)) rotate(calc(var(--float-rotate) + 2deg));
+  }
+  75% {
+    transform: translate(calc(var(--float-offsetX) - 5px), calc(var(--float-offsetY) - 4px)) rotate(calc(var(--float-rotate) - 2deg));
+  }
+}
+
+/* --- Accessibility: Respect Reduced Motion --- */
+@media (prefers-reduced-motion: reduce) {
+  .floating-food__item {
+    animation: none !important;
+  }
+}
+
+/* --- Responsive: Hide on small screens --- */
+@media (max-width: 768px) {
+  .floating-food {
+    display: none;
+  }
+}
+
+/* --- Medium screens: scale down --- */
+@media (min-width: 769px) and (max-width: 1200px) {
+  .floating-food__item--sm {
+    --food-width: 110px;
+  }
+  .floating-food__item--md {
+    --food-width: 180px;
+  }
+  .floating-food__item--lg {
+    --food-width: 260px; /* Scaled down from 320px */
+  }
+}
+
+/* --- Floating Food Behind Content --- */
+.floating-food--behind {
+  z-index: -1 !important;
+}
+

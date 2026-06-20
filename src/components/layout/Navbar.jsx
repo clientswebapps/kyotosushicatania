@@ -49,10 +49,15 @@ const Navbar = () => {
     return location.pathname.startsWith(path);
   };
 
+  const isSolid = true;
+
   return (
-    <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
+    <nav className={`navbar ${isSolid ? 'scrolled' : ''}`}>
       <Link to="/" className="navbar__logo">
-        <img src="/images/logo-white.avif" alt="Kyō-To Sushi Catania" />
+        <img
+          src={isSolid ? "/images/logo.avif" : "/images/logo-white.avif"}
+          alt="Kyō-To Sushi Catania"
+        />
       </Link>
 
       <ul className="navbar__links">

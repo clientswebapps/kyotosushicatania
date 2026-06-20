@@ -6,6 +6,7 @@ import { useCollection } from "../hooks/useFirestore";
 import { Search, AlertCircle, X, Info } from "lucide-react";
 import AllergenModal from "../components/common/AllergenModal";
 import { MenuSkeleton } from "../components/common/SkeletonComponents";
+import FloatingFood from "../components/home/FloatingFood";
 import "../styles/menu.css";
 
 const imageMap = {
@@ -197,6 +198,64 @@ export default function Menu() {
         <meta property="og:description" content="Explore the authentic menu of Kyō-To Sushi Catania. Fresh, premium Japanese cuisine." />
         <meta property="og:url" content="https://www.kyotosushicatania.com/menu" />
       </Helmet>
+
+      {/* Foreground Floating Foods */}
+      <FloatingFood
+        items={[
+          {
+            src: '/images/decorations/single-nigiri.png',
+            position: 'right',
+            top: '350px',
+            size: 'lg',
+            rotate: '-15deg',
+          },
+          {
+            src: '/images/decorations/single-maki.png',
+            position: 'left',
+            top: '1100px',
+            size: 'md',
+            rotate: '-8deg',
+          },
+          {
+            src: '/images/decorations/chopsticks.png',
+            position: 'right',
+            top: '1800px',
+            size: 'lg',
+            rotate: '22deg',
+          },
+        ]}
+      />
+
+      {/* Background Floating Foods */}
+      <FloatingFood
+        className="floating-food--behind"
+        items={[
+          {
+            src: '/images/decorations/single-tempura.png',
+            position: 'left',
+            top: '900px',
+            size: 'lg',
+            rotate: '18deg',
+            opacity: 0.12,
+          },
+          {
+            src: '/images/decorations/sushi-nigiri.png',
+            position: 'right',
+            top: '1300px',
+            size: 'lg',
+            rotate: '-25deg',
+            opacity: 0.12,
+          },
+          {
+            src: '/images/decorations/maki-rolls.png',
+            position: 'left',
+            top: '2100px',
+            size: 'lg',
+            rotate: '20deg',
+            opacity: 0.12,
+          },
+        ]}
+      />
       <motion.div
         className="menu-section__logo-lockup"
         initial={{ opacity: 0, scale: 0.88 }}
@@ -204,7 +263,7 @@ export default function Menu() {
         transition={{ duration: 0.8, ease: 'easeOut' }}
       >
         <img
-          src="/images/logo-white.avif"
+          src="/images/logo.avif"
           alt="Kyō-To"
           className="menu-section__logo"
         />
@@ -367,7 +426,7 @@ export default function Menu() {
                               )
                             ) : (
                               <div className="menu-section__card-image-placeholder">
-                                <img src="/images/logo-white.avif" alt="" className="placeholder-logo" />
+                                <img src="/images/logo.avif" alt="" className="placeholder-logo" />
                               </div>
                             )}
                             <div className="menu-card-hint-badge">
@@ -497,7 +556,7 @@ export default function Menu() {
                               )
                             ) : (
                               <div className="menu-section__card-image-placeholder">
-                                <img src="/images/logo-white.avif" alt="" className="placeholder-logo" />
+                                <img src="/images/logo.avif" alt="" className="placeholder-logo" />
                               </div>
                             )}
                             <div className="menu-card-hint-badge">

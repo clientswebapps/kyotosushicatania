@@ -11,6 +11,9 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
 }
 
 .about__container {
@@ -30,11 +33,12 @@
 .about__image {
   width: 100%;
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(232, 184, 48, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   display: block;
   object-fit: cover;
   position: relative;
   z-index: 2;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 /* --- Decorative Brush Stroke (Pseudo-element) --- */
@@ -47,8 +51,8 @@
   height: 120px;
   background: linear-gradient(
     135deg,
-    rgba(243, 192, 22, 0.3) 0%,
-    rgba(28, 59, 135, 0.25) 100%
+    rgba(243, 192, 22, 0.2) 0%,
+    rgba(200, 16, 46, 0.15) 100%
   );
   border-radius: 60% 40% 50% 50% / 50% 60% 40% 50%;
   z-index: 1;
@@ -64,8 +68,8 @@
   height: 80px;
   background: linear-gradient(
     90deg,
-    rgba(200, 16, 46, 0.2) 0%,
-    rgba(243, 192, 22, 0.25) 100%
+    rgba(200, 16, 46, 0.12) 0%,
+    rgba(243, 192, 22, 0.18) 100%
   );
   border-radius: 40% 60% 50% 50% / 60% 40% 50% 50%;
   z-index: 1;
@@ -76,6 +80,7 @@
 .about__content {
   flex: 0 0 55%;
   max-width: 55%;
+  padding-right: 120px;
 }
 
 .about__label {
@@ -188,6 +193,10 @@
   .about__stats {
     gap: 28px;
   }
+
+  .about__content {
+    padding-right: 60px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -211,6 +220,7 @@
     flex: none;
     max-width: 100%;
     text-align: center;
+    padding-right: 0;
   }
 
   .about__divider {
