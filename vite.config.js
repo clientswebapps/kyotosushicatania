@@ -6,6 +6,8 @@ export default defineConfig({
   plugins: [react()],
   build: {
     outDir: 'build',
+    // Use esbuild for CSS minification to guarantee backdrop-filter preservation.
+    cssMinify: 'esbuild',
     rollupOptions: {
       output: {
         manualChunks(id) {

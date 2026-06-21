@@ -676,6 +676,7 @@ hr {
   min-height: 100vh;
   background: var(--color-bg);
   padding-bottom: 80px;
+  overflow-x: hidden;
 }
 
 /* Common Page Header */

@@ -13,7 +13,8 @@ import { useMemo } from 'react';
  * (percentage of the element's bounding box), so it scales to any card size.
  */
 export default function WavyClipDefs() {
-  const wavyPath = useMemo(() => generateWavyCardPath(), []);
+  const wavyPath = useMemo(() => generateWavyCardPath(18, 0.005, 0.005), []);
+  const wavyFounderPath = useMemo(() => generateWavyCardPath(18, 0.004, 0.0015), []);
 
   return (
     <svg
@@ -25,6 +26,9 @@ export default function WavyClipDefs() {
       <defs>
         <clipPath id="wavy-card-clip" clipPathUnits="objectBoundingBox">
           <path d={wavyPath} />
+        </clipPath>
+        <clipPath id="wavy-founder-clip" clipPathUnits="objectBoundingBox">
+          <path d={wavyFounderPath} />
         </clipPath>
       </defs>
     </svg>
@@ -38,25 +42,26 @@ export default function WavyClipDefs() {
  *
  * All coordinates are in 0–1 range for objectBoundingBox usage.
  */
-function generateWavyCardPath() {
-  const waveCount = 18;         // waves per side (same density as hero's 36 across 1440px)
-  const wiggleAmp = 0.005;      // amplitude in 0–1 space (~0.5% of dimension — subtle)
+function generateWavyCardPath(waveCount = 18, wiggleAmpX = 0.005, wiggleAmpY = 0.005) {
   const step = 1 / waveCount;
 
   // Wiggle offset at segment i — mirrors the hero formula exactly
-  const getWiggle = (i) =>
-    wiggleAmp * Math.sin(i * 1.5) + (wiggleAmp / 2) * Math.cos(i * 2.7);
+  const getWiggleX = (i) =>
+    wiggleAmpX * Math.sin(i * 1.5) + (wiggleAmpX / 2) * Math.cos(i * 2.7);
+
+  const getWiggleY = (i) =>
+    wiggleAmpY * Math.sin(i * 1.5) + (wiggleAmpY / 2) * Math.cos(i * 2.7);
 
   let d = '';
 
   // --- Top edge: left → right (y wiggles around 0) ---
-  d += `M 0,${fmt(0 + getWiggle(0))}`;
+  d += `M 0,${fmt(0 + getWiggleY(0))}`;
   for (let i = 0; i < waveCount; i++) {
     const x1 = i * step;
     const x2 = (i + 1) * step;
     const midX = (x1 + x2) / 2;
-    const controlY = 0 + getWiggle(i + 0.5);
-    const endY = 0 + getWiggle(i + 1);
+    const controlY = 0 + getWiggleY(i + 0.5);
+    const endY = 0 + getWiggleY(i + 1);
     d += ` Q ${fmt(midX)},${fmt(controlY)} ${fmt(x2)},${fmt(endY)}`;
   }
 
@@ -65,8 +70,8 @@ function generateWavyCardPath() {
     const y1 = i * step;
     const y2 = (i + 1) * step;
     const midY = (y1 + y2) / 2;
-    const controlX = 1 + getWiggle(i + waveCount + 0.5);
-    const endX = 1 + getWiggle(i + waveCount + 1);
+    const controlX = 1 + getWiggleX(i + waveCount + 0.5);
+    const endX = 1 + getWiggleX(i + waveCount + 1);
     d += ` Q ${fmt(controlX)},${fmt(midY)} ${fmt(endX)},${fmt(y2)}`;
   }
 
@@ -75,8 +80,8 @@ function generateWavyCardPath() {
     const x1 = 1 - i * step;
     const x2 = 1 - (i + 1) * step;
     const midX = (x1 + x2) / 2;
-    const controlY = 1 + getWiggle(i + waveCount * 2 + 0.5);
-    const endY = 1 + getWiggle(i + waveCount * 2 + 1);
+    const controlY = 1 + getWiggleY(i + waveCount * 2 + 0.5);
+    const endY = 1 + getWiggleY(i + waveCount * 2 + 1);
     d += ` Q ${fmt(midX)},${fmt(controlY)} ${fmt(x2)},${fmt(endY)}`;
   }
 
@@ -85,8 +90,8 @@ function generateWavyCardPath() {
     const y1 = 1 - i * step;
     const y2 = 1 - (i + 1) * step;
     const midY = (y1 + y2) / 2;
-    const controlX = 0 + getWiggle(i + waveCount * 3 + 0.5);
-    const endX = 0 + getWiggle(i + waveCount * 3 + 1);
+    const controlX = 0 + getWiggleX(i + waveCount * 3 + 0.5);
+    const endX = 0 + getWiggleX(i + waveCount * 3 + 1);
     d += ` Q ${fmt(controlX)},${fmt(midY)} ${fmt(endX)},${fmt(y2)}`;
   }
 

@@ -137,7 +137,7 @@ const HeroCarousel = () => {
   return (
     <section className="hero onboarding-section" id="hero">
       <div className="hero__slides">
-        <AnimatePresence mode="wait" initial={false}>
+        <AnimatePresence initial={false}>
           <motion.div
             key={activeSlide.id || currentSlide}
             className="hero__slide active"

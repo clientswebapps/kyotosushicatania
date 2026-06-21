@@ -30,13 +30,10 @@
   left: 0;
   width: 100%;
   height: 100%;
-  opacity: 0;
-  transition: opacity 1s ease-in-out;
   z-index: 1;
 }
 
 .hero__slide.active {
-  opacity: 1;
   z-index: 2;
 }
 
@@ -70,18 +67,19 @@
   z-index: 5;
   text-align: center;
   width: 90%;
-  max-width: 860px;
+  max-width: 720px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: rgba(255, 255, 255, 0.15); /* Light glassmorphism card (translucent white) */
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: none; /* Replaced flat border with drop-shadow filter contour */
-  border-radius: 0; /* Removed border-radius for cutout theme */
-  padding: 56px 48px;
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(36px) saturate(1.4);
+  -webkit-backdrop-filter: blur(36px) saturate(1.4);
+  border: none;
+  border-radius: 0;
+  padding: 48px 40px;
   clip-path: url(#wavy-card-clip); /* Cutout theme: organic wiggly paper clip-path from WavyClipDefs */
-  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.25)); /* Shadow outlines the exact wiggly cutout shape */
+  /* NOTE: Do NOT add filter: drop-shadow() here — it creates an offscreen
+     compositing buffer that breaks backdrop-filter blur rendering. */
 }
 
 /* --- Tagline & Star Decorations --- */
@@ -300,8 +298,8 @@
   }
 
   .hero__content {
-    padding-left: 8%;
-    padding-right: 8%;
+    max-width: 640px;
+    padding: 40px 32px;
   }
 }
 
@@ -311,10 +309,10 @@
   }
 
   .hero__content {
-    padding: 24px 16px; /* Divisible by 8 (8px grid) */
-    border-radius: 0; /* Removed border-radius for cutout theme */
     width: calc(100% - 64px); /* Divisible by 8 — narrows card, leaving 32px margin on each side */
     max-width: 480px; /* Divisible by 8 */
+    padding: 24px 16px; /* Divisible by 8 (8px grid) */
+    border-radius: 0; /* Removed border-radius for cutout theme */
   }
 
   .hero__tagline {
@@ -384,8 +382,8 @@
 
 @media (max-width: 480px) {
   .hero__content {
-    padding: 16px 16px; /* Divisible by 8 — highly compact for small viewports */
     width: calc(100% - 48px); /* Divisible by 8 — narrows card on mobile, leaving 24px margin on each side */
+    padding: 16px 16px; /* Divisible by 8 — highly compact for small viewports */
   }
 
   .hero__tagline {
