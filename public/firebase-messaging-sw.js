@@ -19,11 +19,19 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
   console.log('[firebase-messaging-sw.js] Received background message: ', payload);
   
-  const notificationTitle = payload.notification?.title || "Kyō-To Sushi Catania";
+  // If the payload already contains a notification object, the FCM SDK will show it automatically.
+  // We do NOT show a manual notification here to avoid the double-notification bug.
+  if (payload.notification) {
+    console.log('[firebase-messaging-sw.js] FCM will handle displaying this notification natively.');
+    return;
+  }
+  
+  // Only show manual notification if it's a data-only payload
+  const notificationTitle = payload.data?.title || "Kyō-To Sushi Catania";
   const notificationOptions = {
-    body: payload.notification?.body || "Nuova offerta disponibile!",
-    icon: '/favicon.svg',
-    badge: '/favicon.svg',
+    body: payload.data?.body || "Nuova offerta disponibile!",
+    icon: '/logo-192.png',
+    badge: '/logo-192.png',
     data: payload.data || {}
   };
 

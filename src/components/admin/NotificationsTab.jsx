@@ -14,6 +14,7 @@ export default function NotificationsTab() {
   // Get total subscribers count
   const { data: subscribers = [], loading: subsLoading } = useCollection("pushSubscriptions", {
     realtime: true,
+    orderByField: null,
   });
 
   const iosCount = subscribers.filter(s => s.platform === "iOS").length;

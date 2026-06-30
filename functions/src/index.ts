@@ -577,8 +577,8 @@ export const sendPushNotification = onCall(async (request) => {
     },
     webpush: {
       notification: {
-        icon: "/favicon.svg",
-        badge: "/favicon.svg",
+        icon: "/logo-192.png",
+        badge: "/logo-192.png",
         clickAction: "/",
       }
     },

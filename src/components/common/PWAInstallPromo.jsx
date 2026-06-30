@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { messaging, db } from "../../firebase/config";
 import { getToken } from "firebase/messaging";
@@ -16,14 +17,19 @@ export default function PWAInstallPromo() {
   // Check standalone mode (PWA active) and OS
   useEffect(() => {
     const checkPwaState = () => {
-      const standalone = 
-        window.matchMedia("(display-mode: standalone)").matches || 
+      const standalone =
+        window.matchMedia("(display-mode: standalone)").matches ||
         window.navigator.standalone === true;
       setIsStandalone(standalone);
 
       // Detect iOS device
       const ios = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
       setIsIos(ios);
+
+      // Log installation detection state to console
+      console.log(`[Kyō-To PWA Debug] App Installed (Standalone Mode): ${standalone}`);
+      console.log(`[Kyō-To PWA Debug] Running on iOS: ${ios}`);
+      console.log(`[Kyō-To PWA Debug] Notification Permission: ${"Notification" in window ? Notification.permission : "Not Supported"}`);
 
       // Check Notification permissions
       if ("Notification" in window) {
@@ -82,7 +88,7 @@ export default function PWAInstallPromo() {
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
     console.log(`User response to install prompt: ${outcome}`);
-    
+
     // Clear deferred prompt so it can only be used once
     setDeferredPrompt(null);
     if (outcome === "accepted") {
@@ -123,8 +129,10 @@ export default function PWAInstallPromo() {
           return;
         }
 
+        console.log(`[Kyō-To PWA Debug] Attempting FCM token fetch with VAPID key: ${vapidKey.substring(0, 10)}...`);
         const token = await getToken(messaging, { vapidKey });
-        
+        console.log(`[Kyō-To PWA Debug] FCM Token result: ${token ? "Token Fetched (" + token.substring(0, 10) + "...)" : "No Token Received"}`);
+
         if (token) {
           // 3. Check if token already exists in database
           const pushSubscriptionsRef = collection(db, "pushSubscriptions");
@@ -200,7 +208,7 @@ export default function PWAInstallPromo() {
           <div className="ios-install-modal" onClick={(e) => e.stopPropagation()}>
             <h3>Install on iOS</h3>
             <p>Add Kyō-To to your Home Screen to get real-time updates, enable push notifications, and receive exclusive offers!</p>
-            
+
             <div className="ios-steps">
               <div className="ios-step">
                 <span className="ios-step-num">1</span>
