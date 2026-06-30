@@ -50,15 +50,15 @@ export function GallerySkeleton() {
   );
 }
 
-// Hero banner slide loading skeleton (Full screen shimmer)
+// Hero loading spinner (replaced glimmer skeleton)
 export function HeroSkeleton() {
   return (
-    <div className="skeleton-hero skeleton-shimmer">
-      <div className="skeleton-hero-overlay">
-        <div className="skeleton-hero-title skeleton-shimmer"></div>
-        <div className="skeleton-hero-subtitle skeleton-shimmer"></div>
-        <div className="skeleton-hero-button skeleton-shimmer"></div>
+    <div className="hero-loader-container">
+      <div className="hero-loader-spinner">
+        <div className="hero-loader-double-ring"></div>
+        <div className="hero-loader-logo">京</div>
       </div>
+      <span className="hero-loader-text">Loading Kyō-To Experience...</span>
     </div>
   );
 }

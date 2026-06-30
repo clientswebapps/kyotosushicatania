@@ -84,11 +84,17 @@ const contentVariants = {
   },
 };
 
-const HeroCarousel = () => {
+const HeroCarousel = ({ onLoaded }) => {
 
   const { data: allSlides, loading } = useCollection('heroSlides', {
     realtime: true,
   });
+
+  useEffect(() => {
+    if (!loading && onLoaded) {
+      onLoaded();
+    }
+  }, [loading, onLoaded]);
 
   const firebaseSlides = allSlides?.filter(slide => slide.active !== false) || [];
 
