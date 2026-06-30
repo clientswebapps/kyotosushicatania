@@ -30,9 +30,8 @@ export default function PWAInstallPromo() {
         setNotificationStatus(Notification.permission);
       }
 
-      // If running in browser and has not dismissed before, show banner after 3 seconds
-      const isDismissed = localStorage.getItem("pwa_promo_dismissed") === "true";
-      if (!standalone && !isDismissed) {
+      // If running in browser, show banner after 3 seconds
+      if (!standalone) {
         const timer = setTimeout(() => setShowBanner(true), 3000);
         return () => clearTimeout(timer);
       }
@@ -45,8 +44,7 @@ export default function PWAInstallPromo() {
       e.preventDefault();
       setDeferredPrompt(e);
       // Only show banner if we have the prompt ready
-      const isDismissed = localStorage.getItem("pwa_promo_dismissed") === "true";
-      if (!isStandalone && !isDismissed) {
+      if (!isStandalone) {
         setShowBanner(true);
       }
     };
@@ -95,7 +93,6 @@ export default function PWAInstallPromo() {
   // Dismiss install banner
   const handleDismissBanner = () => {
     setShowBanner(false);
-    localStorage.setItem("pwa_promo_dismissed", "true");
   };
 
   // Request Notification Permissions & Save FCM Token
@@ -158,49 +155,19 @@ export default function PWAInstallPromo() {
     }
   };
 
-  // Render standalone rewards view
+  // Trigger notification permission request automatically on PWA launch
+  useEffect(() => {
+    if (isStandalone && "Notification" in window && Notification.permission !== "denied") {
+      const timer = setTimeout(() => {
+        handleEnableNotifications();
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [isStandalone]);
+
+  // Render standalone rewards view — hidden in standalone mode per user request
   if (isStandalone) {
-    return (
-      <div className="pwa-reward-banner">
-        <h3 className="pwa-reward-title">Welcome to the Kyō-To App!</h3>
-        <p className="pwa-reward-description">
-          Thank you for installing our app on your device. Enjoy this exclusive offer on us!
-        </p>
-
-        <div className="pwa-reward-code-box">
-          <span className="pwa-reward-code-label">Your Exclusive Promo Code</span>
-          <span className="pwa-reward-code">KYOTOAPP25</span>
-          <p style={{ margin: "4px 0 0 0", fontSize: "11px", color: "var(--color-brand-gold)" }}>
-            Receive 25% Off Your Next Order!
-          </p>
-        </div>
-
-        <div className="pwa-notification-optin">
-          {notificationStatus === "granted" || notificationStatus === "success" ? (
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#2ecc71", fontSize: "14px" }}>
-              <Check size={18} />
-              <span>Notifications are active! You will receive our custom offers directly on this device.</span>
-            </div>
-          ) : notificationStatus === "denied" ? (
-            <p style={{ fontSize: "12px", color: "var(--color-brand-red)" }}>
-              Notifications are blocked. Please enable notifications in your device settings to receive our offers.
-            </p>
-          ) : (
-            <>
-              <p>Keep push notifications enabled to receive custom daily offers and secret deals!</p>
-              <button 
-                onClick={handleEnableNotifications} 
-                className="pwa-btn-notifications"
-                disabled={notificationStatus === "loading"}
-              >
-                <Bell size={16} />
-                <span>{notificationStatus === "loading" ? "Activating..." : "Enable Push Notifications"}</span>
-              </button>
-            </>
-          )}
-        </div>
-      </div>
-    );
+    return null;
   }
 
   // Render browser promotion banner

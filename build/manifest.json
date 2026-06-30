@@ -4,13 +4,13 @@
   "description": "Japanese Asian Contemporary Cuisine in the heart of Catania",
   "icons": [
     {
-      "src": "/favicon.svg",
-      "type": "image/svg+xml",
-      "sizes": "any"
+      "src": "/logo-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
     },
     {
-      "src": "/images/logo.avif",
-      "type": "image/avif",
+      "src": "/logo-512.png",
+      "type": "image/png",
       "sizes": "512x512"
     }
   ],

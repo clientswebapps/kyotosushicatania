@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, useScroll, useTransform, useSpring, useReducedMotion } from 'framer-motion';
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import '../../styles/floating-food.css';
 
 /**
@@ -16,8 +16,7 @@ const FloatingItem = ({ item, index }) => {
   const defaultSpeed = isBehind ? 0.04 : -0.025;
   const speed = shouldReduceMotion ? 0 : (item.speed !== undefined ? item.speed : defaultSpeed);
 
-  const rawY = useTransform(scrollY, (val) => val * speed);
-  const smoothY = useSpring(rawY, { damping: 28, stiffness: 100 });
+  const smoothY = useTransform(scrollY, (val) => val * speed);
 
   // Wrapper Styles — Handles positioning and scroll parallax translation
   const wrapperStyle = {
