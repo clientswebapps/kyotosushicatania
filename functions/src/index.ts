@@ -6,6 +6,7 @@ import { defineString, defineInt } from "firebase-functions/params";
 import * as logger from "firebase-functions/logger";
 import * as nodemailer from "nodemailer";
 import { getFirestore } from "firebase-admin/firestore";
+import { getMessaging } from "firebase-admin/messaging";
 import { BetaAnalyticsDataClient } from "@google-analytics/data";
 
 // Initialize Firebase Admin SDK
@@ -527,3 +528,92 @@ export const getAnalyticsReport = onCall({ cors: true }, async (request) => {
     };
   }
 });
+
+/**
+ * Cloud Function to broadcast push notifications to all subscribed devices.
+ * Restricts access to authenticated admin users only and cleans up dead tokens automatically.
+ */
+export const sendPushNotification = onCall(async (request) => {
+  const auth = request.auth;
+  if (!auth) {
+    throw new HttpsError("unauthenticated", "The function must be called while authenticated.");
+  }
+  
+  const uid = auth.uid;
+  const db = getFirestore();
+  
+  // Verify administrator privileges
+  const adminDoc = await db.collection("adminUsers").doc(uid).get();
+  if (!adminDoc.exists || adminDoc.data()?.role !== "admin") {
+    throw new HttpsError("permission-denied", "Only administrators can send push notifications.");
+  }
+
+  const { title, body } = request.data;
+  if (!title || !body) {
+    throw new HttpsError("invalid-argument", "Title and Body are required parameters.");
+  }
+
+  // Retrieve all registered subscriber tokens
+  const snapshot = await db.collection("pushSubscriptions").get();
+  const tokens: string[] = [];
+  snapshot.forEach((doc) => {
+    const data = doc.data();
+    if (data.token) {
+      tokens.push(data.token);
+    }
+  });
+
+  if (tokens.length === 0) {
+    return { success: true, sentCount: 0, message: "No registered devices found." };
+  }
+
+  const messaging = getMessaging();
+  
+  // Construct multicast web push payload
+  const message = {
+    notification: {
+      title,
+      body,
+    },
+    webpush: {
+      notification: {
+        icon: "/favicon.svg",
+        badge: "/favicon.svg",
+        clickAction: "/",
+      }
+    },
+    tokens,
+  };
+
+  const response = await messaging.sendEachForMulticast(message);
+  
+  // Clean up stale, unregistered or invalid tokens reported by FCM
+  if (response.failureCount > 0) {
+    const tokensToDelete: Promise<any>[] = [];
+    response.responses.forEach((resp, idx) => {
+      if (!resp.success) {
+        const error = resp.error;
+        if (error && (
+          error.code === "messaging/invalid-registration-token" ||
+          error.code === "messaging/registration-token-not-registered"
+        )) {
+          const badToken = tokens[idx];
+          const queryRef = db.collection("pushSubscriptions").where("token", "==", badToken);
+          tokensToDelete.push(queryRef.get().then((qSnap) => {
+            const batch = db.batch();
+            qSnap.forEach((docRef) => batch.delete(docRef.ref));
+            return batch.commit();
+          }));
+        }
+      }
+    });
+    await Promise.all(tokensToDelete);
+  }
+
+  return {
+    success: true,
+    sentCount: response.successCount,
+    failedCount: response.failureCount,
+  };
+});
+

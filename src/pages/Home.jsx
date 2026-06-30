@@ -8,6 +8,7 @@ import ContactSection from "../components/home/ContactSection";
 import Footer from "../components/layout/Footer";
 import SectionDivider from "../components/home/SectionDivider";
 import FloatingFood from "../components/home/FloatingFood";
+import PWAInstallPromo from "../components/common/PWAInstallPromo";
 import '../styles/onboarding.css';
 import '../styles/floating-food.css';
 
@@ -152,6 +153,9 @@ export default function Home() {
           />
         )}
       </div>
+
+      {/* PWA Install Promotion & Rewards */}
+      <PWAInstallPromo />
 
       {/* Footer — stays dark */}
       <Footer />

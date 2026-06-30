@@ -4,6 +4,7 @@ import { getStorage } from "firebase/storage";
 import { getAuth } from "firebase/auth";
 import { getAnalytics } from "firebase/analytics";
 import { getFunctions } from "firebase/functions";
+import { getMessaging } from "firebase/messaging";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -24,6 +25,7 @@ export const db = isConfigured ? getFirestore(app) : null;
 export const storage = isConfigured ? getStorage(app) : null;
 export const auth = isConfigured ? getAuth(app) : null;
 export const functions = isConfigured ? getFunctions(app, "europe-west8") : null;
+export const messaging = (isConfigured && typeof window !== "undefined") ? getMessaging(app) : null;
 
 // Initialize analytics only if configured and in a browser context
 export const analytics = (isConfigured && typeof window !== "undefined" && firebaseConfig.measurementId) 

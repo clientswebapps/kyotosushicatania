@@ -13,7 +13,8 @@ import {
   AlertCircle,
   Shield,
   Star,
-  BarChart2
+  BarChart2,
+  BellRing
 } from "lucide-react";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
@@ -29,6 +30,7 @@ import GalleryTab from "../components/admin/GalleryTab";
 import UsersTab from "../components/admin/UsersTab";
 import FeaturedTab from "../components/admin/FeaturedTab";
 import AnalyticsTab from "../components/admin/AnalyticsTab";
+import NotificationsTab from "../components/admin/NotificationsTab";
 
 export default function Admin() {
   const { user, loading: authLoading, login, logout } = useAuth();
@@ -299,6 +301,13 @@ export default function Admin() {
           <span>Analytics</span>
         </button>
         <button
+          className={`admin-tab-btn ${activeTab === "notifications" ? "active" : ""}`}
+          onClick={() => setActiveTab("notifications")}
+        >
+          <BellRing size={18} />
+          <span>Push Notifications</span>
+        </button>
+        <button
           className={`admin-tab-btn ${activeTab === "users" ? "active" : ""}`}
           onClick={() => setActiveTab("users")}
         >
@@ -339,6 +348,10 @@ export default function Admin() {
           )}
 
           {activeTab === "gallery" && <GalleryTab />}
+
+          {activeTab === "notifications" && (
+            <NotificationsTab />
+          )}
 
           {activeTab === "users" && (
             <UsersTab

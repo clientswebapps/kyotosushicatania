@@ -1,0 +1,22 @@
+{
+  "short_name": "Kyō-To",
+  "name": "Kyō-To Sushi Catania",
+  "description": "Japanese Asian Contemporary Cuisine in the heart of Catania",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    },
+    {
+      "src": "/images/logo.avif",
+      "type": "image/avif",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0c0c0e",
+  "theme_color": "#0c0c0e",
+  "display": "standalone",
+  "orientation": "portrait-primary"
+}
