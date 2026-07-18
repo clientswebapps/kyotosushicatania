@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Star, Award, Compass, RefreshCw, ChevronRight, Gift } from 'lucide-react';
 import { useCollection } from '../../hooks/useFirestore';
@@ -149,6 +149,17 @@ export default function HeroBento() {
   const activeSlides = slides.length > 0 ? slides : fallbackSlides;
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
 
+  // Video buffering/loading state for the hero banner
+  const [videoLoading, setVideoLoading] = useState(false);
+  const handleVideoWaiting = useCallback(() => setVideoLoading(true), []);
+  const handleVideoCanPlay = useCallback(() => setVideoLoading(false), []);
+  const handleVideoLoaded = useCallback(() => setVideoLoading(false), []);
+
+  // Reset video loading state when slide changes
+  useEffect(() => {
+    setVideoLoading(false);
+  }, [currentSlideIndex]);
+
   // Auto-slide welcome banner every 6 seconds
   useEffect(() => {
     if (activeSlides.length <= 1) return;
@@ -201,8 +212,15 @@ export default function HeroBento() {
     while (nextIndex === recommendedIndex) {
       nextIndex = Math.floor(Math.random() * menuItems.length);
     }
+    setImgError(false);   // reset error flag so fallback doesn't linger
+    setImgLoading(true);  // show spinner while new image loads
     setRecommendedIndex(nextIndex);
   };
+
+  // Track image load errors separately so we can reset on shuffle
+  const [imgError, setImgError] = useState(false);
+  // Track image loading state to show spinner while new image fetches
+  const [imgLoading, setImgLoading] = useState(true);
 
   const activeSlide = activeSlides[currentSlideIndex];
   const activePromo = activePromotions[currentPromoIndex];
@@ -212,7 +230,10 @@ export default function HeroBento() {
   const itemRating = recommendedItem.rating || 5.0;
   const reviewsCount = recommendedItem.reviewsCount || Math.floor(15 + (recommendedItem.name.length * 1.5));
   const displayPrice = formatPrice(recommendedItem.price, recommendedItem.price6);
-  const resolvedImage = recommendedItem.imageUrl || imageMap[recommendedItem.name] || "/images/logo-192.png";
+  // Use error-safe resolved image: prefer db url → static map → logo fallback
+  const resolvedImage = imgError
+    ? "/images/logo.avif"
+    : (recommendedItem.imageUrl || imageMap[recommendedItem.name] || "/images/logo.avif");
   const displayHighlight = recommendedItem.highlight || (itemRating >= 5.0 ? "🔥 Top Rated" : "✨ Recommended");
 
   return (
@@ -232,6 +253,9 @@ export default function HeroBento() {
                   muted
                   playsInline
                   className="hero-slide-media"
+                  onWaiting={handleVideoWaiting}
+                  onCanPlay={handleVideoCanPlay}
+                  onLoadedData={handleVideoLoaded}
                 />
               ) : (
                 <img
@@ -244,9 +268,17 @@ export default function HeroBento() {
             </div>
           )}
 
-          {slidesLoading ? (
-            <div className="menu-loading-spinner" style={{ margin: 'auto', zIndex: 10 }}></div>
-          ) : (
+          {/* Branded spinner — shown while video buffers OR slides data is loading */}
+          {(slidesLoading || videoLoading) && (
+            <div className="hero-video-spinner" aria-label="Loading Kyō-To experience" role="status">
+              <div className="hero-video-spinner__ring hero-video-spinner__ring--gold"></div>
+              <div className="hero-video-spinner__ring hero-video-spinner__ring--red"></div>
+              <div className="hero-video-spinner__kanji" aria-hidden="true">京</div>
+              <span className="hero-video-spinner__label">LOADING KYŌ-TO EXPERIENCE…</span>
+            </div>
+          )}
+
+          {!slidesLoading && (
             <div className="hero-slide-content">
               <div>
                 <span className="hero-slide__tagline">{parseFormattedText(activeSlide?.tagline || 'Contemporary Japanese Cuisine')}</span>
@@ -291,7 +323,12 @@ export default function HeroBento() {
           )}
 
           {promoLoading ? (
-            <div className="menu-loading-spinner" style={{ margin: 'auto' }}></div>
+            <div className="bento-card-spinner" aria-label="Loading promotions" role="status">
+              <div className="bento-card-spinner__ring bento-card-spinner__ring--gold"></div>
+              <div className="bento-card-spinner__ring bento-card-spinner__ring--red"></div>
+              <div className="bento-card-spinner__kanji" aria-hidden="true">京</div>
+              <span className="bento-card-spinner__label">LOADING KYŌ-TO EXPERIENCE…</span>
+            </div>
           ) : (
             <div className="promo-slide" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', zIndex: 10 }}>
               <div className="promo-slide__header" style={{ position: 'relative', zIndex: 10, textShadow: '0 2px 8px rgba(0, 0, 0, 0.85)' }}>
@@ -340,7 +377,12 @@ export default function HeroBento() {
           </div>
 
           {menuLoading ? (
-            <div className="menu-loading-spinner" style={{ margin: 'auto' }}></div>
+            <div className="bento-card-spinner" aria-label="Loading menu recommendation" role="status">
+              <div className="bento-card-spinner__ring bento-card-spinner__ring--gold"></div>
+              <div className="bento-card-spinner__ring bento-card-spinner__ring--red"></div>
+              <div className="bento-card-spinner__kanji" aria-hidden="true">京</div>
+              <span className="bento-card-spinner__label">LOADING KYŌ-TO EXPERIENCE…</span>
+            </div>
           ) : (
             <div className="recommendation-body">
               <div className="recommendation-info">
@@ -366,13 +408,29 @@ export default function HeroBento() {
               </div>
 
               <div className="recommendation-img-container">
+                {/* Mini branded spinner — shown while dish image is fetching */}
+                {imgLoading && (
+                  <div className="rec-img-spinner" aria-hidden="true">
+                    <div className="rec-img-spinner__ring rec-img-spinner__ring--gold"></div>
+                    <div className="rec-img-spinner__ring rec-img-spinner__ring--red"></div>
+                    <div className="rec-img-spinner__kanji">京</div>
+                  </div>
+                )}
                 <img
+                  key={recommendedItem.id || recommendedIndex}
                   src={resolvedImage}
                   alt={recommendedItem.name}
-                  className="recommendation-img"
-                  loading="lazy"
+                  className={`recommendation-img${resolvedImage === '/images/logo.avif' ? ' recommendation-img--logo' : ''}${imgLoading ? ' recommendation-img--hidden' : ''}`}
+                  loading="eager"
+                  onLoad={() => setImgLoading(false)}
                   onError={(e) => {
-                    e.target.src = "/images/logo-192.png";
+                    // Guard: only fall back once — prevents infinite error loops
+                    if (e.target.src.includes('logo.avif')) {
+                      setImgLoading(false);
+                      return;
+                    }
+                    setImgError(true);
+                    setImgLoading(false);
                   }}
                 />
               </div>

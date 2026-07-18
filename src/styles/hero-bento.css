@@ -508,13 +508,18 @@
 }
 
 .recommendation-img-container {
+  position: relative; /* anchor for rec-img-spinner absolute rings */
   width: 105px;
   height: 105px;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   overflow: hidden;
   flex-shrink: 0;
-  background: rgba(255, 255, 255, 0.02);
+  /* Placeholder shown while image loads — prevents white flash */
+  background: rgba(20, 20, 22, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .recommendation-img {
@@ -522,10 +527,249 @@
   height: 100%;
   object-fit: cover;
   transition: transform 0.4s ease;
+  /* Prevent broken-icon flash during src swap */
+  color: transparent;
+}
+
+/* Logo fallback: contain + padding so it isn't stretched */
+.recommendation-img--logo {
+  object-fit: contain;
+  padding: 12px;
+  opacity: 0.55;
+  filter: brightness(0.9);
+}
+
+/* Keep image in DOM but invisible while loading so onLoad fires */
+.recommendation-img--hidden {
+  opacity: 0;
+  position: absolute;
+  pointer-events: none;
 }
 
 .recommendation-img-container:hover .recommendation-img {
   transform: scale(1.08);
+}
+
+/* ==========================================================================
+   Bento Card Spinner — full-card branded spinner for promo & menu loading
+   Centred inside the card, no dark overlay (card itself is dark)
+   ========================================================================== */
+
+.bento-card-spinner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 0;
+  min-height: 120px;
+}
+
+.bento-card-spinner__ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 3px solid transparent;
+}
+
+.bento-card-spinner__ring--gold {
+  width: 60px;
+  height: 60px;
+  border-top-color: var(--color-brand-gold);
+  border-right-color: var(--color-brand-gold);
+  animation: hero-spin-cw 1.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.bento-card-spinner__ring--red {
+  width: 44px;
+  height: 44px;
+  border-bottom-color: var(--color-brand-red);
+  border-left-color: var(--color-brand-red);
+  animation: hero-spin-ccw 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.bento-card-spinner__kanji {
+  position: absolute;
+  font-family: var(--font-display);
+  font-size: 16px;
+  color: var(--color-brand-gold);
+  line-height: 1;
+  user-select: none;
+  pointer-events: none;
+}
+
+.bento-card-spinner__label {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-body);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(245, 240, 232, 0.5);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bento-card-spinner__ring--gold,
+  .bento-card-spinner__ring--red {
+    animation: none;
+    opacity: 0.5;
+  }
+}
+
+/* ==========================================================================
+   Mini Branded Spinner — inside the recommendation image container
+   Scaled-down version of the hero-video-spinner
+   ========================================================================== */
+
+.rec-img-spinner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  border-radius: inherit;
+}
+
+.rec-img-spinner__ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid transparent;
+}
+
+.rec-img-spinner__ring--gold {
+  width: 38px;
+  height: 38px;
+  border-top-color: var(--color-brand-gold);
+  border-right-color: var(--color-brand-gold);
+  animation: hero-spin-cw 1.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.rec-img-spinner__ring--red {
+  width: 28px;
+  height: 28px;
+  border-bottom-color: var(--color-brand-red);
+  border-left-color: var(--color-brand-red);
+  animation: hero-spin-ccw 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Reuses the same keyframes defined for hero-video-spinner */
+
+.rec-img-spinner__kanji {
+  position: absolute;
+  font-family: var(--font-display);
+  font-size: 11px;
+  color: var(--color-brand-gold);
+  line-height: 1;
+  user-select: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rec-img-spinner__ring--gold,
+  .rec-img-spinner__ring--red {
+    animation: none;
+    opacity: 0.5;
+  }
+}
+
+/* ==========================================================================
+   Branded Video-Loading Spinner — matches Kyō-To loading screen design
+   ========================================================================== */
+
+.hero-video-spinner {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  background: rgba(5, 5, 6, 0.82);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* Shared ring base */
+.hero-video-spinner__ring {
+  position: absolute;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+}
+
+/* Gold outer arc — clockwise */
+.hero-video-spinner__ring--gold {
+  border-top-color: var(--color-brand-gold);
+  border-right-color: var(--color-brand-gold);
+  animation: hero-spin-cw 1.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Red inner arc — counter-clockwise, slightly smaller */
+.hero-video-spinner__ring--red {
+  width: 56px;
+  height: 56px;
+  border-bottom-color: var(--color-brand-red);
+  border-left-color: var(--color-brand-red);
+  animation: hero-spin-ccw 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes hero-spin-cw {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes hero-spin-ccw {
+  to { transform: rotate(-360deg); }
+}
+
+/* Kanji character centred inside the rings */
+.hero-video-spinner__kanji {
+  position: relative; /* sits above the absolute rings */
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--color-brand-gold);
+  line-height: 1;
+  /* vertically centre within the 72px ring area */
+  margin-top: 60px; /* push down so the label sits below */
+  /* Actually, use absolute positioning for precise centre */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Label text below rings */
+.hero-video-spinner__label {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(245, 240, 232, 0.6);
+  white-space: nowrap;
+}
+
+/* Reduced motion — remove ring spin, keep label */
+@media (prefers-reduced-motion: reduce) {
+  .hero-video-spinner__ring--gold,
+  .hero-video-spinner__ring--red {
+    animation: none;
+    opacity: 0.5;
+  }
 }
 
 /* Wavy Section Divider */
