@@ -57,6 +57,14 @@ service cloud.firestore {
       allow read, update, delete: if request.auth != null;
     }
 
+    // ─── Customer Reviews / Guestbook ───
+    // Anyone can read reviews and submit new ones.
+    // Only authenticated admins can update or delete reviews.
+    match /reviews/{docId} {
+      allow read, create: if true;
+      allow update, delete: if request.auth != null;
+    }
+
     // ─── Deny everything else by default ───
     // Any collection not explicitly listed above is blocked.
   }

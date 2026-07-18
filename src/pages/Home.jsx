@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import HeroCarousel from "../components/home/HeroCarousel";
-import PromotionsSection from "../components/home/PromotionsSection";
+import HeroBento from "../components/home/HeroBento";
 import MenuPreview from "../components/home/MenuPreview";
 import AboutSection from "../components/home/AboutSection";
 import MenuGallery from "../components/home/MenuGallery";
@@ -14,7 +13,7 @@ import '../styles/floating-food.css';
 import { Helmet } from 'react-helmet-async';
 
 export default function Home() {
-  const [heroLoaded, setHeroLoaded] = useState(false);
+  const [heroLoaded, setHeroLoaded] = useState(true);
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Restaurant",
@@ -70,30 +69,11 @@ export default function Home() {
         </script>
       </Helmet>
 
-      {/* Hero — dark section with wave cutout built in */}
-      <HeroCarousel onLoaded={() => setHeroLoaded(true)} />
+      {/* Hero — Bento Grid layout */}
+      <HeroBento />
 
-      {/* Promotions → white background, floating sushi scattered */}
+      {/* Menu Preview */}
       <div style={{ position: 'relative' }}>
-        <PromotionsSection />
-        {heroLoaded && (
-          <FloatingFood
-            items={[
-              {
-                src: '/images/decorations/single-nigiri.png',
-                position: 'right',
-                top: '-150px',
-                size: 'lg',
-                rotate: '-15deg',
-              },
-            ]}
-          />
-        )}
-      </div>
-
-      {/* Divider: Promotions → Menu Preview */}
-      <div style={{ position: 'relative' }}>
-        <SectionDivider variant="gentle" fillColor="#ffffff" position="top" />
         <MenuPreview />
       </div>
 
