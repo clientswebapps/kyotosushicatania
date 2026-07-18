@@ -58,22 +58,23 @@
   background: rgba(14, 14, 16, 0.65);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(243, 192, 22, 0.08);
-  border-radius: 20px;
+  border: none;
+  border-radius: 0;
   padding: 24px;
   overflow: hidden;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  clip-path: url(#wavy-bento-clip); /* Cutout theme: shallower wiggly paper clip-path for bento grid elements */
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3));
 }
 
 .bento-card:hover {
   transform: translateY(-2px);
-  border-color: rgba(243, 192, 22, 0.25);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4),
-              0 0 20px rgba(243, 192, 22, 0.04);
+  filter: drop-shadow(0 12px 30px rgba(0, 0, 0, 0.5))
+          drop-shadow(0 0 8px rgba(243, 192, 22, 0.12));
 }
 
 /* --- Hero Welcome Slides Card (Row 1 - Full Width) --- */
@@ -81,7 +82,7 @@
   grid-column: 1 / -1; /* Spans full width on desktop */
   height: 280px;
   background-color: #0d0d0e;
-  border-color: rgba(243, 192, 22, 0.12);
+  border: none;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -197,16 +198,15 @@
 .bento-card--promotions {
   height: 330px;
   background: linear-gradient(135deg, rgba(200, 16, 46, 0.12) 0%, rgba(14, 14, 16, 0.7) 100%);
-  border-color: rgba(200, 16, 46, 0.18);
+  border: none;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
 .bento-card--promotions:hover {
-  border-color: rgba(200, 16, 46, 0.35);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4),
-              0 0 20px rgba(200, 16, 46, 0.05);
+  filter: drop-shadow(0 12px 30px rgba(0, 0, 0, 0.5))
+          drop-shadow(0 0 8px rgba(200, 16, 46, 0.15));
 }
 
 .promo-slide {
@@ -342,7 +342,7 @@
 .bento-card--recommendation {
   height: 330px;
   background: rgba(14, 14, 16, 0.75);
-  border-color: rgba(243, 192, 22, 0.1);
+  border: none;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

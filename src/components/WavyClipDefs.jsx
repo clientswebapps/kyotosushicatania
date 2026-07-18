@@ -14,6 +14,7 @@ import { useMemo } from 'react';
  */
 export default function WavyClipDefs() {
   const wavyPath = useMemo(() => generateWavyCardPath(18, 0.005, 0.005), []);
+  const wavyBentoPath = useMemo(() => generateWavyCardPath(24, 0.0015, 0.004), []);
   const wavyFounderPath = useMemo(() => generateWavyCardPath(18, 0.004, 0.0015), []);
 
   return (
@@ -26,6 +27,9 @@ export default function WavyClipDefs() {
       <defs>
         <clipPath id="wavy-card-clip" clipPathUnits="objectBoundingBox">
           <path d={wavyPath} />
+        </clipPath>
+        <clipPath id="wavy-bento-clip" clipPathUnits="objectBoundingBox">
+          <path d={wavyBentoPath} />
         </clipPath>
         <clipPath id="wavy-founder-clip" clipPathUnits="objectBoundingBox">
           <path d={wavyFounderPath} />
