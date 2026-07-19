@@ -265,7 +265,7 @@ export default function HeroBento() {
                   onError={(e) => { 
                     if (e.target.src !== '/images/logo.avif') {
                       e.target.src = '/images/logo.avif';
-                      e.target.style.opacity = '0.35';
+                      e.target.style.opacity = '0.20';
                       e.target.style.objectFit = 'contain';
                       e.target.style.padding = '80px';
                     }
@@ -327,6 +327,39 @@ export default function HeroBento() {
                 className="hero-slide-media"
                 style={{ filter: 'brightness(0.35)' }}
               />
+            </div>
+          )}
+
+          {/* Background Media for active custom promotions (supports images & videos) */}
+          {!promoLoading && !isDefaultPromo && activePromo?.imageUrl && (
+            <div className="hero-slide-bg-media">
+              {(/\.(mp4|webm|ogg)(\?.*)?$/i.test(activePromo.imageUrl) || /\/video\/upload\//i.test(activePromo.imageUrl)) ? (
+                <video
+                  src={activePromo.imageUrl}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="hero-slide-media"
+                  style={{ filter: 'brightness(0.35)', objectFit: "cover", width: "100%", height: "100%" }}
+                />
+              ) : (
+                <img
+                  src={activePromo.imageUrl}
+                  alt={activePromo.title || "Promotion Background"}
+                  className="hero-slide-media"
+                  style={{ filter: 'brightness(0.35)' }}
+                  onError={(e) => {
+                    if (e.target.src !== '/images/logo.avif') {
+                      e.target.src = '/images/logo.avif';
+                      e.target.style.opacity = '0.20';
+                      e.target.style.objectFit = 'contain';
+                      e.target.style.padding = '40px';
+                      e.target.style.filter = 'none';
+                    }
+                  }}
+                />
+              )}
             </div>
           )}
 

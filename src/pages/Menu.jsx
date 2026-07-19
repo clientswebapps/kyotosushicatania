@@ -85,7 +85,7 @@ function ImageWithLoader({ src, alt, className, ...props }) {
           if (imgSrc !== FALLBACK_IMAGE) setImgSrc(FALLBACK_IMAGE);
         }}
         style={{ 
-          opacity: imageLoading ? 0 : (imgSrc === FALLBACK_IMAGE ? 0.35 : 1),
+          opacity: imageLoading ? 0 : (imgSrc === FALLBACK_IMAGE ? 0.20 : 1),
           objectFit: imgSrc === FALLBACK_IMAGE ? "contain" : "cover",
           padding: imgSrc === FALLBACK_IMAGE ? "16px" : "0"
         }}

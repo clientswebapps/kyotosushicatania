@@ -137,7 +137,7 @@ const BestSellers = () => {
                   onError={(e) => {
                     if (e.target.src !== '/images/logo.avif') {
                       e.target.src = '/images/logo.avif';
-                      e.target.style.opacity = '0.35';
+                      e.target.style.opacity = '0.20';
                       e.target.style.objectFit = 'contain';
                       e.target.style.padding = '16px';
                     }

@@ -48,7 +48,7 @@ function GalleryMediaItem({ item }) {
           draggable={false}
           onDragStart={(e) => e.preventDefault()}
           style={{ 
-            opacity: mediaLoading ? 0 : (imgSrc === '/images/logo.avif' ? 0.35 : 1), 
+            opacity: mediaLoading ? 0 : (imgSrc === '/images/logo.avif' ? 0.20 : 1), 
             transition: 'opacity 0.3s ease-in-out',
             objectFit: imgSrc === '/images/logo.avif' ? 'contain' : 'cover',
             padding: imgSrc === '/images/logo.avif' ? '24px' : '0'

@@ -59,7 +59,7 @@ export default function MenuItemModal({ item, isOpen, onClose }) {
                   }
                 }}
                 style={{
-                  opacity: imgSrc === '/images/logo.avif' ? 0.35 : 1,
+                  opacity: imgSrc === '/images/logo.avif' ? 0.20 : 1,
                   objectFit: imgSrc === '/images/logo.avif' ? 'contain' : 'cover',
                   padding: imgSrc === '/images/logo.avif' ? '24px' : '0'
                 }}
