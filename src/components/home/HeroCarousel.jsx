@@ -152,7 +152,7 @@ const HeroCarousel = ({ onLoaded }) => {
             animate="center"
             exit="exit"
           >
-            {/\.(mp4|webm|ogg)(\?.*)?$/i.test(activeSlide.imageUrl) ? (
+            {(/\.(mp4|webm|ogg)(\?.*)?$/i.test(activeSlide.imageUrl) || /\/video\/upload\//i.test(activeSlide.imageUrl)) ? (
               <video
                 className="hero__slide-image"
                 autoPlay
@@ -172,6 +172,14 @@ const HeroCarousel = ({ onLoaded }) => {
                 fetchpriority={currentSlide === 0 ? "high" : "auto"}
                 width={1920}
                 height={1080}
+                onError={(e) => { 
+                  if (e.target.src !== '/images/logo.avif') {
+                    e.target.src = '/images/logo.avif';
+                    e.target.style.opacity = '0.35';
+                    e.target.style.objectFit = 'contain';
+                    e.target.style.padding = '80px';
+                  }
+                }}
               />
             )}
             <div className="hero__overlay" />

@@ -134,6 +134,14 @@ const BestSellers = () => {
                   alt={item.name}
                   className="bestsellers__card-image"
                   loading="lazy"
+                  onError={(e) => {
+                    if (e.target.src !== '/images/logo.avif') {
+                      e.target.src = '/images/logo.avif';
+                      e.target.style.opacity = '0.35';
+                      e.target.style.objectFit = 'contain';
+                      e.target.style.padding = '16px';
+                    }
+                  }}
                 />
                 <div className="bestsellers__badge">
                   <Star size={10} style={{ marginRight: '4px', fill: 'currentColor' }} />

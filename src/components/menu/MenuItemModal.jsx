@@ -1,10 +1,18 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ShoppingBag } from 'lucide-react';
 import '../../styles/menu.css';
 
 export default function MenuItemModal({ item, isOpen, onClose }) {
+  const [imgSrc, setImgSrc] = useState('');
+
+  useEffect(() => {
+    if (item) {
+      setImgSrc(item.imageUrl || '/images/logo.avif');
+    }
+  }, [item]);
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -41,7 +49,21 @@ export default function MenuItemModal({ item, isOpen, onClose }) {
             </button>
             
             <div className="menu-modal-image-wrapper">
-              <img src={item.imageUrl} alt={item.name} className="menu-modal-image" />
+              <img 
+                src={imgSrc || "/images/logo.avif"} 
+                alt={item.name} 
+                className="menu-modal-image" 
+                onError={() => {
+                  if (imgSrc !== '/images/logo.avif') {
+                    setImgSrc('/images/logo.avif');
+                  }
+                }}
+                style={{
+                  opacity: imgSrc === '/images/logo.avif' ? 0.35 : 1,
+                  objectFit: imgSrc === '/images/logo.avif' ? 'contain' : 'cover',
+                  padding: imgSrc === '/images/logo.avif' ? '24px' : '0'
+                }}
+              />
               {item.isBestSeller && (
                 <span className="menu-modal-badge">Best Seller</span>
               )}

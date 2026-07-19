@@ -245,7 +245,7 @@ export default function HeroBento() {
           {/* Background Media (Video/Image) */}
           {activeSlide && (
             <div className="hero-slide-bg-media">
-              {/\.(mp4|webm|ogg)(\?.*)?$/i.test(activeSlide.imageUrl || "") ? (
+              {(/\.(mp4|webm|ogg)(\?.*)?$/i.test(activeSlide.imageUrl || "") || /\/video\/upload\//i.test(activeSlide.imageUrl || "")) ? (
                 <video
                   src={activeSlide.imageUrl}
                   autoPlay
@@ -262,6 +262,14 @@ export default function HeroBento() {
                   src={activeSlide.imageUrl || "/images/dragon-roll.avif"}
                   alt={activeSlide.title || "Hero Background"}
                   className="hero-slide-media"
+                  onError={(e) => { 
+                    if (e.target.src !== '/images/logo.avif') {
+                      e.target.src = '/images/logo.avif';
+                      e.target.style.opacity = '0.35';
+                      e.target.style.objectFit = 'contain';
+                      e.target.style.padding = '80px';
+                    }
+                  }}
                 />
               )}
               <div className="hero-slide-media-overlay" />

@@ -66,19 +66,29 @@ const formatPrice = (price, price6, isCard = false) => {
 };
 
 // Reusable Image component with loading shimmer
+const FALLBACK_IMAGE = "/images/logo.avif";
+
 function ImageWithLoader({ src, alt, className, ...props }) {
   const [imageLoading, setImageLoading] = useState(true);
+  const [imgSrc, setImgSrc] = useState(src);
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
       {imageLoading && <div className="menu-image-shimmer skeleton-shimmer"></div>}
       <img
-        src={src}
+        src={imgSrc}
         alt={alt}
         className={className}
         onLoad={() => setImageLoading(false)}
-        onError={() => setImageLoading(false)}
-        style={{ opacity: imageLoading ? 0 : 1 }}
+        onError={() => {
+          setImageLoading(false);
+          if (imgSrc !== FALLBACK_IMAGE) setImgSrc(FALLBACK_IMAGE);
+        }}
+        style={{ 
+          opacity: imageLoading ? 0 : (imgSrc === FALLBACK_IMAGE ? 0.35 : 1),
+          objectFit: imgSrc === FALLBACK_IMAGE ? "contain" : "cover",
+          padding: imgSrc === FALLBACK_IMAGE ? "16px" : "0"
+        }}
         {...props}
       />
     </div>
@@ -444,7 +454,7 @@ export default function Menu() {
               <div className="menu-section__grid-4">
                 {filteredItems.map((item, index) => {
                   const hasMedia = item.imageUrl || imageMap[item.name];
-                  const isVideo = hasMedia && /\.(mp4|webm|ogg)(\?.*)?$/i.test(item.imageUrl || "");
+                  const isVideo = hasMedia && (/\.(mp4|webm|ogg)(\?.*)?$/i.test(item.imageUrl || "") || /\/video\/upload\//i.test(item.imageUrl || ""));
                   return (
                     <motion.div
                       key={item.id}
@@ -578,7 +588,7 @@ export default function Menu() {
                 {(() => {
                   const item = selectedModalItem;
                   const hasMedia = item.imageUrl || imageMap[item.name];
-                  const isVideo = hasMedia && /\.(mp4|webm|ogg)(\?.*)?$/i.test(item.imageUrl || "");
+                  const isVideo = hasMedia && (/\.(mp4|webm|ogg)(\?.*)?$/i.test(item.imageUrl || "") || /\/video\/upload\//i.test(item.imageUrl || ""));
                   return (
                     <div
                       className="menu-flip-card menu-flip-card--modal"

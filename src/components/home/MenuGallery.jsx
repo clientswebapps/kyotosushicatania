@@ -7,7 +7,8 @@ import '../../styles/menu-gallery.css';
 
 function GalleryMediaItem({ item }) {
   const [mediaLoading, setMediaLoading] = useState(true);
-  const isVideo = /\.(mp4|webm|ogg)(\?.*)?$/i.test(item.imageUrl);
+  const [imgSrc, setImgSrc] = useState(item.imageUrl);
+  const isVideo = /\.(mp4|webm|ogg)(\?.*)?$/i.test(item.imageUrl) || /\/video\/upload\//i.test(item.imageUrl);
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }} draggable={false}>
@@ -33,15 +34,25 @@ function GalleryMediaItem({ item }) {
         </video>
       ) : (
         <img
-          src={item.imageUrl}
+          src={imgSrc || "/images/logo.avif"}
           alt={item.title || "Menu Dish"}
           className="menu-gallery__media"
           loading="lazy"
           onLoad={() => setMediaLoading(false)}
-          onError={() => setMediaLoading(false)}
+          onError={() => {
+            setMediaLoading(false);
+            if (imgSrc !== '/images/logo.avif') {
+              setImgSrc('/images/logo.avif');
+            }
+          }}
           draggable={false}
           onDragStart={(e) => e.preventDefault()}
-          style={{ opacity: mediaLoading ? 0 : 1, transition: 'opacity 0.3s ease-in-out' }}
+          style={{ 
+            opacity: mediaLoading ? 0 : (imgSrc === '/images/logo.avif' ? 0.35 : 1), 
+            transition: 'opacity 0.3s ease-in-out',
+            objectFit: imgSrc === '/images/logo.avif' ? 'contain' : 'cover',
+            padding: imgSrc === '/images/logo.avif' ? '24px' : '0'
+          }}
         />
       )}
     </div>

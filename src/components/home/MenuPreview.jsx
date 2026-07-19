@@ -10,19 +10,29 @@ import FloatingFood from './FloatingFood';
 import '../../styles/menu.css';
 
 // Reusable Image component with loading shimmer
+const FALLBACK_IMAGE = "/images/logo.avif";
+
 function ImageWithLoader({ src, alt, className, ...props }) {
   const [imageLoading, setImageLoading] = useState(true);
+  const [imgSrc, setImgSrc] = useState(src);
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
       {imageLoading && <div className="menu-image-shimmer skeleton-shimmer"></div>}
       <img
-        src={src}
+        src={imgSrc || FALLBACK_IMAGE}
         alt={alt}
         className={className}
         onLoad={() => setImageLoading(false)}
-        onError={() => setImageLoading(false)}
-        style={{ opacity: imageLoading ? 0 : 1 }}
+        onError={() => {
+          setImageLoading(false);
+          if (imgSrc !== FALLBACK_IMAGE) setImgSrc(FALLBACK_IMAGE);
+        }}
+        style={{ 
+          opacity: imageLoading ? 0 : (imgSrc === FALLBACK_IMAGE ? 0.35 : 1),
+          objectFit: imgSrc === FALLBACK_IMAGE ? "contain" : "cover",
+          padding: imgSrc === FALLBACK_IMAGE ? "16px" : "0"
+        }}
         {...props}
       />
     </div>
