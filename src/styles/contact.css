@@ -443,3 +443,77 @@
   color: var(--color-text-muted);
 }
 
+/* Holiday & Closed Date Styles */
+.cal-day-btn.holiday {
+  color: var(--color-brand-red);
+  background-color: var(--color-brand-red-subtle);
+  text-decoration: line-through;
+  opacity: 0.65;
+  cursor: not-allowed;
+  position: relative;
+}
+
+.cal-day-btn.holiday:hover {
+  background: var(--color-brand-red-subtle);
+  color: var(--color-brand-red);
+}
+
+.cal-holiday-indicator {
+  position: absolute;
+  bottom: 2px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--color-brand-red);
+}
+
+.calendar-popover-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-border);
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+.cal-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cal-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.cal-legend-dot.today-dot {
+  border: 1px solid var(--color-brand-gold);
+  background-color: transparent;
+}
+
+.cal-legend-dot.holiday-dot {
+  background-color: var(--color-brand-red);
+}
+
+.res-closed-notice {
+  font-size: 12px;
+  color: var(--color-brand-red);
+  margin-top: 8px;
+  padding: 8px 12px;
+  background-color: var(--color-brand-red-subtle);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(200, 16, 46, 0.2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cal-day-btn {
+    transition: none !important;
+  }
+}
+

@@ -2329,5 +2329,6 @@ export const fallbackData = {
             isBestSeller: false,
             cardSize: "long"
         }
-    ]
+    ],
+    closedDates: []
 };

@@ -1,14 +1,18 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { MapPin, Phone, Clock, Mail, Send, Users, Calendar } from "lucide-react";
-import { useAddDocument } from "../hooks/useFirestore";
+import { useCollection, useAddDocument } from "../hooks/useFirestore";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../firebase/config";
 import FloatingFood from "../components/home/FloatingFood";
 import "../styles/contact.css";
 
-const validateReservationTime = (dateStr, timeStr) => {
+const validateReservationTime = (dateStr, timeStr, closedDatesMap = {}) => {
+  if (closedDatesMap[dateStr]) {
+    return `Kyō-To è chiuso in questa data (${closedDatesMap[dateStr]}). Ti invitiamo a selezionare un'altra data.`;
+  }
+
   const selectedDate = new Date(dateStr);
   const dayOfWeek = selectedDate.getDay(); // 0 is Sunday, 1 is Monday, etc.
   
@@ -71,8 +75,8 @@ const formatDateLabel = (dateStr) => {
   });
 };
 
-const getTimeSlots = (dateStr) => {
-  if (!dateStr) return [];
+const getTimeSlots = (dateStr, closedDatesMap = {}) => {
+  if (!dateStr || (closedDatesMap && closedDatesMap[dateStr])) return [];
   const selectedDate = new Date(dateStr);
   const dayOfWeek = selectedDate.getDay(); // 0 is Sunday, 1 is Monday, etc.
   
@@ -131,6 +135,10 @@ const getDaysInMonth = (date) => {
 };
 
 export default function Contact() {
+  const { data: closedDates = [] } = useCollection("closedDates", {
+    orderByField: null,
+    realtime: true,
+  });
   const { addDocument, loading: submitting } = useAddDocument("reservations");
   const [formData, setFormData] = useState({
     name: "",
@@ -141,6 +149,17 @@ export default function Contact() {
     partySize: 2,
     notes: "",
   });
+
+  const closedDatesMap = useMemo(() => {
+    const map = {};
+    closedDates.forEach((item) => {
+      if (item.date) {
+        map[item.date] = item.reason || "Chiusura / Ferie";
+      }
+    });
+    return map;
+  }, [closedDates]);
+
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
@@ -175,7 +194,7 @@ export default function Contact() {
     setError(null);
 
     // 1. Time-slot validation
-    const timeValidationError = validateReservationTime(formData.date, formData.time);
+    const timeValidationError = validateReservationTime(formData.date, formData.time, closedDatesMap);
     if (timeValidationError) {
       setError(timeValidationError);
       setIsSubmitting(false);
@@ -464,26 +483,49 @@ export default function Contact() {
                         {getDaysInMonth(currentMonth).map((day, idx) => {
                           if (!day) return <span key={`empty-${idx}`} className="cal-day empty"></span>;
                           
+                          const dayStr = formatDateString(day);
+                          const holidayReason = closedDatesMap[dayStr];
+                          const isHoliday = !!holidayReason;
+
                           const today = new Date();
                           today.setHours(0,0,0,0);
                           const isPast = day < today;
-                          const isSelected = formData.date === formatDateString(day);
-                          const isToday = formatDateString(day) === formatDateString(new Date());
+                          const isSelected = formData.date === dayStr;
+                          const isToday = dayStr === formatDateString(new Date());
+                          const isDisabled = isPast || isHoliday;
                           
                           return (
                             <button
                               key={day.getTime()}
                               type="button"
-                              disabled={isPast}
-                              className={`cal-day-btn ${isPast ? "past" : ""} ${isSelected ? "selected" : ""} ${isToday ? "today" : ""}`}
+                              disabled={isDisabled}
+                              title={isHoliday ? `Chiuso: ${holidayReason}` : undefined}
+                              className={`cal-day-btn ${isPast ? "past" : ""} ${isHoliday ? "holiday" : ""} ${isSelected ? "selected" : ""} ${isToday ? "today" : ""}`}
                               onClick={() => handleSelectDate(day)}
                             >
-                              {day.getDate()}
+                              <span>{day.getDate()}</span>
+                              {isHoliday && <span className="cal-holiday-indicator" aria-hidden="true"></span>}
                             </button>
                           );
                         })}
                       </div>
+                      <div className="calendar-popover-legend">
+                        <div className="cal-legend-item">
+                          <span className="cal-legend-dot today-dot"></span>
+                          <span>Oggi</span>
+                        </div>
+                        <div className="cal-legend-item">
+                          <span className="cal-legend-dot holiday-dot"></span>
+                          <span>Chiuso / Ferie</span>
+                        </div>
+                      </div>
                     </div>
+                  )}
+
+                  {formData.date && closedDatesMap[formData.date] && (
+                    <p className="res-closed-notice">
+                      ⚠️ Siamo chiusi in questa data ({closedDatesMap[formData.date]}). Seleziona un'altra data.
+                    </p>
                   )}
                 </div>
                 <div className="form-group">
@@ -496,10 +538,10 @@ export default function Contact() {
                     value={formData.time}
                     onChange={handleChange}
                     required
-                    disabled={!formData.date}
+                    disabled={!formData.date || !!closedDatesMap[formData.date]}
                   >
                     <option value="">Select a time...</option>
-                    {formData.date && getTimeSlots(formData.date).map((slot) => (
+                    {formData.date && getTimeSlots(formData.date, closedDatesMap).map((slot) => (
                       <option key={slot} value={slot}>
                         {slot}
                       </option>

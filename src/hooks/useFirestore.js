@@ -33,7 +33,8 @@ export function useCollection(collectionName, options = {}) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const { orderByField = "order", whereField, whereValue, realtime = false } = options;
+  const defaultOrderBy = ["closedDates", "reservations", "pushSubscriptions", "reviews", "adminUsers"].includes(collectionName) ? null : "order";
+  const { orderByField = defaultOrderBy, whereField, whereValue, realtime = false } = options;
 
   useEffect(() => {
     // Use fallback data if Firebase is not configured

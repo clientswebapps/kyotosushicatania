@@ -3,6 +3,19 @@ import { createRoot } from 'react-dom/client'
 import { HelmetProvider } from 'react-helmet-async'
 import App from './App.jsx'
 
+// Catch and suppress benign Chrome extension communication errors
+if (typeof window !== 'undefined') {
+  window.addEventListener('unhandledrejection', (event) => {
+    if (
+      event.reason &&
+      typeof event.reason.message === 'string' &&
+      event.reason.message.includes('A listener indicated an asynchronous response by returning true')
+    ) {
+      event.preventDefault();
+    }
+  });
+}
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <HelmetProvider>
