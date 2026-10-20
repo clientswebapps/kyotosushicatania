@@ -45,7 +45,7 @@ export default function Home() {
       },
       {
         "@type": "OpeningHoursSpecification",
-        "dayOfWeek": ["Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        "dayOfWeek": ["Saturday", "Sunday"],
         "opens": "12:30",
         "closes": "15:00"
       }

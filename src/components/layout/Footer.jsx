@@ -82,12 +82,12 @@ const Footer = () => {
             <h4 className="footer__hours-title">Opening Hours</h4>
             <ul className="footer__hours-list">
               <li className="footer__hours-item">
-                <span>Monday</span>
+                <span>Monday - Friday</span>
                 <span>18:00 - 23:30</span>
               </li>
               <li className="footer__hours-item">
-                <span>Tue - Sun</span>
-                <span>12:30 - 15:00 / 18:00 - 23:30</span>
+                <span>Saturday &amp; Sunday</span>
+                <span>12:30 - 15:00 | 18:00 - 23:30</span>
               </li>
             </ul>
           </div>

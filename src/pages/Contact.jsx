@@ -40,17 +40,17 @@ const validateReservationTime = (dateStr, timeStr, closedDatesMap = {}) => {
     }
   }
 
-  // Monday Opening Hours: 18:00 - 23:30 (18.0 to 23.5)
-  if (dayOfWeek === 1) {
+  // Monday - Friday Opening Hours: 18:00 - 23:30 (18.0 to 23.5)
+  if (dayOfWeek >= 1 && dayOfWeek <= 5) {
     if (timeVal < 18.0 || timeVal > 23.5) {
-      return "On Mondays, Kyō-To is only open for dinner from 18:00 to 23:30.";
+      return "From Monday to Friday, Kyō-To is only open for dinner from 18:00 to 23:30.";
     }
   } else {
-    // Tue - Sun Opening Hours: 12:30 - 15:00 (12.5 to 15.0) AND 18:00 - 23:30 (18.0 to 23.5)
+    // Saturday & Sunday Opening Hours: 12:30 - 15:00 (12.5 to 15.0) AND 18:00 - 23:30 (18.0 to 23.5)
     const isLunch = timeVal >= 12.5 && timeVal <= 15.0;
     const isDinner = timeVal >= 18.0 && timeVal <= 23.5;
     if (!isLunch && !isDinner) {
-      return "Kyō-To is open Tue-Sun for lunch (12:30 - 15:00) and dinner (18:00 - 23:30). Please select a time within these slots.";
+      return "Kyō-To is open on Saturday and Sunday for lunch (12:30 - 15:00) and dinner (18:00 - 23:30). Please select a time within these slots.";
     }
   }
   return null;
@@ -87,7 +87,7 @@ const getTimeSlots = (dateStr, closedDatesMap = {}) => {
   ];
   
   let slots = [];
-  if (dayOfWeek === 1) {
+  if (dayOfWeek >= 1 && dayOfWeek <= 5) {
     slots = [...dinnerSlots];
   } else {
     slots = [...lunchSlots, ...dinnerSlots];
@@ -359,8 +359,8 @@ export default function Contact() {
               <Clock size={24} className="contact-icon" />
               <div>
                 <h3>Hours</h3>
-                <p>Monday: 18:00 - 23:30</p>
-                <p>Tue - Sun: 12:30 - 15:00 / 18:00 - 23:30</p>
+                <p>Monday - Friday: 18:00 - 23:30</p>
+                <p>Saturday &amp; Sunday: 12:30 - 15:00 | 18:00 - 23:30</p>
               </div>
             </div>
           </div>

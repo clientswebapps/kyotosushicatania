@@ -31,8 +31,8 @@ const contactInfo = [
 ];
 
 const hours = [
-  { days: 'Monday', times: '18:00 - 23:30' },
-  { days: 'Tue - Sun', times: '12:30 - 15:00 / 18:00 - 23:30' },
+  { days: 'Monday - Friday', times: '18:00 - 23:30' },
+  { days: 'Saturday & Sunday', times: '12:30 - 15:00 | 18:00 - 23:30' },
 ];
 
 const containerVariants = {
